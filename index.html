@@ -10,45 +10,45 @@
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
         /* 瀑布流排版 */
-        .masonry-grid { column-count: 2; column-gap: 1.25rem; }
+        .masonry-grid { column-count: 2; column-gap: 1.5rem; }
         @media (min-width: 768px) { .masonry-grid { column-count: 3; } }
         @media (min-width: 1024px) { .masonry-grid { column-count: 4; } }
-        .masonry-item { break-inside: avoid; margin-bottom: 1.25rem; }
+        .masonry-item { break-inside: avoid; margin-bottom: 1.5rem; }
         
-        /* 輪播滑動與滾動行為 */
+        /* 輪播滾動行為 */
         .carousel-track { scroll-snap-type: x mandatory; scroll-behavior: smooth; }
         .carousel-slide { scroll-snap-align: center; }
-        .dot { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .dot.active { width: 24px; border-radius: 9999px; background-color: #3B82F6; }
+        .dot { transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        .dot.active { width: 20px; border-radius: 9999px; background-color: #1e293b; }
 
-        /* 動畫效果 */
+        /* 高階過場動畫 */
         @keyframes slideUp {
-            from { transform: translateY(20px); opacity: 0; }
+            from { transform: translateY(16px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translate(-50%, 15px); }
+            from { opacity: 0; transform: translate(-50%, 10px); }
             to { opacity: 1; transform: translate(-50%, 0); }
         }
-        .animate-slide-up { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .animate-fade-in { animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .animate-slide-up { animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .animate-fade-in { animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans antialiased pb-24 min-h-screen relative overflow-x-hidden">
+<body class="bg-[#faf9f6] text-slate-800 font-sans antialiased pb-24 min-h-screen relative overflow-x-hidden">
     
-    <!-- 後台微弱的光暈背景，消除死板背景 -->
-    <div class="absolute top-0 left-1/4 w-96 h-96 bg-blue-100/40 rounded-full filter blur-3xl pointer-events-none -z-10"></div>
-    <div class="absolute top-1/3 right-1/4 w-96 h-96 bg-indigo-100/30 rounded-full filter blur-3xl pointer-events-none -z-10"></div>
+    <!-- 輕雅背景光暈 -->
+    <div class="absolute top-0 left-1/3 w-[500px] h-[500px] bg-amber-100/20 rounded-full filter blur-3xl pointer-events-none -z-10"></div>
+    <div class="absolute top-1/4 right-1/4 w-[400px] h-[400px] bg-slate-200/30 rounded-full filter blur-3xl pointer-events-none -z-10"></div>
 
-    <!-- 頂部導覽：毛玻璃效果 -->
-    <header class="bg-white/80 backdrop-blur-md border-b border-slate-100 sticky top-0 z-50 transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center gap-4">
+    <!-- 頂部導覽：極簡溫潤白 -->
+    <header class="bg-[#faf9f6]/90 backdrop-blur-md sticky top-0 z-50 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center gap-4">
             <h1 class="text-xl font-black tracking-widest text-slate-900 whitespace-nowrap select-none">
-                <span class="bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent">留友看</span> Hinata Ver.
+                <span class="bg-gradient-to-r from-amber-600 to-slate-800 bg-clip-text text-transparent">留友看</span> <span class="text-xs font-normal text-slate-400 tracking-normal">Hinata Ver.</span>
             </h1>
             <div class="flex items-center gap-3">
-                <button onclick="openFolderCreate()" title="新增收藏分類" class="w-10 h-10 rounded-full bg-slate-100/80 hover:bg-slate-200 flex items-center justify-center text-lg transition duration-200 active:scale-90">📁</button>
-                <button id="account-btn" onclick="openAccountSettings()" title="登入 / 我的帳號" class="w-10 h-10 rounded-full bg-slate-950 text-white flex items-center justify-center text-sm font-bold transition overflow-hidden shadow-sm active:scale-90 ring-2 ring-slate-100">
+                <button onclick="openFolderCreate()" title="新增收藏分類" class="w-10 h-10 rounded-full bg-white shadow-sm border border-slate-100 flex items-center justify-center text-lg transition hover:bg-slate-50 active:scale-90">📁</button>
+                <button id="account-btn" onclick="openAccountSettings()" title="登入 / 我的帳號" class="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center text-sm font-bold transition overflow-hidden shadow-sm active:scale-90 ring-2 ring-white">
                     <span id="account-initial">?</span>
                     <img id="account-img" class="w-full h-full object-cover hidden" src="" alt="avatar">
                 </button>
@@ -56,46 +56,48 @@
         </div>
 
         <nav class="max-w-7xl mx-auto px-6 pb-4 flex">
-            <div class="bg-slate-100 p-1 rounded-2xl flex w-fit shadow-inner">
-                <button onclick="switchLayer('explore')" id="tab-explore" class="px-5 py-2 text-sm font-extrabold rounded-xl bg-white shadow-sm text-slate-900 transition-all duration-300">🌍 全站探索</button>
-                <button onclick="switchLayer('subs')" id="tab-subs" class="px-5 py-2 text-sm font-extrabold rounded-xl text-slate-500 hover:text-slate-900 transition-all duration-300 relative">🔔 專屬訂閱</button>
-                <button onclick="switchLayer('folders')" id="tab-folders" class="px-5 py-2 text-sm font-extrabold rounded-xl text-slate-500 hover:text-slate-900 transition-all duration-300">📁 個人收藏</button>
+            <div class="bg-slate-200/50 p-1 rounded-2xl flex w-fit shadow-inner">
+                <button onclick="switchLayer('explore')" id="tab-explore" class="px-5 py-2 text-xs font-black rounded-xl bg-white shadow-sm text-slate-900 transition-all duration-300">🏠 首頁</button>
+                <button onclick="switchLayer('subs')" id="tab-subs" class="px-5 py-2 text-xs font-black rounded-xl text-slate-500 hover:text-slate-900 transition-all duration-300">🔔 專屬訂閱</button>
+                <button onclick="switchLayer('folders')" id="tab-folders" class="px-5 py-2 text-xs font-black rounded-xl text-slate-500 hover:text-slate-900 transition-all duration-300">📁 個人收藏</button>
             </div>
         </nav>
     </header>
 
-    <main class="max-w-7xl mx-auto px-6 pt-6">
+    <main class="max-w-7xl mx-auto px-6 pt-2">
         <!-- 分類滾動區塊 -->
         <section class="mb-8">
             <div id="category-scroll" class="flex gap-4 overflow-x-auto hide-scrollbar pb-2 scroll-smooth"></div>
         </section>
 
-        <!-- 第一層：全站探索 -->
+        <!-- 第一層：首頁 -->
         <section id="layer-explore" class="layer-section transition-opacity duration-300">
-            <div class="mb-8">
-                <div class="relative max-w-2xl">
-                    <span class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 text-base">🔍</span>
-                    <input id="search-input" type="text" placeholder="搜尋影片標籤或標題..." class="w-full bg-white border border-slate-200/80 rounded-2xl py-3.5 pl-12 pr-5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300" oninput="renderExplore()">
-                </div>
-            </div>
-
-            <!-- 隨機回味區塊：加入底座層次 -->
-            <div class="bg-slate-100/50 rounded-3xl p-6 mb-12 border border-slate-200/40 shadow-sm">
-                <div class="flex items-center justify-between mb-4">
+            <!-- 🎲 隨機回味區塊（移至最上方） -->
+            <div class="bg-white rounded-3xl p-6 mb-8 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
+                <div class="flex items-center justify-between mb-5">
                     <div class="flex items-center gap-2">
-                        <span class="text-xl">🎲</span>
-                        <h2 class="text-lg font-black text-slate-800 tracking-wider">隨機回味</h2>
+                        <span class="text-lg">🎲</span>
+                        <h2 class="text-base font-black text-slate-800 tracking-wider">隨機回味</h2>
                     </div>
-                    <button onclick="shuffleRandom()" class="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-xs font-extrabold px-5 py-2.5 rounded-full shadow-md shadow-blue-500/10 hover:shadow-lg transition duration-200 active:scale-95">換一批</button>
+                    <button onclick="shuffleRandom()" class="bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-black px-4 py-2 rounded-full shadow-sm transition active:scale-95">換一批</button>
                 </div>
                 <div id="random-track" class="carousel-track flex overflow-x-auto hide-scrollbar gap-5 pb-2"></div>
                 <div id="random-dots" class="flex justify-center gap-2 mt-4"></div>
             </div>
 
-            <div class="mb-6 flex justify-between items-center border-t border-slate-200/60 pt-8">
-                <h2 class="text-lg font-black text-slate-800 tracking-wider">最新上架影片</h2>
-                <select id="sort-select" onchange="renderExplore()" class="text-sm font-bold bg-white border border-slate-200 rounded-xl px-4 py-2 focus:outline-none cursor-pointer shadow-sm hover:bg-slate-50 transition">
-                    <option value="newest">最新上架</option>
+            <!-- 搜尋框區塊（下移至此） -->
+            <div class="mb-8">
+                <div class="relative max-w-xl">
+                    <span class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 text-base">🔍</span>
+                    <input id="search-input" type="text" placeholder="搜尋影片標籤或標題..." class="w-full bg-white border border-slate-100 rounded-2xl py-3.5 pl-12 pr-5 text-sm shadow-[0_4px_20px_rgb(0,0,0,0.01)] focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all duration-300" oninput="renderExplore()">
+                </div>
+            </div>
+
+            <!-- 影片牆區塊 -->
+            <div class="mb-6 flex justify-between items-center border-t border-slate-200/40 pt-8">
+                <h2 class="text-base font-black text-slate-800 tracking-wider">影片牆</h2>
+                <select id="sort-select" onchange="renderExplore()" class="text-xs font-bold bg-white border border-slate-200/60 rounded-xl px-4 py-2 focus:outline-none cursor-pointer shadow-sm hover:bg-slate-50 transition">
+                    <option value="newest">最新加入</option>
                     <option value="popular">最熱門</option>
                 </select>
             </div>
@@ -104,8 +106,8 @@
 
         <!-- 第二層：專屬訂閱 -->
         <section id="layer-subs" class="layer-section hidden transition-opacity duration-300">
-            <div class="mb-6 bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                <h2 class="text-lg font-black text-slate-800 tracking-wider mb-2">Tag 訂閱動態</h2>
+            <div class="mb-6 bg-white p-6 rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
+                <h2 class="text-base font-black text-slate-800 tracking-wider mb-2">Tag 訂閱動態</h2>
                 <p class="text-xs text-slate-400 mb-4">點擊標籤檢視內容，點擊星星 ⭐ 即可新增/取消訂閱</p>
                 <div id="subs-tags" class="flex gap-2.5 flex-wrap"></div>
             </div>
@@ -115,45 +117,60 @@
 
         <!-- 第三層：個人收藏夾 -->
         <section id="layer-folders" class="layer-section hidden transition-opacity duration-300">
+            <!-- 未登入提示（預設隱藏，由 JS 動態控制） -->
+            <div id="folder-login-prompt" class="hidden text-center py-16 bg-white rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.02)] max-w-md mx-auto">
+                <span class="text-4xl block mb-4">🔐</span>
+                <h3 class="text-base font-black text-slate-800 mb-2">這是您的專屬私密空間</h3>
+                <p class="text-xs text-slate-400 px-8 leading-relaxed mb-6">個人收藏夾採用個人化雲端儲存，登入帳號後即可跨裝置同步並建立您的專屬收藏清單。</p>
+                <button onclick="openAccountSettings()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-black px-6 py-3 rounded-full transition shadow-sm active:scale-95">登入帳號</button>
+            </div>
+
             <!-- 資料夾列表視圖 -->
             <div id="folders-main-view" class="space-y-4">
                 <div class="flex justify-between items-center mb-2">
-                    <h2 class="text-lg font-black text-slate-800 tracking-wider">我的收藏夾</h2>
+                    <h2 class="text-base font-black text-slate-800 tracking-wider">我的收藏夾</h2>
                 </div>
                 <div id="folders-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <p class="text-slate-500 text-sm py-10 text-center col-span-full">目前還沒有建立任何資料夾。</p>
+                    <!-- 動態載入 -->
                 </div>
             </div>
             
             <!-- 單一資料夾內容視圖 -->
             <div id="folder-view" class="hidden">
-                <button onclick="closeFolderView()" class="mb-6 flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-slate-900 transition bg-white px-5 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">
-                    <span>⬅</span> 返回列表
-                </button>
+                <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
+                    <button onclick="closeFolderView()" class="flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-slate-900 transition bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">
+                        <span>⬅</span> 返回列表
+                    </button>
+                    <!-- 資料夾管理功能（新增：編輯與刪除功能） -->
+                    <div class="flex items-center gap-2">
+                        <button id="btn-edit-folder" class="text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">⚙️ 變更名稱/圖示</button>
+                        <button id="btn-delete-folder" class="text-xs font-bold text-red-600 hover:text-red-700 hover:bg-red-50 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">🗑️ 刪除整個資料夾</button>
+                    </div>
+                </div>
                 <h2 id="folder-view-title" class="text-xl font-black text-slate-800 tracking-wider mb-6"></h2>
                 <div id="folder-videos-grid" class="masonry-grid"></div>
             </div>
         </section>
     </main>
 
-    <!-- 帳號設定彈窗：加入毛玻璃與滑動效果 -->
-    <div id="account-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4 transition-opacity duration-300" onclick="if(event.target===this) closeAccountModal()">
+    <!-- 帳號設定彈窗 -->
+    <div id="account-modal" class="fixed inset-0 bg-slate-950/20 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4 transition-opacity duration-300" onclick="if(event.target===this) closeAccountModal()">
         <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl relative border border-slate-100 animate-slide-up">
             <button onclick="closeAccountModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-900 text-xl font-bold w-8 h-8 flex items-center justify-center">&times;</button>
-            <h2 class="text-lg font-black mb-4 text-slate-900">帳號設定</h2>
+            <h2 class="text-base font-black mb-4 text-slate-900">帳號設定</h2>
             
             <div id="login-section" class="hidden">
-                <p class="text-sm text-slate-500 mb-6 leading-relaxed">登入後即可建立你的專屬收藏夾、訂閱標籤，並在不同裝置間同步。</p>
-                <button onclick="handleLogin()" class="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-extrabold py-3.5 rounded-2xl transition shadow-md shadow-blue-500/10 active:scale-95">使用 Google 帳號登入</button>
+                <p class="text-xs text-slate-400 mb-6 leading-relaxed">登入後即可建立您的專屬收藏夾、訂閱標籤，並在不同裝置間同步。</p>
+                <button onclick="handleLogin()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-extrabold py-3.5 rounded-2xl transition shadow-md active:scale-95">使用 Google 帳號登入</button>
             </div>
 
             <div id="profile-section" class="hidden">
-                <p class="text-sm font-bold text-slate-800 mb-3">選擇預設頭像</p>
+                <p class="text-xs font-bold text-slate-800 mb-3">選擇預設頭像</p>
                 <div class="grid grid-cols-4 gap-3 mb-8" id="avatar-choices">
-                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Shiho" class="w-14 h-14 rounded-full cursor-pointer hover:ring-4 hover:ring-blue-100 transition avatar-option" onclick="selectAvatar(this.src)">
-                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Kumi" class="w-14 h-14 rounded-full cursor-pointer hover:ring-4 hover:ring-blue-100 transition avatar-option" onclick="selectAvatar(this.src)">
-                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Miku" class="w-14 h-14 rounded-full cursor-pointer hover:ring-4 hover:ring-blue-100 transition avatar-option" onclick="selectAvatar(this.src)">
-                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Hinata" class="w-14 h-14 rounded-full cursor-pointer hover:ring-4 hover:ring-blue-100 transition avatar-option" onclick="selectAvatar(this.src)">
+                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Shiho" class="w-14 h-14 rounded-full cursor-pointer hover:ring-4 hover:ring-slate-100 transition avatar-option" onclick="selectAvatar(this.src)">
+                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Kumi" class="w-14 h-14 rounded-full cursor-pointer hover:ring-4 hover:ring-slate-100 transition avatar-option" onclick="selectAvatar(this.src)">
+                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Miku" class="w-14 h-14 rounded-full cursor-pointer hover:ring-4 hover:ring-slate-100 transition avatar-option" onclick="selectAvatar(this.src)">
+                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Hinata" class="w-14 h-14 rounded-full cursor-pointer hover:ring-4 hover:ring-slate-100 transition avatar-option" onclick="selectAvatar(this.src)">
                 </div>
                 <button onclick="handleLogout()" class="w-full bg-slate-50 text-red-500 font-extrabold py-3.5 rounded-2xl hover:bg-red-50 transition border border-slate-100 active:scale-95">登出帳號</button>
             </div>
@@ -161,10 +178,10 @@
     </div>
 
     <!-- 加入收藏夾彈窗 -->
-    <div id="save-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[70] hidden flex items-end sm:items-center justify-center p-0 sm:p-4 transition-opacity duration-300" onclick="if(event.target===this) closeSaveModal()">
+    <div id="save-modal" class="fixed inset-0 bg-slate-950/20 backdrop-blur-sm z-[70] hidden flex items-end sm:items-center justify-center p-0 sm:p-4 transition-opacity duration-300" onclick="if(event.target===this) closeSaveModal()">
         <div class="bg-white rounded-t-3xl sm:rounded-3xl max-w-sm w-full p-6 shadow-2xl relative border-t sm:border border-slate-100 animate-slide-up">
             <button onclick="closeSaveModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-900 text-2xl font-bold w-8 h-8 flex items-center justify-center">&times;</button>
-            <h2 class="text-xl font-black mb-5 text-slate-900">加入收藏夾</h2>
+            <h2 class="text-lg font-black mb-5 text-slate-900">加入收藏夾</h2>
             <div id="save-folder-list" class="space-y-2.5 max-h-[60vh] overflow-y-auto hide-scrollbar pb-4">
                 <!-- 動態載入資料夾列表 -->
             </div>
@@ -173,7 +190,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getDatabase, ref, onValue, push, set, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+        import { getDatabase, ref, onValue, push, set, update, off } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -196,24 +213,25 @@
         let activeTag = null;
         let subscribedTags = []; 
         let currentSaveVideoId = null; 
+        let foldersRef = null; // 用於儲存個人資料夾的 Firebase 監聽參照
         const fallbackImage = "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&w=600&q=80";
 
-        // 優化卡片圓角、陰影、增加邊緣高光，加入懸浮上升效果
+        // 優化：消除黑色內縮邊框、改為軟陰影
         function videoCardHtml(video) {
             let displayTitle = video.custom_title || video.original_title || video.original_excerpt || "未命名影片";
             const tagsArray = Array.isArray(video.tags) ? video.tags : [];
             const tagsHtml = tagsArray.map(tag => `<span class="text-[10px] font-semibold text-slate-300 bg-white/10 backdrop-blur-sm px-2 py-0.5 rounded-full">#${tag}</span>`).join('');
 
             return `
-                <div class="relative w-full aspect-[3/4] rounded-3xl overflow-hidden cursor-pointer group shadow-sm hover:shadow-xl bg-slate-950 border border-white/5 transition-all duration-300 hover:-translate-y-1.5" onclick="openVideo('${video.id}')">
-                    <img src="${video.thumbnail_url}" referrerpolicy="no-referrer" onerror="this.src='${fallbackImage}'" loading="lazy" class="absolute inset-0 w-full h-full object-cover transform group-hover:scale-105 transition-all duration-700 opacity-80">
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/30 to-transparent"></div>
+                <div class="relative w-full aspect-[3/4] rounded-3xl overflow-hidden cursor-pointer group shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-2xl transition-all duration-300 hover:-translate-y-1" onclick="openVideo('${video.id}')">
+                    <img src="${video.thumbnail_url}" referrerpolicy="no-referrer" onerror="this.src='${fallbackImage}'" loading="lazy" class="absolute inset-0 w-full h-full object-cover transform group-hover:scale-105 transition-all duration-700 opacity-90">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-900/30 to-transparent"></div>
                     
-                    <div class="absolute top-3 left-3 bg-white/20 backdrop-blur-md text-white text-[9px] px-2.5 py-1 rounded-lg font-extrabold border border-white/20 tracking-wide uppercase">${video.platform || 'LINK'}</div>
+                    <div class="absolute top-3 left-3 bg-white/30 backdrop-blur-md text-white text-[9px] px-2.5 py-1 rounded-lg font-extrabold border border-white/20 tracking-wide uppercase">${video.platform || 'LINK'}</div>
                     
                     <button onclick="event.stopPropagation(); openSaveModal('${video.id}')" title="加入收藏"
-                        class="absolute top-3 right-3 bg-slate-900/40 hover:bg-slate-900/80 backdrop-blur-md text-white w-8.5 h-8.5 rounded-full flex items-center justify-center transition border border-white/10 z-10 active:scale-90">
-                        <span class="text-sm">📁</span>
+                        class="absolute top-3 right-3 bg-slate-900/40 hover:bg-slate-900/80 backdrop-blur-md text-white w-8 h-8 rounded-full flex items-center justify-center transition border border-white/10 z-10 active:scale-90">
+                        <span class="text-xs">📁</span>
                     </button>
 
                     <div class="absolute bottom-0 left-0 p-4 w-full text-white">
@@ -262,8 +280,8 @@
             tagsContainer.innerHTML = Array.from(tagsSet).map(tag => {
                 const isSubbed = subscribedTags.includes(tag);
                 return `
-                <div class="inline-flex items-center border ${isSubbed ? 'border-blue-200 bg-blue-50/50' : 'border-slate-200/60 bg-white'} rounded-xl shadow-sm overflow-hidden transition hover:border-slate-300">
-                    <button onclick="filterSubs('${tag}')" class="px-3 py-1.5 text-xs font-bold ${activeTag === tag ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white border-none' : 'text-slate-700 hover:bg-slate-50'} transition">
+                <div class="inline-flex items-center border ${isSubbed ? 'border-slate-300 bg-slate-100' : 'border-slate-200/60 bg-white'} rounded-xl shadow-sm overflow-hidden transition hover:border-slate-300">
+                    <button onclick="filterSubs('${tag}')" class="px-3 py-1.5 text-xs font-bold ${activeTag === tag ? 'bg-slate-900 text-white border-none' : 'text-slate-700 hover:bg-slate-50'} transition">
                         #${tag}
                     </button>
                     <button onclick="toggleTagSub('${tag}')" class="px-2.5 py-1.5 text-xs bg-transparent border-l border-slate-100 hover:bg-yellow-50 transition" title="訂閱此標籤">
@@ -300,6 +318,7 @@
 
         function renderFoldersPage() {
             const container = document.getElementById('folders-container');
+            if(!currentUser) return;
             if(allFolders.length === 0) {
                 container.innerHTML = '<p class="text-slate-500 text-sm py-10 text-center col-span-full">尚未建立任何資料夾，快點擊頂部 📁 新增吧！</p>';
                 return;
@@ -309,7 +328,7 @@
                 return `
                 <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 flex items-center justify-between cursor-pointer hover:shadow-md hover:border-slate-200 transition-all duration-200 active:scale-[0.98]" onclick="openFolderView('${f.id}')">
                     <div class="flex items-center gap-4">
-                        <div class="w-14 h-14 bg-blue-50/50 rounded-2xl flex items-center justify-center text-2xl border border-blue-100">${f.emoji || '📁'}</div>
+                        <div class="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-2xl border border-slate-100">${f.emoji || '📁'}</div>
                         <div>
                             <h2 class="text-base font-extrabold text-slate-900">${f.name}</h2>
                             <p class="text-xs text-slate-400 mt-1">已收錄 ${count} 部影片</p>
@@ -328,6 +347,10 @@
             document.getElementById('folder-view').classList.remove('hidden');
             document.getElementById('folder-view-title').innerText = `${folder.emoji || '📁'} ${folder.name}`;
 
+            // 動態綁定 CRUD 管理按鈕的事件
+            document.getElementById('btn-edit-folder').onclick = () => editFolder(folderId, folder.name, folder.emoji);
+            document.getElementById('btn-delete-folder').onclick = () => deleteFolder(folderId, folder.name);
+
             const videoIds = folder.video_ids ? Object.keys(folder.video_ids) : [];
             let list = allVideos.filter(v => videoIds.includes(v.id));
             
@@ -340,40 +363,43 @@
             document.getElementById('folder-view').classList.add('hidden');
         };
 
+        // 修改資料夾資訊 (變更圖示與標題)
+        function editFolder(folderId, oldName, oldEmoji) {
+            const newName = prompt('請輸入新的資料夾名稱：', oldName);
+            if (!newName) return;
+            const newEmoji = prompt('請輸入代表 Emoji (例如 📁)：', oldEmoji || '📁');
+            if (newEmoji === null) return;
+            
+            update(ref(db, `users/${currentUser.uid}/folders/${folderId}`), {
+                name: newName.trim(),
+                emoji: newEmoji.trim() || '📁'
+            }).then(() => {
+                showToast("資料夾已更新");
+                openFolderView(folderId); // 重新載入畫面
+            });
+        }
+
+        // 刪除整個資料夾
+        function deleteFolder(folderId, folderName) {
+            if (confirm(`確定要刪除整個資料夾「${folderName}」嗎？刪除後無法復原！`)) {
+                set(ref(db, `users/${currentUser.uid}/folders/${folderId}`), null).then(() => {
+                    showToast("資料夾已刪除");
+                    closeFolderView();
+                });
+            }
+        }
+
         onValue(ref(db, 'videos'), (snapshot) => {
             allVideos = snapshot.val() ? Object.values(snapshot.val()) : [];
             renderExplore(); renderRandom(true); renderSubs();
         });
 
-        // 重新排版圓形導覽分類（Category Scroll）
-        onValue(ref(db, 'folders'), (snapshot) => {
-            allFolders = snapshot.val() ? Object.entries(snapshot.val()).map(([id, f]) => ({ id, ...f })) : [];
-            document.getElementById('category-scroll').innerHTML = allFolders.map(f => `
-                <div class="flex flex-col items-center gap-1.5 flex-shrink-0 cursor-pointer group" onclick="switchLayer('folders'); openFolderView('${f.id}')">
-                    <div class="relative w-15 h-15 rounded-2xl bg-white border border-slate-100 shadow-sm flex items-center justify-center text-2xl transform group-hover:scale-105 group-hover:border-slate-200 transition-all duration-300">
-                        ${f.emoji || '📁'}
-                    </div>
-                    <span class="text-xs font-bold text-slate-600 max-w-[64px] truncate group-hover:text-slate-900 transition">${f.name}</span>
-                </div>
-            `).join('') + `
-                <div class="flex flex-col items-center gap-1.5 flex-shrink-0 cursor-pointer group" onclick="openFolderCreate()">
-                    <div class="w-15 h-15 rounded-2xl border-2 border-dashed border-slate-300 flex items-center justify-center text-xl text-slate-400 group-hover:border-slate-400 group-hover:text-slate-500 transition-all duration-300">＋</div>
-                    <span class="text-xs font-bold text-slate-400 group-hover:text-slate-500 transition">新分類</span>
-                </div>
-            `;
-            renderFoldersPage();
-            if(!document.getElementById('folder-view').classList.contains('hidden')) {
-                const currentTitle = document.getElementById('folder-view-title').innerText;
-                const folderName = currentTitle.substring(currentTitle.indexOf(' ') + 1); 
-                const f = allFolders.find(x => x.name === folderName);
-                if(f) openFolderView(f.id);
-            }
-        });
-
         window.openFolderCreate = function() {
+            if(!currentUser) { alert('請先登入帳號才能建立資料夾！'); openAccountSettings(); return; }
             const name = prompt('新分類名稱：');
             if(!name) return;
-            push(ref(db, 'folders'), { name: name.trim(), emoji: prompt('代表 emoji (留空預設📁)：') || '📁', created_at: Date.now() });
+            const emoji = prompt('代表 emoji (留空預設📁)：') || '📁';
+            push(ref(db, `users/${currentUser.uid}/folders`), { name: name.trim(), emoji: emoji, created_at: Date.now() });
         };
 
         window.openSaveModal = function(videoId) {
@@ -385,13 +411,13 @@
                 list.innerHTML = `
                     <div class="text-center py-6">
                         <p class="text-sm text-slate-400 mb-4">你還沒有建立任何資料夾。</p>
-                        <button onclick="closeSaveModal(); openFolderCreate()" class="bg-blue-50 text-blue-600 font-bold px-6 py-2.5 rounded-xl border border-blue-100 hover:bg-blue-100/50 transition">建立新資料夾</button>
+                        <button onclick="closeSaveModal(); openFolderCreate()" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-6 py-2.5 rounded-xl transition">建立新資料夾</button>
                     </div>`;
             } else {
                 list.innerHTML = allFolders.map(f => {
                     const isSaved = f.video_ids && f.video_ids[videoId];
                     return `
-                    <button onclick="toggleVideoInFolder('${f.id}', ${!!isSaved})" class="w-full text-left px-4 py-4 rounded-2xl border ${isSaved ? 'bg-blue-50/50 border-blue-200' : 'bg-white border-slate-100 hover:bg-slate-50'} flex justify-between items-center transition duration-200">
+                    <button onclick="toggleVideoInFolder('${f.id}', ${!!isSaved})" class="w-full text-left px-4 py-4 rounded-2xl border ${isSaved ? 'bg-slate-100 border-slate-300' : 'bg-white border-slate-100 hover:bg-slate-50'} flex justify-between items-center transition duration-200">
                         <span class="font-bold text-sm text-slate-800">${f.emoji || '📁'} ${f.name}</span>
                         <span class="text-lg">${isSaved ? '✅' : '<span class="text-slate-300">＋</span>'}</span>
                     </button>`;
@@ -403,16 +429,20 @@
         window.closeSaveModal = function() { document.getElementById('save-modal').classList.add('hidden'); };
 
         window.toggleVideoInFolder = function(folderId, isCurrentlySaved) {
-            const nodeRef = ref(db, `folders/${folderId}/video_ids/${currentSaveVideoId}`);
+            const nodeRef = ref(db, `users/${currentUser.uid}/folders/${folderId}/video_ids/${currentSaveVideoId}`);
             if(isCurrentlySaved) set(nodeRef, null); 
             else set(nodeRef, true); 
             closeSaveModal();
+            showToast(isCurrentlySaved ? "已從資料夾移除" : "已加入資料夾");
+        };
+
+        function showToast(text) {
             const msg = document.createElement('div');
             msg.className = "fixed bottom-8 left-1/2 -translate-x-1/2 bg-slate-900/90 backdrop-blur-md text-white px-6 py-2.5 rounded-full text-xs font-black z-[100] shadow-lg border border-white/10 animate-fade-in";
-            msg.innerText = isCurrentlySaved ? "已從資料夾移除" : "已加入資料夾";
+            msg.innerText = text;
             document.body.appendChild(msg);
             setTimeout(() => msg.remove(), 2200);
-        };
+        }
 
         let randomPool = [];
         window.shuffleRandom = function() { renderRandom(true); };
@@ -427,7 +457,7 @@
             track.onscroll = () => {
                 const firstChild = track.firstElementChild;
                 if(!firstChild) return;
-                const childWidth = firstChild.offsetWidth + 20; // 5gap = 20px
+                const childWidth = firstChild.offsetWidth + 20; 
                 const idx = childWidth > 20 ? Math.round(track.scrollLeft / childWidth) : 0;
                 [...dots.children].forEach((d, i) => d.classList.toggle('active', i === idx));
             };
@@ -458,12 +488,54 @@
             img.src = url; img.classList.remove('hidden');
         }
 
+        // 監聽使用者狀態：動態掛載/解除個人資料夾的 Firebase 監聽器，確保無痕模式及未登入使用者無法取得隱私資料
         onAuthStateChanged(auth, (user) => {
+            if (foldersRef) {
+                off(foldersRef); // 解除先前的監聽，防止記憶體洩漏與跨帳號殘留
+                foldersRef = null;
+            }
+
             currentUser = user;
+            const folderPrompt = document.getElementById('folder-login-prompt');
+            const folderMainView = document.getElementById('folders-main-view');
+
             if(user) {
                 document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('profile-section').classList.remove('hidden');
                 
+                // 顯示資料夾主要視圖，隱藏登入提示
+                if (folderPrompt) folderPrompt.classList.add('hidden');
+                if (folderMainView) folderMainView.classList.remove('hidden');
+
+                // 綁定使用者專屬資料夾節點 (修正全域讀取 Bug)
+                foldersRef = ref(db, `users/${user.uid}/folders`);
+                onValue(foldersRef, (snapshot) => {
+                    allFolders = snapshot.val() ? Object.entries(snapshot.val()).map(([id, f]) => ({ id, ...f })) : [];
+                    
+                    // 首頁頂端類別滾動條渲染
+                    document.getElementById('category-scroll').innerHTML = allFolders.map(f => `
+                        <div class="flex flex-col items-center gap-1.5 flex-shrink-0 cursor-pointer group" onclick="switchLayer('folders'); openFolderView('${f.id}')">
+                            <div class="relative w-15 h-15 rounded-2xl bg-white border border-slate-100 shadow-sm flex items-center justify-center text-2xl transform group-hover:scale-105 group-hover:border-slate-200 transition-all duration-300">
+                                ${f.emoji || '📁'}
+                            </div>
+                            <span class="text-xs font-bold text-slate-600 max-w-[64px] truncate group-hover:text-slate-900 transition">${f.name}</span>
+                        </div>
+                    `).join('') + `
+                        <div class="flex flex-col items-center gap-1.5 flex-shrink-0 cursor-pointer group" onclick="openFolderCreate()">
+                            <div class="w-15 h-15 rounded-2xl border-2 border-dashed border-slate-300 flex items-center justify-center text-xl text-slate-400 group-hover:border-slate-400 group-hover:text-slate-500 transition-all duration-300">＋</div>
+                            <span class="text-xs font-bold text-slate-400 group-hover:text-slate-500 transition">新分類</span>
+                        </div>
+                    `;
+                    renderFoldersPage();
+                    
+                    if(!document.getElementById('folder-view').classList.contains('hidden')) {
+                        const currentTitle = document.getElementById('folder-view-title').innerText;
+                        const folderName = currentTitle.substring(currentTitle.indexOf(' ') + 1); 
+                        const f = allFolders.find(x => x.name === folderName);
+                        if(f) openFolderView(f.id);
+                    }
+                });
+
                 onValue(ref(db, 'users/' + user.uid + '/avatarUrl'), (snap) => {
                     updateAvatarDisplay(snap.val() || user.photoURL);
                 }, { onlyOnce: true });
@@ -473,7 +545,20 @@
                     renderSubs();
                 });
             } else {
+                // 未登入或登出狀態：清理資料、顯示登入提示並隱藏資料夾
                 subscribedTags = [];
+                allFolders = [];
+                
+                document.getElementById('category-scroll').innerHTML = `
+                    <div class="flex flex-col items-center gap-1.5 flex-shrink-0 cursor-pointer group" onclick="openFolderCreate()">
+                        <div class="w-15 h-15 rounded-2xl border-2 border-dashed border-slate-300 flex items-center justify-center text-xl text-slate-400 group-hover:border-slate-400 group-hover:text-slate-500 transition-all duration-300">＋</div>
+                        <span class="text-xs font-bold text-slate-400 group-hover:text-slate-500 transition">建立資料夾</span>
+                    </div>
+                `;
+
+                if (folderPrompt) folderPrompt.classList.remove('hidden');
+                if (folderMainView) folderMainView.classList.add('hidden');
+
                 document.getElementById('login-section').classList.remove('hidden');
                 document.getElementById('profile-section').classList.add('hidden');
                 document.getElementById('account-initial').classList.remove('hidden');
@@ -487,8 +572,8 @@
             document.getElementById(`layer-${layer}`).classList.remove('hidden');
             ['explore', 'subs', 'folders'].forEach(t => {
                 document.getElementById(`tab-${t}`).className = t === layer 
-                    ? "px-5 py-2 text-sm font-extrabold rounded-xl bg-white shadow-sm text-slate-900 transition-all duration-300" 
-                    : "px-5 py-2 text-sm font-extrabold rounded-xl text-slate-500 hover:text-slate-900 transition-all duration-300";
+                    ? "px-5 py-2 text-xs font-black rounded-xl bg-white shadow-sm text-slate-900 transition-all duration-300" 
+                    : "px-5 py-2 text-xs font-black rounded-xl text-slate-500 hover:text-slate-900 transition-all duration-300";
             });
             if(layer === 'folders') closeFolderView();
         };
