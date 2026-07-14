@@ -2,26 +2,29 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 優化行動端視窗設定，防止誤觸縮放，使操作更具 App 質感 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>留友看 Hinata Ver.</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* 瀑布流排版 */
-        .masonry-grid { column-count: 2; column-gap: 1.5rem; }
+        /* 自適應瀑布流 */
+        .masonry-grid { column-count: 2; column-gap: 0.75rem; }
+        @media (min-width: 640px) { .masonry-grid { column-gap: 1.25rem; } }
         @media (min-width: 768px) { .masonry-grid { column-count: 3; } }
         @media (min-width: 1024px) { .masonry-grid { column-count: 4; } }
-        .masonry-item { break-inside: avoid; margin-bottom: 1.5rem; }
+        .masonry-item { break-inside: avoid; margin-bottom: 0.75rem; }
+        @media (min-width: 640px) { .masonry-item { margin-bottom: 1.25rem; } }
         
         /* 輪播滾動行為 */
         .carousel-track { scroll-snap-type: x mandatory; scroll-behavior: smooth; }
         .carousel-slide { scroll-snap-align: center; }
         .dot { transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-        .dot.active { width: 20px; border-radius: 9999px; background-color: #1e293b; }
+        .dot.active { width: 20px; border-radius: 9999px; background-color: #0ea5e9; } /* 日向藍 active dot */
 
-        /* 高階過場動畫 */
+        /* 過場動畫 */
         @keyframes slideUp {
             from { transform: translateY(16px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
@@ -34,69 +37,69 @@
         .animate-fade-in { animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     </style>
 </head>
-<body class="bg-[#faf9f6] text-slate-800 font-sans antialiased pb-24 min-h-screen relative overflow-x-hidden">
+<body class="bg-slate-50/50 text-slate-800 font-sans antialiased pb-24 min-h-screen relative overflow-x-hidden select-none sm:select-text">
     
-    <!-- 輕雅背景光暈 -->
-    <div class="absolute top-0 left-1/3 w-[500px] h-[500px] bg-amber-100/20 rounded-full filter blur-3xl pointer-events-none -z-10"></div>
-    <div class="absolute top-1/4 right-1/4 w-[400px] h-[400px] bg-slate-200/30 rounded-full filter blur-3xl pointer-events-none -z-10"></div>
+    <!-- 日向坂天藍色主題柔和背景光暈 -->
+    <div class="absolute top-0 left-1/4 w-[400px] h-[400px] bg-sky-200/20 rounded-full filter blur-3xl pointer-events-none -z-10"></div>
+    <div class="absolute top-1/4 right-1/4 w-[350px] h-[350px] bg-sky-100/30 rounded-full filter blur-3xl pointer-events-none -z-10"></div>
 
-    <!-- 頂部導覽：極簡溫潤白 -->
-    <header class="bg-[#faf9f6]/90 backdrop-blur-md sticky top-0 z-50 transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center gap-4">
-            <h1 class="text-xl font-black tracking-widest text-slate-900 whitespace-nowrap select-none">
-                <span class="bg-gradient-to-r from-amber-600 to-slate-800 bg-clip-text text-transparent">留友看</span> <span class="text-xs font-normal text-slate-400 tracking-normal">Hinata Ver.</span>
+    <!-- 頂部導覽 -->
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100/80 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center gap-4">
+            <h1 class="text-lg sm:text-xl font-black tracking-widest text-slate-900 whitespace-nowrap select-none">
+                <span class="bg-gradient-to-r from-sky-400 to-sky-500 bg-clip-text text-transparent">留友看</span> <span class="text-[10px] sm:text-xs font-bold text-sky-400/80 tracking-normal">Hinata Ver.</span>
             </h1>
-            <div class="flex items-center gap-3">
-                <button onclick="openFolderCreate()" title="新增收藏分類" class="w-10 h-10 rounded-full bg-white shadow-sm border border-slate-100 flex items-center justify-center text-lg transition hover:bg-slate-50 active:scale-90">📁</button>
-                <button id="account-btn" onclick="openAccountSettings()" title="登入 / 我的帳號" class="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center text-sm font-bold transition overflow-hidden shadow-sm active:scale-90 ring-2 ring-white">
+            <div class="flex items-center gap-2.5">
+                <button onclick="openFolderCreate()" title="新增收藏分類" class="w-9 h-9 rounded-full bg-white shadow-sm border border-slate-100/80 flex items-center justify-center text-base transition hover:bg-slate-50 active:scale-90">📁</button>
+                <button id="account-btn" onclick="openAccountSettings()" title="登入 / 我的帳號" class="w-9 h-9 rounded-full bg-sky-500 text-white flex items-center justify-center text-sm font-bold transition overflow-hidden shadow-sm active:scale-90 ring-2 ring-white">
                     <span id="account-initial">?</span>
                     <img id="account-img" class="w-full h-full object-cover hidden" src="" alt="avatar">
                 </button>
             </div>
         </div>
 
-        <nav class="max-w-7xl mx-auto px-6 pb-4 flex">
-            <div class="bg-slate-200/50 p-1 rounded-2xl flex w-fit shadow-inner">
-                <button onclick="switchLayer('explore')" id="tab-explore" class="px-5 py-2 text-xs font-black rounded-xl bg-white shadow-sm text-slate-900 transition-all duration-300">🏠 首頁</button>
-                <button onclick="switchLayer('subs')" id="tab-subs" class="px-5 py-2 text-xs font-black rounded-xl text-slate-500 hover:text-slate-900 transition-all duration-300">🔔 專屬訂閱</button>
-                <button onclick="switchLayer('folders')" id="tab-folders" class="px-5 py-2 text-xs font-black rounded-xl text-slate-500 hover:text-slate-900 transition-all duration-300">📁 個人收藏</button>
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 pb-3 flex">
+            <div class="bg-slate-200/40 p-1 rounded-2xl flex w-fit shadow-inner">
+                <button onclick="switchLayer('explore')" id="tab-explore" class="px-4 sm:px-5 py-2 text-xs font-black rounded-xl bg-white shadow-sm text-slate-900 transition-all duration-300">🏠 首頁</button>
+                <button onclick="switchLayer('subs')" id="tab-subs" class="px-4 sm:px-5 py-2 text-xs font-black rounded-xl text-slate-500 hover:text-slate-900 transition-all duration-300">🔔 專屬訂閱</button>
+                <button onclick="switchLayer('folders')" id="tab-folders" class="px-4 sm:px-5 py-2 text-xs font-black rounded-xl text-slate-500 hover:text-slate-900 transition-all duration-300">📁 個人收藏</button>
             </div>
         </nav>
     </header>
 
-    <main class="max-w-7xl mx-auto px-6 pt-2">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 pt-2">
         <!-- 分類滾動區塊 -->
-        <section class="mb-8">
-            <div id="category-scroll" class="flex gap-4 overflow-x-auto hide-scrollbar pb-2 scroll-smooth"></div>
+        <section class="mb-6">
+            <div id="category-scroll" class="flex gap-3 sm:gap-4 overflow-x-auto hide-scrollbar pb-1 scroll-smooth"></div>
         </section>
 
         <!-- 第一層：首頁 -->
         <section id="layer-explore" class="layer-section transition-opacity duration-300">
-            <!-- 🎲 隨機回味區塊（移至最上方） -->
-            <div class="bg-white rounded-3xl p-6 mb-8 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
-                <div class="flex items-center justify-between mb-5">
+            <!-- 🎲 隨機回味區塊 -->
+            <div class="bg-white rounded-3xl p-4 sm:p-6 mb-6 border border-slate-100/80 shadow-[0_8px_30px_rgb(14,165,233,0.01)]">
+                <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center gap-2">
-                        <span class="text-lg">🎲</span>
-                        <h2 class="text-base font-black text-slate-800 tracking-wider">隨機回味</h2>
+                        <span class="text-base sm:text-lg">🎲</span>
+                        <h2 class="text-sm sm:text-base font-black text-slate-800 tracking-wider">隨機回味</h2>
                     </div>
-                    <button onclick="shuffleRandom()" class="bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-black px-4 py-2 rounded-full shadow-sm transition active:scale-95">換一批</button>
+                    <button onclick="shuffleRandom()" class="bg-sky-500 hover:bg-sky-600 text-white text-[10px] sm:text-[11px] font-black px-4 py-2 rounded-full shadow-md shadow-sky-500/10 transition active:scale-95">換一批</button>
                 </div>
-                <div id="random-track" class="carousel-track flex overflow-x-auto hide-scrollbar gap-5 pb-2"></div>
-                <div id="random-dots" class="flex justify-center gap-2 mt-4"></div>
+                <div id="random-track" class="carousel-track flex overflow-x-auto hide-scrollbar gap-4 sm:gap-5 pb-2"></div>
+                <div id="random-dots" class="flex justify-center gap-2 mt-3"></div>
             </div>
 
-            <!-- 搜尋框區塊（下移至此） -->
-            <div class="mb-8">
+            <!-- 搜尋框區塊（在隨機回味下方） -->
+            <div class="mb-6">
                 <div class="relative max-w-xl">
-                    <span class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 text-base">🔍</span>
-                    <input id="search-input" type="text" placeholder="搜尋影片標籤或標題..." class="w-full bg-white border border-slate-100 rounded-2xl py-3.5 pl-12 pr-5 text-sm shadow-[0_4px_20px_rgb(0,0,0,0.01)] focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all duration-300" oninput="renderExplore()">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm">🔍</span>
+                    <input id="search-input" type="text" placeholder="搜尋影片標籤或標題..." class="w-full bg-white border border-slate-100 rounded-2xl py-3 pl-11 pr-5 text-sm shadow-[0_4px_20px_rgb(0,0,0,0.01)] focus:outline-none focus:ring-2 focus:ring-sky-200 transition-all duration-300" oninput="renderExplore()">
                 </div>
             </div>
 
             <!-- 影片牆區塊 -->
-            <div class="mb-6 flex justify-between items-center border-t border-slate-200/40 pt-8">
-                <h2 class="text-base font-black text-slate-800 tracking-wider">影片牆</h2>
-                <select id="sort-select" onchange="renderExplore()" class="text-xs font-bold bg-white border border-slate-200/60 rounded-xl px-4 py-2 focus:outline-none cursor-pointer shadow-sm hover:bg-slate-50 transition">
+            <div class="mb-4 sm:mb-6 flex justify-between items-center border-t border-slate-200/40 pt-6 sm:pt-8">
+                <h2 class="text-sm sm:text-base font-black text-slate-800 tracking-wider">影片牆</h2>
+                <select id="sort-select" onchange="renderExplore()" class="text-xs font-bold bg-white border border-slate-200/60 rounded-xl px-3 py-2 focus:outline-none cursor-pointer shadow-sm hover:bg-slate-50 transition">
                     <option value="newest">最新加入</option>
                     <option value="popular">最熱門</option>
                 </select>
@@ -104,50 +107,72 @@
             <div id="explore-grid" class="masonry-grid"><p class="text-slate-500 text-sm py-10 text-center col-span-full block w-full">正在同步最新資料...</p></div>
         </section>
 
-        <!-- 第二層：專屬訂閱 -->
+        <!-- 第二層：專屬訂閱（優化後的標籤搜尋與訂閱機制） -->
         <section id="layer-subs" class="layer-section hidden transition-opacity duration-300">
-            <div class="mb-6 bg-white p-6 rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
-                <h2 class="text-base font-black text-slate-800 tracking-wider mb-2">Tag 訂閱動態</h2>
-                <p class="text-xs text-slate-400 mb-4">點擊標籤檢視內容，點擊星星 ⭐ 即可新增/取消訂閱</p>
-                <div id="subs-tags" class="flex gap-2.5 flex-wrap"></div>
+            <div class="mb-6 bg-white p-5 sm:p-6 rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.01)]">
+                <h2 class="text-sm sm:text-base font-black text-slate-800 tracking-wider mb-1.5">專屬標籤追蹤</h2>
+                <p class="text-xs text-slate-400 mb-4">點擊標籤直接檢視影片，點擊 ⭐ 新增/取消訂閱</p>
+                
+                <!-- 新增：標籤內部搜尋過濾，防止標籤爆炸 -->
+                <div class="relative max-w-xs mb-5">
+                    <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">🔍</span>
+                    <input id="tag-search-input" type="text" placeholder="快速尋找成員或活動標籤..." class="w-full bg-slate-50 border border-slate-100 rounded-xl py-2 pl-9 pr-4 text-xs focus:outline-none focus:ring-2 focus:ring-sky-200 transition-all" oninput="renderSubs()">
+                </div>
+
+                <!-- 訂閱分組：我的訂閱（置頂） -->
+                <div class="mb-4">
+                    <h3 class="text-xs font-bold text-slate-400 mb-2.5 flex items-center gap-1"><span>⭐</span> 我的追蹤</h3>
+                    <div id="subs-tags-active" class="flex gap-2 flex-wrap">
+                        <!-- 已訂閱的標籤會在這裡置頂顯示 -->
+                    </div>
+                </div>
+
+                <div class="border-t border-slate-100 my-4"></div>
+
+                <!-- 所有標籤 -->
+                <div>
+                    <h3 class="text-xs font-bold text-slate-400 mb-2.5 flex items-center gap-1"><span>🏷️</span> 所有標籤</h3>
+                    <div id="subs-tags-all" class="flex gap-2 flex-wrap max-h-40 overflow-y-auto hide-scrollbar pr-1">
+                        <!-- 所有標籤在這邊列表 -->
+                    </div>
+                </div>
             </div>
-            <div class="border-t border-slate-200/40 mb-6"></div>
-            <div id="subs-grid" class="masonry-grid"><p class="text-slate-500 text-sm py-10 text-center col-span-full block w-full">請先點選上方的 Tag 進行檢視</p></div>
+            
+            <div id="subs-grid" class="masonry-grid"><p class="text-slate-500 text-sm py-10 text-center col-span-full block w-full">請點選上方標籤過濾影片</p></div>
         </section>
 
         <!-- 第三層：個人收藏夾 -->
         <section id="layer-folders" class="layer-section hidden transition-opacity duration-300">
-            <!-- 未登入提示（預設隱藏，由 JS 動態控制） -->
-            <div id="folder-login-prompt" class="hidden text-center py-16 bg-white rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.02)] max-w-md mx-auto">
+            <!-- 未登入提示 -->
+            <div id="folder-login-prompt" class="hidden text-center py-16 bg-white rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.01)] max-w-md mx-auto">
                 <span class="text-4xl block mb-4">🔐</span>
                 <h3 class="text-base font-black text-slate-800 mb-2">這是您的專屬私密空間</h3>
                 <p class="text-xs text-slate-400 px-8 leading-relaxed mb-6">個人收藏夾採用個人化雲端儲存，登入帳號後即可跨裝置同步並建立您的專屬收藏清單。</p>
-                <button onclick="openAccountSettings()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-black px-6 py-3 rounded-full transition shadow-sm active:scale-95">登入帳號</button>
+                <button onclick="openAccountSettings()" class="bg-sky-500 hover:bg-sky-600 text-white text-xs font-black px-6 py-3 rounded-full transition shadow-md active:scale-95">登入帳號</button>
             </div>
 
-            <!-- 資料夾列表視圖 -->
+            <!-- 資料夾列表 -->
             <div id="folders-main-view" class="space-y-4">
                 <div class="flex justify-between items-center mb-2">
-                    <h2 class="text-base font-black text-slate-800 tracking-wider">我的收藏夾</h2>
+                    <h2 class="text-sm sm:text-base font-black text-slate-800 tracking-wider">我的收藏夾</h2>
                 </div>
-                <div id="folders-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div id="folders-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <!-- 動態載入 -->
                 </div>
             </div>
             
-            <!-- 單一資料夾內容視圖 -->
+            <!-- 單一資料夾內容 -->
             <div id="folder-view" class="hidden">
-                <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
+                <div class="flex flex-wrap justify-between items-center gap-3 mb-5">
                     <button onclick="closeFolderView()" class="flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-slate-900 transition bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">
                         <span>⬅</span> 返回列表
                     </button>
-                    <!-- 資料夾管理功能（新增：編輯與刪除功能） -->
                     <div class="flex items-center gap-2">
-                        <button id="btn-edit-folder" class="text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">⚙️ 變更名稱/圖示</button>
-                        <button id="btn-delete-folder" class="text-xs font-bold text-red-600 hover:text-red-700 hover:bg-red-50 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">🗑️ 刪除整個資料夾</button>
+                        <button id="btn-edit-folder" class="text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">⚙️ 修改</button>
+                        <button id="btn-delete-folder" class="text-xs font-bold text-red-500 hover:text-red-700 hover:bg-red-50 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">🗑️ 刪除</button>
                     </div>
                 </div>
-                <h2 id="folder-view-title" class="text-xl font-black text-slate-800 tracking-wider mb-6"></h2>
+                <h2 id="folder-view-title" class="text-lg sm:text-xl font-black text-slate-800 tracking-wider mb-5"></h2>
                 <div id="folder-videos-grid" class="masonry-grid"></div>
             </div>
         </section>
@@ -157,20 +182,20 @@
     <div id="account-modal" class="fixed inset-0 bg-slate-950/20 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4 transition-opacity duration-300" onclick="if(event.target===this) closeAccountModal()">
         <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl relative border border-slate-100 animate-slide-up">
             <button onclick="closeAccountModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-900 text-xl font-bold w-8 h-8 flex items-center justify-center">&times;</button>
-            <h2 class="text-base font-black mb-4 text-slate-900">帳號設定</h2>
+            <h2 class="text-sm sm:text-base font-black mb-4 text-slate-900">帳號設定</h2>
             
             <div id="login-section" class="hidden">
                 <p class="text-xs text-slate-400 mb-6 leading-relaxed">登入後即可建立您的專屬收藏夾、訂閱標籤，並在不同裝置間同步。</p>
-                <button onclick="handleLogin()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-extrabold py-3.5 rounded-2xl transition shadow-md active:scale-95">使用 Google 帳號登入</button>
+                <button onclick="handleLogin()" class="w-full bg-sky-500 hover:bg-sky-600 text-white font-extrabold py-3.5 rounded-2xl transition shadow-md active:scale-95">使用 Google 帳號登入</button>
             </div>
 
             <div id="profile-section" class="hidden">
                 <p class="text-xs font-bold text-slate-800 mb-3">選擇預設頭像</p>
                 <div class="grid grid-cols-4 gap-3 mb-8" id="avatar-choices">
-                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Shiho" class="w-14 h-14 rounded-full cursor-pointer hover:ring-4 hover:ring-slate-100 transition avatar-option" onclick="selectAvatar(this.src)">
-                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Kumi" class="w-14 h-14 rounded-full cursor-pointer hover:ring-4 hover:ring-slate-100 transition avatar-option" onclick="selectAvatar(this.src)">
-                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Miku" class="w-14 h-14 rounded-full cursor-pointer hover:ring-4 hover:ring-slate-100 transition avatar-option" onclick="selectAvatar(this.src)">
-                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Hinata" class="w-14 h-14 rounded-full cursor-pointer hover:ring-4 hover:ring-slate-100 transition avatar-option" onclick="selectAvatar(this.src)">
+                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Shiho" class="w-14 h-14 rounded-full cursor-pointer hover:ring-4 hover:ring-sky-100 transition avatar-option" onclick="selectAvatar(this.src)">
+                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Kumi" class="w-14 h-14 rounded-full cursor-pointer hover:ring-4 hover:ring-sky-100 transition avatar-option" onclick="selectAvatar(this.src)">
+                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Miku" class="w-14 h-14 rounded-full cursor-pointer hover:ring-4 hover:ring-sky-100 transition avatar-option" onclick="selectAvatar(this.src)">
+                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Hinata" class="w-14 h-14 rounded-full cursor-pointer hover:ring-4 hover:ring-sky-100 transition avatar-option" onclick="selectAvatar(this.src)">
                 </div>
                 <button onclick="handleLogout()" class="w-full bg-slate-50 text-red-500 font-extrabold py-3.5 rounded-2xl hover:bg-red-50 transition border border-slate-100 active:scale-95">登出帳號</button>
             </div>
@@ -181,7 +206,7 @@
     <div id="save-modal" class="fixed inset-0 bg-slate-950/20 backdrop-blur-sm z-[70] hidden flex items-end sm:items-center justify-center p-0 sm:p-4 transition-opacity duration-300" onclick="if(event.target===this) closeSaveModal()">
         <div class="bg-white rounded-t-3xl sm:rounded-3xl max-w-sm w-full p-6 shadow-2xl relative border-t sm:border border-slate-100 animate-slide-up">
             <button onclick="closeSaveModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-900 text-2xl font-bold w-8 h-8 flex items-center justify-center">&times;</button>
-            <h2 class="text-lg font-black mb-5 text-slate-900">加入收藏夾</h2>
+            <h2 class="text-base sm:text-lg font-black mb-5 text-slate-900">加入收藏夾</h2>
             <div id="save-folder-list" class="space-y-2.5 max-h-[60vh] overflow-y-auto hide-scrollbar pb-4">
                 <!-- 動態載入資料夾列表 -->
             </div>
@@ -213,21 +238,22 @@
         let activeTag = null;
         let subscribedTags = []; 
         let currentSaveVideoId = null; 
-        let foldersRef = null; // 用於儲存個人資料夾的 Firebase 監聽參照
+        let foldersRef = null; 
         const fallbackImage = "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&w=600&q=80";
 
-        // 優化：消除黑色內縮邊框、改為軟陰影
+        // 日向藍主題卡片，移除深色背景與多餘邊框，保留平滑投影
         function videoCardHtml(video) {
             let displayTitle = video.custom_title || video.original_title || video.original_excerpt || "未命名影片";
             const tagsArray = Array.isArray(video.tags) ? video.tags : [];
-            const tagsHtml = tagsArray.map(tag => `<span class="text-[10px] font-semibold text-slate-300 bg-white/10 backdrop-blur-sm px-2 py-0.5 rounded-full">#${tag}</span>`).join('');
+            const tagsHtml = tagsArray.map(tag => `<span class="text-[9px] font-semibold text-slate-300 bg-white/10 backdrop-blur-sm px-2 py-0.5 rounded-full">#${tag}</span>`).join('');
 
             return `
-                <div class="relative w-full aspect-[3/4] rounded-3xl overflow-hidden cursor-pointer group shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-2xl transition-all duration-300 hover:-translate-y-1" onclick="openVideo('${video.id}')">
+                <div class="relative w-full aspect-[3/4] rounded-3xl overflow-hidden cursor-pointer group shadow-[0_4px_20px_rgb(14,165,233,0.02)] hover:shadow-xl transition-all duration-300 hover:-translate-y-1" onclick="openVideo('${video.id}')">
                     <img src="${video.thumbnail_url}" referrerpolicy="no-referrer" onerror="this.src='${fallbackImage}'" loading="lazy" class="absolute inset-0 w-full h-full object-cover transform group-hover:scale-105 transition-all duration-700 opacity-90">
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-900/30 to-transparent"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-900/20 to-transparent"></div>
                     
-                    <div class="absolute top-3 left-3 bg-white/30 backdrop-blur-md text-white text-[9px] px-2.5 py-1 rounded-lg font-extrabold border border-white/20 tracking-wide uppercase">${video.platform || 'LINK'}</div>
+                    <!-- 使用日向天藍色修飾平台標籤 -->
+                    <div class="absolute top-3 left-3 bg-sky-500/80 backdrop-blur-md text-white text-[9px] px-2.5 py-1 rounded-lg font-black border border-white/10 tracking-wide uppercase">${video.platform || 'LINK'}</div>
                     
                     <button onclick="event.stopPropagation(); openSaveModal('${video.id}')" title="加入收藏"
                         class="absolute top-3 right-3 bg-slate-900/40 hover:bg-slate-900/80 backdrop-blur-md text-white w-8 h-8 rounded-full flex items-center justify-center transition border border-white/10 z-10 active:scale-90">
@@ -235,8 +261,8 @@
                     </button>
 
                     <div class="absolute bottom-0 left-0 p-4 w-full text-white">
-                        <h3 class="font-bold text-[14px] leading-snug mb-1.5 drop-shadow-md line-clamp-2">${displayTitle}</h3>
-                        ${video.description ? `<p class="text-[11px] text-slate-300 line-clamp-1 mb-2 opacity-90">${video.description}</p>` : ''}
+                        <h3 class="font-bold text-[13px] sm:text-[14px] leading-snug mb-1.5 drop-shadow-md line-clamp-2">${displayTitle}</h3>
+                        ${video.description ? `<p class="text-[10px] sm:text-[11px] text-slate-300 line-clamp-1 mb-2 opacity-90">${video.description}</p>` : ''}
                         <div class="flex items-center gap-1.5 overflow-hidden whitespace-nowrap w-full text-ellipsis mt-1">${tagsHtml}</div>
                     </div>
                 </div>
@@ -272,40 +298,77 @@
             renderGrid('explore-grid', list, '找不到影片。');
         };
 
+        // 重新設計的可擴充標籤面板（支援標籤過濾搜尋、已訂閱獨立分組）
         function renderSubs() {
+            const tagSearchQuery = document.getElementById('tag-search-input').value.trim().toLowerCase();
+            
+            // 收集所有標籤
             const tagsSet = new Set();
             allVideos.forEach(v => { if(!v.hidden && v.tags) v.tags.forEach(t => tagsSet.add(t)); });
-            
-            const tagsContainer = document.getElementById('subs-tags');
-            tagsContainer.innerHTML = Array.from(tagsSet).map(tag => {
-                const isSubbed = subscribedTags.includes(tag);
-                return `
-                <div class="inline-flex items-center border ${isSubbed ? 'border-slate-300 bg-slate-100' : 'border-slate-200/60 bg-white'} rounded-xl shadow-sm overflow-hidden transition hover:border-slate-300">
-                    <button onclick="filterSubs('${tag}')" class="px-3 py-1.5 text-xs font-bold ${activeTag === tag ? 'bg-slate-900 text-white border-none' : 'text-slate-700 hover:bg-slate-50'} transition">
-                        #${tag}
-                    </button>
-                    <button onclick="toggleTagSub('${tag}')" class="px-2.5 py-1.5 text-xs bg-transparent border-l border-slate-100 hover:bg-yellow-50 transition" title="訂閱此標籤">
-                        ${isSubbed ? '⭐' : '☆'}
-                    </button>
-                </div>`;
-            }).join('');
+            const allTagsArray = Array.from(tagsSet);
 
-            let filtered = [];
-            let emptyMessage = '請點選上方的 Tag 檢視，或點擊星星訂閱';
+            // 過濾符合搜尋條件的標籤
+            const filteredTags = tagSearchQuery 
+                ? allTagsArray.filter(t => t.toLowerCase().includes(tagSearchQuery))
+                : allTagsArray;
+
+            // 1. 渲染「已追蹤/已訂閱」區塊（日向天藍配色）
+            const activeTagsContainer = document.getElementById('subs-tags-active');
+            if (subscribedTags.length === 0) {
+                activeTagsContainer.innerHTML = `<span class="text-xs text-slate-400 py-1 block">目前尚未訂閱任何標籤</span>`;
+            } else {
+                activeTagsContainer.innerHTML = subscribedTags.map(tag => {
+                    return `
+                    <div class="inline-flex items-center border border-sky-200 bg-sky-50 rounded-xl shadow-sm overflow-hidden transition hover:border-sky-300">
+                        <button onclick="filterSubs('${tag}')" class="px-3 py-1.5 text-xs font-black ${activeTag === tag ? 'bg-sky-500 text-white' : 'text-sky-600 hover:bg-sky-100/50'} transition">
+                            #${tag}
+                        </button>
+                        <button onclick="toggleTagSub('${tag}')" class="px-2.5 py-1.5 text-xs bg-transparent border-l border-sky-100 hover:bg-red-50 transition" title="取消訂閱">
+                            ⭐
+                        </button>
+                    </div>`;
+                }).join('');
+            }
+
+            // 2. 渲染「所有標籤（扣除已追蹤）」區塊，支援標籤內部搜尋
+            const allTagsContainer = document.getElementById('subs-tags-all');
+            const remainingTags = filteredTags.filter(t => !subscribedTags.includes(t));
+
+            if (remainingTags.length === 0) {
+                allTagsContainer.innerHTML = `<span class="text-xs text-slate-400 py-2 block">沒有找到其他標籤</span>`;
+            } else {
+                allTagsContainer.innerHTML = remainingTags.map(tag => {
+                    return `
+                    <div class="inline-flex items-center border border-slate-200/60 bg-white rounded-xl shadow-sm overflow-hidden transition hover:border-slate-300">
+                        <button onclick="filterSubs('${tag}')" class="px-3 py-1.5 text-xs font-bold ${activeTag === tag ? 'bg-slate-900 text-white' : 'text-slate-700 hover:bg-slate-50'} transition">
+                            #${tag}
+                        </button>
+                        <button onclick="toggleTagSub('${tag}')" class="px-2.5 py-1.5 text-xs bg-transparent border-l border-slate-100 hover:bg-sky-50 transition" title="訂閱此標籤">
+                            ☆
+                        </button>
+                    </div>`;
+                }).join('');
+            }
+
+            // 3. 影片網格資料過濾
+            let filteredVideos = [];
+            let emptyMessage = '請選取上方的標籤以過濾動態影片';
 
             if (!activeTag) {
                 if(subscribedTags.length > 0) {
-                    filtered = allVideos.filter(v => !v.hidden && v.tags && v.tags.some(t => subscribedTags.includes(t)));
-                    emptyMessage = '你訂閱的標籤目前沒有影片';
+                    filteredVideos = allVideos.filter(v => !v.hidden && v.tags && v.tags.some(t => subscribedTags.includes(t)));
+                    emptyMessage = '您追蹤的標籤中目前沒有新影片';
                 }
             } else {
-                filtered = allVideos.filter(v => !v.hidden && v.tags && v.tags.includes(activeTag));
+                filteredVideos = allVideos.filter(v => !v.hidden && v.tags && v.tags.includes(activeTag));
                 emptyMessage = `目前沒有 #${activeTag} 的影片`;
             }
 
-            filtered.sort((a, b) => b.created_at - a.created_at);
-            renderGrid('subs-grid', filtered, emptyMessage);
+            filteredVideos.sort((a, b) => b.created_at - a.created_at);
+            renderGrid('subs-grid', filteredVideos, emptyMessage);
         }
+
+        window.renderSubs = renderSubs; // 掛載到全域
 
         window.filterSubs = function(tag) { activeTag = tag; renderSubs(); };
 
@@ -347,7 +410,6 @@
             document.getElementById('folder-view').classList.remove('hidden');
             document.getElementById('folder-view-title').innerText = `${folder.emoji || '📁'} ${folder.name}`;
 
-            // 動態綁定 CRUD 管理按鈕的事件
             document.getElementById('btn-edit-folder').onclick = () => editFolder(folderId, folder.name, folder.emoji);
             document.getElementById('btn-delete-folder').onclick = () => deleteFolder(folderId, folder.name);
 
@@ -363,7 +425,6 @@
             document.getElementById('folder-view').classList.add('hidden');
         };
 
-        // 修改資料夾資訊 (變更圖示與標題)
         function editFolder(folderId, oldName, oldEmoji) {
             const newName = prompt('請輸入新的資料夾名稱：', oldName);
             if (!newName) return;
@@ -375,11 +436,10 @@
                 emoji: newEmoji.trim() || '📁'
             }).then(() => {
                 showToast("資料夾已更新");
-                openFolderView(folderId); // 重新載入畫面
+                openFolderView(folderId); 
             });
         }
 
-        // 刪除整個資料夾
         function deleteFolder(folderId, folderName) {
             if (confirm(`確定要刪除整個資料夾「${folderName}」嗎？刪除後無法復原！`)) {
                 set(ref(db, `users/${currentUser.uid}/folders/${folderId}`), null).then(() => {
@@ -417,9 +477,9 @@
                 list.innerHTML = allFolders.map(f => {
                     const isSaved = f.video_ids && f.video_ids[videoId];
                     return `
-                    <button onclick="toggleVideoInFolder('${f.id}', ${!!isSaved})" class="w-full text-left px-4 py-4 rounded-2xl border ${isSaved ? 'bg-slate-100 border-slate-300' : 'bg-white border-slate-100 hover:bg-slate-50'} flex justify-between items-center transition duration-200">
+                    <button onclick="toggleVideoInFolder('${f.id}', ${!!isSaved})" class="w-full text-left px-4 py-4 rounded-2xl border ${isSaved ? 'bg-sky-50 border-sky-200' : 'bg-white border-slate-100 hover:bg-slate-50'} flex justify-between items-center transition duration-200">
                         <span class="font-bold text-sm text-slate-800">${f.emoji || '📁'} ${f.name}</span>
-                        <span class="text-lg">${isSaved ? '✅' : '<span class="text-slate-300">＋</span>'}</span>
+                        <span class="text-lg">${isSaved ? '✅' : '<span class="text-gray-300">＋</span>'}</span>
                     </button>`;
                 }).join('');
             }
@@ -488,10 +548,9 @@
             img.src = url; img.classList.remove('hidden');
         }
 
-        // 監聽使用者狀態：動態掛載/解除個人資料夾的 Firebase 監聽器，確保無痕模式及未登入使用者無法取得隱私資料
         onAuthStateChanged(auth, (user) => {
             if (foldersRef) {
-                off(foldersRef); // 解除先前的監聽，防止記憶體洩漏與跨帳號殘留
+                off(foldersRef); 
                 foldersRef = null;
             }
 
@@ -503,26 +562,23 @@
                 document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('profile-section').classList.remove('hidden');
                 
-                // 顯示資料夾主要視圖，隱藏登入提示
                 if (folderPrompt) folderPrompt.classList.add('hidden');
                 if (folderMainView) folderMainView.classList.remove('hidden');
 
-                // 綁定使用者專屬資料夾節點 (修正全域讀取 Bug)
                 foldersRef = ref(db, `users/${user.uid}/folders`);
                 onValue(foldersRef, (snapshot) => {
                     allFolders = snapshot.val() ? Object.entries(snapshot.val()).map(([id, f]) => ({ id, ...f })) : [];
                     
-                    // 首頁頂端類別滾動條渲染
                     document.getElementById('category-scroll').innerHTML = allFolders.map(f => `
                         <div class="flex flex-col items-center gap-1.5 flex-shrink-0 cursor-pointer group" onclick="switchLayer('folders'); openFolderView('${f.id}')">
                             <div class="relative w-15 h-15 rounded-2xl bg-white border border-slate-100 shadow-sm flex items-center justify-center text-2xl transform group-hover:scale-105 group-hover:border-slate-200 transition-all duration-300">
                                 ${f.emoji || '📁'}
                             </div>
-                            <span class="text-xs font-bold text-slate-600 max-w-[64px] truncate group-hover:text-slate-900 transition">${f.name}</span>
+                            <span class="text-xs font-bold text-slate-600 max-w-[64px] truncate group-hover:text-sky-500 transition">${f.name}</span>
                         </div>
                     `).join('') + `
                         <div class="flex flex-col items-center gap-1.5 flex-shrink-0 cursor-pointer group" onclick="openFolderCreate()">
-                            <div class="w-15 h-15 rounded-2xl border-2 border-dashed border-slate-300 flex items-center justify-center text-xl text-slate-400 group-hover:border-slate-400 group-hover:text-slate-500 transition-all duration-300">＋</div>
+                            <div class="w-15 h-15 rounded-2xl border-2 border-dashed border-slate-300 flex items-center justify-center text-xl text-slate-400 group-hover:border-sky-400 group-hover:text-sky-500 transition-all duration-300">＋</div>
                             <span class="text-xs font-bold text-slate-400 group-hover:text-slate-500 transition">新分類</span>
                         </div>
                     `;
@@ -545,13 +601,12 @@
                     renderSubs();
                 });
             } else {
-                // 未登入或登出狀態：清理資料、顯示登入提示並隱藏資料夾
                 subscribedTags = [];
                 allFolders = [];
                 
                 document.getElementById('category-scroll').innerHTML = `
                     <div class="flex flex-col items-center gap-1.5 flex-shrink-0 cursor-pointer group" onclick="openFolderCreate()">
-                        <div class="w-15 h-15 rounded-2xl border-2 border-dashed border-slate-300 flex items-center justify-center text-xl text-slate-400 group-hover:border-slate-400 group-hover:text-slate-500 transition-all duration-300">＋</div>
+                        <div class="w-15 h-15 rounded-2xl border-2 border-dashed border-slate-300 flex items-center justify-center text-xl text-slate-400 group-hover:border-sky-400 group-hover:text-sky-500 transition-all duration-300">＋</div>
                         <span class="text-xs font-bold text-slate-400 group-hover:text-slate-500 transition">建立資料夾</span>
                     </div>
                 `;
