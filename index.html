@@ -8,85 +8,64 @@
     <style>
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
         .masonry-grid { column-count: 2; column-gap: 1rem; }
         @media (min-width: 768px) { .masonry-grid { column-count: 3; } }
         @media (min-width: 1024px) { .masonry-grid { column-count: 4; } }
         .masonry-item { break-inside: avoid; margin-bottom: 1rem; }
-
         .carousel-track { scroll-snap-type: x mandatory; }
         .carousel-slide { scroll-snap-align: center; }
-
         .dot { transition: all .25s ease; }
         .dot.active { width: 18px; border-radius: 9999px; background-color: #EC4899; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-900 font-sans antialiased pb-20">
 
-    <!-- ===== 頂部列：品牌 + 帳號/資料夾功能圖示 ===== -->
     <header class="bg-white shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-5 py-4 flex justify-between items-center gap-4">
             <h1 class="text-xl font-extrabold tracking-widest text-gray-900 whitespace-nowrap">
                 <span class="text-blue-500">留友看</span> Hinata Ver.
             </h1>
-
             <div class="flex items-center gap-2">
-                <button onclick="openFolderCreate()" title="新增收藏分類"
-                    class="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-lg transition">📁</button>
-                <button id="account-btn" onclick="handleAccountClick()" title="登入 / 我的帳號"
-                    class="w-9 h-9 rounded-full bg-gray-900 text-white flex items-center justify-center text-sm font-bold transition">?</button>
+                <button onclick="openFolderCreate()" title="新增收藏分類" class="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-lg transition">📁</button>
+                <!-- 帳號頭像按鈕 -->
+                <button id="account-btn" onclick="openAccountSettings()" title="登入 / 我的帳號" class="w-9 h-9 rounded-full bg-gray-900 text-white flex items-center justify-center text-sm font-bold transition overflow-hidden">
+                    <span id="account-initial">?</span>
+                    <img id="account-img" class="w-full h-full object-cover hidden" src="" alt="avatar">
+                </button>
             </div>
         </div>
 
         <nav class="max-w-7xl mx-auto px-5 pb-3 flex bg-gray-100 mx-5 rounded-xl w-fit">
             <button onclick="switchLayer('explore')" id="tab-explore" class="px-4 py-2 text-sm font-bold rounded-lg bg-white shadow-sm text-gray-900 transition">🌍 全站探索</button>
-            <button onclick="switchLayer('subs')" id="tab-subs" class="px-4 py-2 text-sm font-bold rounded-lg text-gray-500 hover:text-gray-900 transition relative">
-                🔔 專屬訂閱 <span class="absolute top-1 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
-            </button>
+            <button onclick="switchLayer('subs')" id="tab-subs" class="px-4 py-2 text-sm font-bold rounded-lg text-gray-500 hover:text-gray-900 transition relative">🔔 專屬訂閱</button>
             <button onclick="switchLayer('folders')" id="tab-folders" class="px-4 py-2 text-sm font-bold rounded-lg text-gray-500 hover:text-gray-900 transition">📁 個人收藏夾</button>
         </nav>
     </header>
 
     <main class="max-w-7xl mx-auto px-5 pt-6">
-
-        <!-- ===== 橫向分類（收藏夾）圖示列，所有分頁共用 ===== -->
         <section class="mb-6">
-            <div id="category-scroll" class="flex gap-4 overflow-x-auto hide-scrollbar pb-2">
-                <!-- JS 動態填入分類圓形圖示 -->
-            </div>
+            <div id="category-scroll" class="flex gap-4 overflow-x-auto hide-scrollbar pb-2"></div>
         </section>
 
-        <!-- ===== 全域搜尋列 ===== -->
-        <section class="mb-8">
-            <div class="relative">
-                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
-                <input id="search-input" type="text" placeholder="搜尋全部收藏..."
-                    class="w-full bg-white border border-gray-200 rounded-2xl py-3 pl-11 pr-4 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-                    oninput="renderExplore()">
-            </div>
-        </section>
-
-        <!-- ===== 隨機回味 輪播區塊 ===== -->
-        <section class="mb-10">
-            <div class="flex items-center justify-between mb-3">
-                <h2 class="text-lg font-extrabold text-gray-800 tracking-wider">🎲 隨機回味</h2>
-                <div class="flex items-center gap-2">
-                    <button onclick="openRandomSettings()" title="設定"
-                        class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-sm">⚙️</button>
-                    <button onclick="shuffleRandom()"
-                        class="bg-pink-500 hover:bg-pink-600 text-white text-xs font-bold px-4 py-2 rounded-full shadow-sm transition">換一批</button>
+        <!-- 第一層：全站探索 -->
+        <section id="layer-explore" class="layer-section">
+            <div class="mb-8">
+                <div class="relative">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+                    <input id="search-input" type="text" placeholder="搜尋全部收藏..." class="w-full bg-white border border-gray-200 rounded-2xl py-3 pl-11 pr-4 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400" oninput="renderExplore()">
                 </div>
             </div>
-            <div id="random-track" class="carousel-track flex overflow-x-auto hide-scrollbar gap-4 pb-2"></div>
-            <div id="random-dots" class="flex justify-center gap-1.5 mt-3"></div>
-        </section>
 
-        <!-- ===== 第一層：全站探索 ===== -->
-        <section id="layer-explore" class="layer-section">
-            <div class="mb-4 flex justify-between items-center">
+            <div class="flex items-center justify-between mb-3">
+                <h2 class="text-lg font-extrabold text-gray-800 tracking-wider">🎲 隨機回味</h2>
+                <button onclick="shuffleRandom()" class="bg-pink-500 hover:bg-pink-600 text-white text-xs font-bold px-4 py-2 rounded-full shadow-sm transition">換一批</button>
+            </div>
+            <div id="random-track" class="carousel-track flex overflow-x-auto hide-scrollbar gap-4 pb-2 mb-2"></div>
+            <div id="random-dots" class="flex justify-center gap-1.5 mb-10"></div>
+
+            <div class="mb-4 flex justify-between items-center border-t border-gray-200 pt-8">
                 <h2 class="text-lg font-extrabold text-gray-800 tracking-wider">最新上架影片</h2>
-                <select id="sort-select" onchange="renderExplore()"
-                    class="text-sm font-bold bg-white border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none">
+                <select id="sort-select" onchange="renderExplore()" class="text-sm font-bold bg-white border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none">
                     <option value="newest">最新上架</option>
                     <option value="popular">最熱門</option>
                 </select>
@@ -94,38 +73,48 @@
             <div id="explore-grid" class="masonry-grid"><p class="text-gray-500 text-sm py-10 text-center col-span-full">正在同步最新資料...</p></div>
         </section>
 
-        <!-- ===== 第二層：專屬訂閱 ===== -->
+        <!-- 第二層：專屬訂閱 (動態生成) -->
         <section id="layer-subs" class="layer-section hidden">
             <div class="mb-6">
-                <h2 class="text-lg font-extrabold text-gray-800 tracking-wider">你訂閱的 Tags 動態</h2>
-                <div class="flex gap-2 mt-3">
-                    <span class="px-3 py-1 bg-blue-50 text-blue-600 text-xs font-bold rounded-full border border-blue-200">#加藤史帆</span>
-                    <span class="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-bold rounded-full">#佐佐木久美</span>
-                </div>
+                <h2 class="text-lg font-extrabold text-gray-800 tracking-wider mb-2">熱門 Tags 訂閱區</h2>
+                <p class="text-xs text-gray-500 mb-3">點擊標籤查看專屬動態</p>
+                <div id="subs-tags" class="flex gap-2 flex-wrap"></div>
             </div>
-            <div id="subs-grid" class="masonry-grid"><p class="text-gray-500 text-sm py-10 text-center col-span-full">此處功能待串接...</p></div>
+            <div id="subs-grid" class="masonry-grid"><p class="text-gray-500 text-sm py-10 text-center col-span-full">請選擇一個 Tag 進行檢視</p></div>
         </section>
 
-        <!-- ===== 第三層：個人收藏夾 ===== -->
+        <!-- 第三層：個人收藏夾 (動態生成) -->
         <section id="layer-folders" class="layer-section hidden">
-            <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 mb-8">
-                <div class="flex items-center gap-4 mb-4">
-                    <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center text-3xl border border-blue-100">🐻</div>
-                    <div>
-                        <h2 class="text-2xl font-extrabold text-gray-900 tracking-wide">史帆神級</h2>
-                        <p id="folder-count" class="text-sm text-gray-500 mt-1">手動精心策展的播放清單</p>
-                    </div>
-                </div>
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-gray-100">
-                    <div class="flex items-center gap-3">
-                        <span id="toggle-status" class="text-sm font-bold text-blue-600 flex items-center gap-1">已公開分享</span>
-                    </div>
-                    <button onclick="alert('🔗 專屬連結已複製！')" class="bg-gray-900 text-white px-5 py-2.5 rounded-xl text-sm font-bold">複製分享連結</button>
-                </div>
+            <div id="folders-container" class="space-y-6">
+                <p class="text-gray-500 text-sm py-10 text-center">目前還沒有建立任何資料夾。</p>
             </div>
-            <div id="folder-grid" class="masonry-grid"><p class="text-gray-500 text-sm py-10 text-center col-span-full">此處功能待串接...</p></div>
         </section>
     </main>
+
+    <!-- 頭像選擇彈窗 -->
+    <div id="account-modal" class="fixed inset-0 bg-black/50 z-[60] hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl relative">
+            <button onclick="closeAccountModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-900 text-xl font-bold">&times;</button>
+            <h2 class="text-lg font-extrabold mb-4">帳號設定</h2>
+            
+            <div id="login-section" class="hidden">
+                <p class="text-sm text-gray-600 mb-4">登入後即可建立專屬收藏夾，並自訂頭像。</p>
+                <button onclick="handleLogin()" class="w-full bg-blue-500 text-white font-bold py-3 rounded-xl hover:bg-blue-600">使用 Google 帳號登入</button>
+            </div>
+
+            <div id="profile-section" class="hidden">
+                <p class="text-sm font-bold text-gray-800 mb-2">選擇預設頭像</p>
+                <!-- 這裡替換成你要給使用者的自訂圖庫網址 -->
+                <div class="grid grid-cols-4 gap-3 mb-6" id="avatar-choices">
+                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Shiho" class="w-12 h-12 rounded-full cursor-pointer hover:ring-2 hover:ring-blue-500 avatar-option" onclick="selectAvatar(this.src)">
+                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Kumi" class="w-12 h-12 rounded-full cursor-pointer hover:ring-2 hover:ring-blue-500 avatar-option" onclick="selectAvatar(this.src)">
+                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Miku" class="w-12 h-12 rounded-full cursor-pointer hover:ring-2 hover:ring-blue-500 avatar-option" onclick="selectAvatar(this.src)">
+                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Hinata" class="w-12 h-12 rounded-full cursor-pointer hover:ring-2 hover:ring-blue-500 avatar-option" onclick="selectAvatar(this.src)">
+                </div>
+                <button onclick="handleLogout()" class="w-full bg-gray-100 text-red-500 font-bold py-3 rounded-xl hover:bg-gray-200">登出帳號</button>
+            </div>
+        </div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -145,204 +134,204 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const auth = getAuth(app);
-        const videosRef = ref(db, 'videos');
-        const foldersRef = ref(db, 'folders');
 
         let allVideos = [];
         let allFolders = [];
         let currentUser = null;
+        let activeTag = null;
         const fallbackImage = "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&w=600&q=80";
 
-        // ---------- 標題顯示優先序（沿用先前共識） ----------
-        function resolveDisplayTitle(video) {
-            if (video.custom_title && video.custom_title.trim() !== "") return video.custom_title.trim();
-            if (video.original_title && video.original_title.trim() !== "") return video.original_title.trim();
-            if (video.original_excerpt && video.original_excerpt.trim() !== "") {
-                const e = video.original_excerpt.trim();
-                return e.length > 20 ? e.slice(0, 20) + "..." : e;
-            }
-            if (video.url) return "新影片連結 (" + video.url.substring(0, 25) + "...)";
-            return "未命名影片";
-        }
-
+        // HTML 影片卡片共用模板 (加入 referrer 防禦、標題及 Tags 截斷)
         function videoCardHtml(video) {
-            const displayTitle = resolveDisplayTitle(video);
+            let displayTitle = video.custom_title || video.original_title || video.original_excerpt || "未命名影片";
             const tagsArray = Array.isArray(video.tags) ? video.tags : [];
-            const tagsHtml = tagsArray.map(tag => `<span class="text-xs font-medium text-gray-300">#${tag}</span>`).join('<span class="text-gray-500 mx-1">•</span>');
+            const tagsHtml = tagsArray.map(tag => `<span class="text-[11px] font-medium text-gray-300">#${tag}</span>`).join('');
 
             return `
-                <div class="relative w-full aspect-[3/4] rounded-2xl overflow-hidden cursor-pointer group shadow-sm bg-gray-900"
-                     onclick="openVideo('${video.id}')">
-                    <img src="${video.thumbnail_url}" onerror="this.src='${fallbackImage}'" class="absolute inset-0 w-full h-full object-cover transform group-hover:scale-105 transition duration-700 opacity-80">
+                <div class="relative w-full aspect-[3/4] rounded-2xl overflow-hidden cursor-pointer group shadow-sm bg-gray-900" onclick="openVideo('${video.id}')">
+                    <!-- 更新：加入 referrerpolicy="no-referrer" 破解 B站防盜鏈 -->
+                    <img src="${video.thumbnail_url}" referrerpolicy="no-referrer" onerror="this.src='${fallbackImage}'" class="absolute inset-0 w-full h-full object-cover transform group-hover:scale-105 transition duration-700 opacity-80">
                     <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
                     <div class="absolute top-3 left-3 bg-white/20 backdrop-blur-md text-white text-[10px] px-2 py-1 rounded-md font-bold border border-white/20 uppercase">${video.platform || 'LINK'}</div>
                     <div class="absolute bottom-0 left-0 p-4 w-full text-white">
-                        <h3 class="font-bold text-base leading-snug mb-1 drop-shadow-md">${displayTitle}</h3>
-                        ${video.description ? `<p class="text-[11px] text-gray-300 line-clamp-2 mb-2">${video.description}</p>` : ''}
-                        <div class="flex items-center flex-wrap mt-1">${tagsHtml}</div>
+                        <!-- 更新：line-clamp-2 標題截斷 -->
+                        <h3 class="font-bold text-[15px] leading-snug mb-1 drop-shadow-md line-clamp-2">${displayTitle}</h3>
+                        ${video.description ? `<p class="text-[11px] text-gray-300 line-clamp-1 mb-1">${video.description}</p>` : ''}
+                        <!-- 更新：Tags 橫向超出一行截斷隱藏 -->
+                        <div class="flex items-center gap-1.5 overflow-hidden whitespace-nowrap w-full text-ellipsis mt-1">${tagsHtml}</div>
                     </div>
                 </div>
             `;
         }
 
-        // ---------- 點擊卡片：view_count +1 並開新分頁 ----------
-        window.openVideo = function (videoId) {
+        window.openVideo = function(videoId) {
             const video = allVideos.find(v => v.id === videoId);
             if (!video) return;
             update(ref(db, 'videos/' + videoId), { view_count: (video.view_count || 0) + 1 });
             window.open(video.url, '_blank');
         };
 
-        // ---------- 全站探索：套用搜尋 + 排序 ----------
-        window.renderExplore = function () {
+        window.renderExplore = function() {
             const exploreGrid = document.getElementById('explore-grid');
             const keyword = document.getElementById('search-input').value.trim().toLowerCase();
             const sortMode = document.getElementById('sort-select').value;
 
-            let list = allVideos.slice();
+            let list = allVideos.filter(v => !v.hidden);
+            if (keyword) list = list.filter(v => (v.custom_title + v.original_title + v.tags?.join('')).toLowerCase().includes(keyword));
+            
+            list.sort((a, b) => sortMode === 'popular' ? (b.view_count || 0) - (a.view_count || 0) : b.created_at - a.created_at);
 
-            if (keyword) {
-                list = list.filter(v => {
-                    const haystack = [
-                        v.custom_title, v.original_title, v.original_excerpt, v.description,
-                        ...(Array.isArray(v.tags) ? v.tags : [])
-                    ].filter(Boolean).join(' ').toLowerCase();
-                    return haystack.includes(keyword);
-                });
-            }
-
-            if (sortMode === 'popular') {
-                list.sort((a, b) => (b.view_count || 0) - (a.view_count || 0));
-            } else {
-                list.sort((a, b) => b.created_at - a.created_at);
-            }
-
-            exploreGrid.innerHTML = list.length
-                ? list.map(v => `<div class="masonry-item">${videoCardHtml(v)}</div>`).join('')
-                : '<p class="text-gray-500 text-sm py-10 text-center col-span-full">找不到符合條件的影片。</p>';
+            exploreGrid.innerHTML = list.length ? list.map(v => `<div class="masonry-item">${videoCardHtml(v)}</div>`).join('') : '<p class="text-gray-500 py-10 text-center col-span-full">找不到影片。</p>';
         };
 
-        onValue(videosRef, (snapshot) => {
-            const data = snapshot.val();
-            allVideos = data ? Object.values(data) : [];
+        // 動態生成 Tags 訂閱區
+        function renderSubs() {
+            const tagsSet = new Set();
+            allVideos.forEach(v => { if(!v.hidden && v.tags) v.tags.forEach(t => tagsSet.add(t)); });
+            
+            const tagsContainer = document.getElementById('subs-tags');
+            tagsContainer.innerHTML = Array.from(tagsSet).map(tag => 
+                `<button onclick="filterSubs('${tag}')" class="px-3 py-1 ${activeTag === tag ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'} text-xs font-bold rounded-full transition">#${tag}</button>`
+            ).join('');
+
+            const grid = document.getElementById('subs-grid');
+            if (!activeTag) {
+                grid.innerHTML = '<p class="text-gray-500 text-sm py-10 text-center col-span-full">請點擊上方標籤，查看專屬動態</p>';
+                return;
+            }
+            const filtered = allVideos.filter(v => !v.hidden && v.tags && v.tags.includes(activeTag));
+            grid.innerHTML = filtered.map(v => `<div class="masonry-item">${videoCardHtml(v)}</div>`).join('');
+        }
+
+        window.filterSubs = function(tag) {
+            activeTag = tag;
+            renderSubs();
+        };
+
+        // 動態生成 資料夾列表
+        function renderFoldersPage() {
+            const container = document.getElementById('folders-container');
+            if(allFolders.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-sm py-10 text-center">尚未建立任何資料夾，快點擊頂部 📁 新增吧！</p>';
+                return;
+            }
+            container.innerHTML = allFolders.map(f => `
+                <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-14 h-14 bg-blue-50 rounded-full flex items-center justify-center text-2xl border border-blue-100">${f.emoji || '📁'}</div>
+                        <div>
+                            <h2 class="text-xl font-extrabold text-gray-900">${f.name}</h2>
+                            <p class="text-xs text-gray-500 mt-1">建立於 ${new Date(f.created_at).toLocaleDateString()}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        onValue(ref(db, 'videos'), (snapshot) => {
+            allVideos = snapshot.val() ? Object.values(snapshot.val()) : [];
             renderExplore();
             renderRandom(true);
+            renderSubs();
         });
 
-        // ---------- 分類（收藏夾）橫向列 ----------
-        onValue(foldersRef, (snapshot) => {
-            const data = snapshot.val();
-            allFolders = data ? Object.entries(data).map(([id, f]) => ({ id, ...f })) : [];
-            renderCategoryScroll();
-        });
-
-        function renderCategoryScroll() {
+        onValue(ref(db, 'folders'), (snapshot) => {
+            allFolders = snapshot.val() ? Object.entries(snapshot.val()).map(([id, f]) => ({ id, ...f })) : [];
+            
+            // 橫向卷軸
             const el = document.getElementById('category-scroll');
-            const chips = allFolders.map(f => {
-                const count = f.video_ids ? Object.keys(f.video_ids).length : 0;
-                return `
-                    <div class="flex flex-col items-center gap-1 flex-shrink-0 cursor-pointer" onclick="switchLayer('folders')">
-                        <div class="relative w-14 h-14 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-2xl">
-                            ${f.emoji || '📁'}
-                            <span class="absolute -top-1 -right-1 bg-gray-900 text-white text-[10px] font-bold rounded-full px-1.5 py-0.5 min-w-[18px] text-center">${count}</span>
-                        </div>
-                        <span class="text-xs font-bold text-gray-700 max-w-[64px] truncate">${f.name}</span>
-                    </div>
-                `;
-            }).join('');
-
-            const addChip = `
+            el.innerHTML = allFolders.map(f => `
+                <div class="flex flex-col items-center gap-1 flex-shrink-0 cursor-pointer" onclick="switchLayer('folders')">
+                    <div class="relative w-14 h-14 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-2xl">${f.emoji || '📁'}</div>
+                    <span class="text-xs font-bold text-gray-700 max-w-[64px] truncate">${f.name}</span>
+                </div>
+            `).join('') + `
                 <div class="flex flex-col items-center gap-1 flex-shrink-0 cursor-pointer" onclick="openFolderCreate()">
                     <div class="w-14 h-14 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center text-xl text-gray-400">＋</div>
                     <span class="text-xs font-bold text-gray-400">新分類</span>
                 </div>
             `;
+            renderFoldersPage();
+        });
 
-            el.innerHTML = chips + addChip;
-        }
-
-        window.openFolderCreate = function () {
-            const name = prompt('新分類名稱（例如：超級偶像 / 地點 / 穿搭）：');
-            if (!name || !name.trim()) return;
-            const emoji = prompt('選一個代表 emoji（例如：⭐️ 📍 👗），留空則用預設 📁：') || '📁';
-            const newRef = push(foldersRef);
-            set(newRef, { name: name.trim(), emoji: emoji.trim(), created_at: Date.now(), video_ids: {} });
+        window.openFolderCreate = function() {
+            const name = prompt('新分類名稱：');
+            if(!name) return;
+            push(ref(db, 'folders'), { name: name.trim(), emoji: prompt('代表 emoji (留空預設📁)：') || '📁', created_at: Date.now() });
         };
 
-        // ---------- 隨機回味 輪播 ----------
+        // 輪播相關
         let randomPool = [];
+        window.shuffleRandom = function() { renderRandom(true); };
         function renderRandom(reshuffle) {
-            const track = document.getElementById('random-track');
-            const dots = document.getElementById('random-dots');
-            if (!allVideos.length) {
-                track.innerHTML = '<p class="text-gray-500 text-sm py-6 px-2">目前還沒有影片可以回味。</p>';
-                dots.innerHTML = '';
-                return;
-            }
-            if (reshuffle || randomPool.length === 0) {
-                randomPool = allVideos.slice().sort(() => Math.random() - 0.5).slice(0, Math.min(6, allVideos.length));
-            }
-
-            track.innerHTML = randomPool.map(v => `
-                <div class="carousel-slide flex-shrink-0 w-40">
-                    <div class="aspect-[3/4]">${videoCardHtml(v)}</div>
-                </div>
-            `).join('');
-
-            dots.innerHTML = randomPool.map((_, i) => `<span class="dot w-1.5 h-1.5 rounded-full bg-gray-300 ${i === 0 ? 'active' : ''}"></span>`).join('');
-
+            const track = document.getElementById('random-track'), dots = document.getElementById('random-dots');
+            if(!allVideos.length) return;
+            if(reshuffle || !randomPool.length) randomPool = allVideos.filter(v => !v.hidden).sort(() => .5 - Math.random()).slice(0, 6);
+            
+            track.innerHTML = randomPool.map(v => `<div class="carousel-slide flex-shrink-0 w-40"><div class="aspect-[3/4]">${videoCardHtml(v)}</div></div>`).join('');
+            dots.innerHTML = randomPool.map((_, i) => `<span class="dot w-1.5 h-1.5 rounded-full bg-gray-300 ${i===0?'active':''}"></span>`).join('');
+            
             track.onscroll = () => {
-                const slideWidth = track.firstElementChild ? track.firstElementChild.offsetWidth + 16 : 1;
-                const idx = Math.round(track.scrollLeft / slideWidth);
+                const idx = Math.round(track.scrollLeft / (track.firstElementChild.offsetWidth + 16));
                 [...dots.children].forEach((d, i) => d.classList.toggle('active', i === idx));
             };
         }
 
-        window.shuffleRandom = function () { renderRandom(true); };
-        window.openRandomSettings = function () {
-            alert('設定功能開發中：未來可在這裡選擇「只從特定分類抽」或「排除已看過」。');
+        /* ----- 帳號登入與自訂頭像邏輯 ----- */
+        window.openAccountSettings = function() {
+            document.getElementById('account-modal').classList.remove('hidden');
+        };
+        window.closeAccountModal = function() {
+            document.getElementById('account-modal').classList.add('hidden');
+        };
+        
+        window.handleLogin = async function() {
+            try { await signInWithPopup(auth, new GoogleAuthProvider()); } 
+            catch(err) { console.error(err); alert("登入失敗"); }
         };
 
-        // ---------- 帳號登入（Firebase Auth Google 登入）----------
+        window.handleLogout = async function() {
+            if(confirm('確定要登出嗎？')) { await signOut(auth); closeAccountModal(); }
+        };
+
+        window.selectAvatar = function(url) {
+            if(!currentUser) return;
+            // 存入 Firebase
+            set(ref(db, 'users/' + currentUser.uid + '/avatarUrl'), url);
+            updateAvatarDisplay(url);
+            closeAccountModal();
+        };
+
+        function updateAvatarDisplay(url) {
+            document.getElementById('account-initial').classList.add('hidden');
+            const img = document.getElementById('account-img');
+            img.src = url;
+            img.classList.remove('hidden');
+        }
+
         onAuthStateChanged(auth, (user) => {
             currentUser = user;
-            const btn = document.getElementById('account-btn');
-            if (user) {
-                btn.textContent = (user.displayName || 'U').charAt(0).toUpperCase();
-                btn.classList.remove('bg-gray-900');
-                btn.classList.add('bg-blue-500');
-                btn.title = user.displayName + '（點擊登出）';
+            if(user) {
+                document.getElementById('login-section').classList.add('hidden');
+                document.getElementById('profile-section').classList.remove('hidden');
+                
+                // 去資料庫找看有沒有自訂頭像，沒有就用 Google 的
+                onValue(ref(db, 'users/' + user.uid + '/avatarUrl'), (snap) => {
+                    updateAvatarDisplay(snap.val() || user.photoURL);
+                }, { onlyOnce: true });
             } else {
-                btn.textContent = '?';
-                btn.classList.remove('bg-blue-500');
-                btn.classList.add('bg-gray-900');
-                btn.title = '登入以建立你自己的收藏夾';
+                document.getElementById('login-section').classList.remove('hidden');
+                document.getElementById('profile-section').classList.add('hidden');
+                document.getElementById('account-initial').classList.remove('hidden');
+                document.getElementById('account-img').classList.add('hidden');
             }
         });
 
-        window.handleAccountClick = async function () {
-            if (currentUser) {
-                if (confirm('要登出目前帳號嗎？')) await signOut(auth);
-                return;
-            }
-            if (!confirm('登入後即可建立專屬收藏夾，並在裝置間同步。要用 Google 帳號登入嗎？')) return;
-            try {
-                await signInWithPopup(auth, new GoogleAuthProvider());
-            } catch (err) {
-                alert('登入失敗，請確認 Firebase 主控台已在 Authentication 啟用 Google 登入方式。');
-                console.error(err);
-            }
-        };
-
-        // ---------- 分頁切換 ----------
-        window.switchLayer = function (layer) {
+        window.switchLayer = function(layer) {
             document.querySelectorAll('.layer-section').forEach(el => el.classList.add('hidden'));
             document.getElementById(`layer-${layer}`).classList.remove('hidden');
             ['explore', 'subs', 'folders'].forEach(t => {
-                const btn = document.getElementById(`tab-${t}`);
-                btn.className = (t === layer)
-                    ? "px-4 py-2 text-sm font-bold rounded-lg bg-white shadow-sm text-gray-900 transition relative"
-                    : "px-4 py-2 text-sm font-bold rounded-lg text-gray-500 hover:text-gray-900 transition relative";
+                document.getElementById(`tab-${t}`).className = t === layer ? "px-4 py-2 text-sm font-bold rounded-lg bg-white shadow-sm text-gray-900 transition relative" : "px-4 py-2 text-sm font-bold rounded-lg text-gray-500 hover:text-gray-900 transition relative";
             });
         };
     </script>
