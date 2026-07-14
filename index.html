@@ -69,28 +69,39 @@
                     <option value="popular">最熱門</option>
                 </select>
             </div>
-            <div id="explore-grid" class="masonry-grid"><p class="text-gray-500 text-sm py-10 text-center col-span-full">正在同步最新資料...</p></div>
+            <div id="explore-grid" class="masonry-grid"><p class="text-gray-500 text-sm py-10 text-center col-span-full block w-full">正在同步最新資料...</p></div>
         </section>
 
         <!-- 第二層：專屬訂閱 -->
         <section id="layer-subs" class="layer-section hidden">
             <div class="mb-6">
                 <h2 class="text-lg font-extrabold text-gray-800 tracking-wider mb-2">Tag 訂閱動態</h2>
-                <!-- 修改：加入 whitespace-nowrap 防跑版 -->
                 <p class="text-xs text-gray-500 mb-3 whitespace-nowrap">點擊文字檢視動態，點擊星星 ⭐ 即可訂閱</p>
                 <div id="subs-tags" class="flex gap-3 flex-wrap"></div>
             </div>
             <div class="border-t border-gray-100 mb-6"></div>
-            <div id="subs-grid" class="masonry-grid"><p class="text-gray-500 text-sm py-10 text-center col-span-full">請先點選上方的 Tag 進行檢視</p></div>
+            <div id="subs-grid" class="masonry-grid"><p class="text-gray-500 text-sm py-10 text-center col-span-full block w-full">請先點選上方的 Tag 進行檢視</p></div>
         </section>
 
         <!-- 第三層：個人收藏夾 -->
         <section id="layer-folders" class="layer-section hidden">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-lg font-extrabold text-gray-800 tracking-wider">我的收藏夾</h2>
+            <!-- 資料夾列表視圖 -->
+            <div id="folders-main-view">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-extrabold text-gray-800 tracking-wider">我的收藏夾</h2>
+                </div>
+                <div id="folders-container" class="space-y-4">
+                    <p class="text-gray-500 text-sm py-10 text-center">目前還沒有建立任何資料夾。</p>
+                </div>
             </div>
-            <div id="folders-container" class="space-y-4">
-                <p class="text-gray-500 text-sm py-10 text-center">目前還沒有建立任何資料夾。</p>
+            
+            <!-- 單一資料夾內容視圖 -->
+            <div id="folder-view" class="hidden">
+                <button onclick="closeFolderView()" class="mb-5 flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-gray-900 transition bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-100">
+                    <span>⬅</span> 返回列表
+                </button>
+                <h2 id="folder-view-title" class="text-xl font-extrabold text-gray-800 tracking-wider mb-6"></h2>
+                <div id="folder-videos-grid" class="masonry-grid"></div>
             </div>
         </section>
     </main>
@@ -108,7 +119,6 @@
 
             <div id="profile-section" class="hidden">
                 <p class="text-sm font-bold text-gray-800 mb-3">選擇預設頭像</p>
-                <!-- 問題 1 解法：將這些 src 替換為你自己準備好的圖片網址 -->
                 <div class="grid grid-cols-4 gap-3 mb-8" id="avatar-choices">
                     <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Shiho" class="w-14 h-14 rounded-full cursor-pointer hover:ring-4 hover:ring-blue-100 transition avatar-option" onclick="selectAvatar(this.src)">
                     <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Kumi" class="w-14 h-14 rounded-full cursor-pointer hover:ring-4 hover:ring-blue-100 transition avatar-option" onclick="selectAvatar(this.src)">
@@ -154,11 +164,10 @@
         let allFolders = [];
         let currentUser = null;
         let activeTag = null;
-        let subscribedTags = []; // 儲存使用者的訂閱標籤
-        let currentSaveVideoId = null; // 當前準備收藏的影片 ID
+        let subscribedTags = []; 
+        let currentSaveVideoId = null; 
         const fallbackImage = "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&w=600&q=80";
 
-        // HTML 影片卡片 (新增加入資料夾按鈕)
         function videoCardHtml(video) {
             let displayTitle = video.custom_title || video.original_title || video.original_excerpt || "未命名影片";
             const tagsArray = Array.isArray(video.tags) ? video.tags : [];
@@ -171,7 +180,6 @@
                     
                     <div class="absolute top-3 left-3 bg-white/20 backdrop-blur-md text-white text-[10px] px-2 py-1 rounded-md font-bold border border-white/20 uppercase">${video.platform || 'LINK'}</div>
                     
-                    <!-- 新增：收藏按鈕 (stopPropagation 避免點擊按鈕時直接跳轉影片) -->
                     <button onclick="event.stopPropagation(); openSaveModal('${video.id}')" title="加入收藏"
                         class="absolute top-3 right-3 bg-black/40 hover:bg-black/70 backdrop-blur-md text-white w-8 h-8 rounded-full flex items-center justify-center transition border border-white/20 z-10">
                         <span class="text-sm">📁</span>
@@ -186,33 +194,36 @@
             `;
         }
 
-        // 開啟影片 (問題 2 解法：強制補上 https://)
         window.openVideo = function(videoId) {
             const video = allVideos.find(v => v.id === videoId);
             if (!video) return;
             update(ref(db, 'videos/' + videoId), { view_count: (video.view_count || 0) + 1 });
-            
             let targetUrl = video.url;
-            if (!targetUrl.startsWith('http://') && !targetUrl.startsWith('https://')) {
-                targetUrl = 'https://' + targetUrl;
-            }
+            if (!targetUrl.startsWith('http://') && !targetUrl.startsWith('https://')) { targetUrl = 'https://' + targetUrl; }
             window.open(targetUrl, '_blank');
         };
 
-        // 探索頁面渲染
+        // 幫元素加上或移除 masonry-grid 避免斷字
+        function renderGrid(containerId, list, emptyMessage) {
+            const container = document.getElementById(containerId);
+            if(list.length > 0) {
+                container.classList.add('masonry-grid');
+                container.innerHTML = list.map(v => `<div class="masonry-item">${videoCardHtml(v)}</div>`).join('');
+            } else {
+                container.classList.remove('masonry-grid'); // 移除瀑布流排版
+                container.innerHTML = `<div class="py-10 text-center text-gray-500 text-sm w-full">${emptyMessage}</div>`;
+            }
+        }
+
         window.renderExplore = function() {
-            const exploreGrid = document.getElementById('explore-grid');
             const keyword = document.getElementById('search-input').value.trim().toLowerCase();
             const sortMode = document.getElementById('sort-select').value;
-
             let list = allVideos.filter(v => !v.hidden);
             if (keyword) list = list.filter(v => (v.custom_title + v.original_title + v.tags?.join('')).toLowerCase().includes(keyword));
-            
             list.sort((a, b) => sortMode === 'popular' ? (b.view_count || 0) - (a.view_count || 0) : b.created_at - a.created_at);
-            exploreGrid.innerHTML = list.length ? list.map(v => `<div class="masonry-item">${videoCardHtml(v)}</div>`).join('') : '<p class="text-gray-500 py-10 text-center col-span-full">找不到影片。</p>';
+            renderGrid('explore-grid', list, '找不到影片。');
         };
 
-        // 訂閱頁面渲染 (問題 4 解法：分離文字點擊與星星訂閱)
         function renderSubs() {
             const tagsSet = new Set();
             allVideos.forEach(v => { if(!v.hidden && v.tags) v.tags.forEach(t => tagsSet.add(t)); });
@@ -231,32 +242,33 @@
                 </div>`;
             }).join('');
 
-            const grid = document.getElementById('subs-grid');
+            let filtered = [];
+            let emptyMessage = '請點選上方的 Tag 檢視，或點擊星星訂閱';
+
             if (!activeTag) {
-                // 若沒有選擇標籤，優先顯示「已訂閱標籤」的影片
                 if(subscribedTags.length > 0) {
-                    const filtered = allVideos.filter(v => !v.hidden && v.tags && v.tags.some(t => subscribedTags.includes(t)));
-                    grid.innerHTML = filtered.length ? filtered.map(v => `<div class="masonry-item">${videoCardHtml(v)}</div>`).join('') : '<p class="text-gray-500 text-sm py-10 text-center col-span-full">你訂閱的標籤目前沒有影片</p>';
-                } else {
-                    grid.innerHTML = '<p class="text-gray-500 text-sm py-10 text-center col-span-full">請點選上方的 Tag 檢視，或點擊星星訂閱</p>';
+                    filtered = allVideos.filter(v => !v.hidden && v.tags && v.tags.some(t => subscribedTags.includes(t)));
+                    emptyMessage = '你訂閱的標籤目前沒有影片';
                 }
-                return;
+            } else {
+                filtered = allVideos.filter(v => !v.hidden && v.tags && v.tags.includes(activeTag));
+                emptyMessage = `目前沒有 #${activeTag} 的影片`;
             }
-            const filtered = allVideos.filter(v => !v.hidden && v.tags && v.tags.includes(activeTag));
-            grid.innerHTML = filtered.map(v => `<div class="masonry-item">${videoCardHtml(v)}</div>`).join('');
+
+            // 強制時間排序（最新在最前）
+            filtered.sort((a, b) => b.created_at - a.created_at);
+            renderGrid('subs-grid', filtered, emptyMessage);
         }
 
         window.filterSubs = function(tag) { activeTag = tag; renderSubs(); };
 
-        // 訂閱/取消訂閱 Tag 的寫入邏輯
         window.toggleTagSub = function(tag) {
             if(!currentUser) { alert('請先登入帳號才能訂閱 Tag！'); openAccountSettings(); return; }
             const nodeRef = ref(db, `users/${currentUser.uid}/subscribed_tags/${tag}`);
-            if(subscribedTags.includes(tag)) set(nodeRef, null); // 已經訂閱就取消
-            else set(nodeRef, true); // 沒訂閱就加入
+            if(subscribedTags.includes(tag)) set(nodeRef, null); 
+            else set(nodeRef, true); 
         };
 
-        // 資料夾清單渲染
         function renderFoldersPage() {
             const container = document.getElementById('folders-container');
             if(allFolders.length === 0) {
@@ -266,7 +278,7 @@
             container.innerHTML = allFolders.map(f => {
                 const count = f.video_ids ? Object.keys(f.video_ids).length : 0;
                 return `
-                <div class="bg-white rounded-3xl p-5 shadow-sm border border-gray-100 flex items-center justify-between cursor-pointer hover:shadow-md transition" onclick="alert('稍後將開放點擊檢視資料夾內影片功能')">
+                <div class="bg-white rounded-3xl p-5 shadow-sm border border-gray-100 flex items-center justify-between cursor-pointer hover:shadow-md transition" onclick="openFolderView('${f.id}')">
                     <div class="flex items-center gap-4">
                         <div class="w-14 h-14 bg-blue-50 rounded-full flex items-center justify-center text-2xl border border-blue-100">${f.emoji || '📁'}</div>
                         <div>
@@ -279,7 +291,28 @@
             }).join('');
         }
 
-        // Firebase 資料監聽
+        // --- 新增：展開檢視個人收藏夾內容 ---
+        window.openFolderView = function(folderId) {
+            const folder = allFolders.find(f => f.id === folderId);
+            if(!folder) return;
+            
+            document.getElementById('folders-main-view').classList.add('hidden');
+            document.getElementById('folder-view').classList.remove('hidden');
+            document.getElementById('folder-view-title').innerText = `${folder.emoji || '📁'} ${folder.name}`;
+
+            const videoIds = folder.video_ids ? Object.keys(folder.video_ids) : [];
+            let list = allVideos.filter(v => videoIds.includes(v.id));
+            
+            // 強制時間排序（最新在最前）
+            list.sort((a, b) => b.created_at - a.created_at);
+            renderGrid('folder-videos-grid', list, '這個資料夾目前還沒有收藏影片喔！');
+        };
+
+        window.closeFolderView = function() {
+            document.getElementById('folders-main-view').classList.remove('hidden');
+            document.getElementById('folder-view').classList.add('hidden');
+        };
+
         onValue(ref(db, 'videos'), (snapshot) => {
             allVideos = snapshot.val() ? Object.values(snapshot.val()) : [];
             renderExplore(); renderRandom(true); renderSubs();
@@ -287,8 +320,6 @@
 
         onValue(ref(db, 'folders'), (snapshot) => {
             allFolders = snapshot.val() ? Object.entries(snapshot.val()).map(([id, f]) => ({ id, ...f })) : [];
-            
-            // 更新頂部橫向卷軸
             document.getElementById('category-scroll').innerHTML = allFolders.map(f => `
                 <div class="flex flex-col items-center gap-1 flex-shrink-0 cursor-pointer" onclick="switchLayer('folders')">
                     <div class="relative w-14 h-14 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-2xl">${f.emoji || '📁'}</div>
@@ -301,6 +332,13 @@
                 </div>
             `;
             renderFoldersPage();
+            // 如果當前正在瀏覽某個資料夾，也同步更新裡面的畫面
+            if(!document.getElementById('folder-view').classList.contains('hidden')) {
+                const currentTitle = document.getElementById('folder-view-title').innerText;
+                const folderName = currentTitle.substring(currentTitle.indexOf(' ') + 1); // 簡略比對
+                const f = allFolders.find(x => x.name === folderName);
+                if(f) openFolderView(f.id);
+            }
         });
 
         window.openFolderCreate = function() {
@@ -309,7 +347,6 @@
             push(ref(db, 'folders'), { name: name.trim(), emoji: prompt('代表 emoji (留空預設📁)：') || '📁', created_at: Date.now() });
         };
 
-        /* ----- 問題 3：加入收藏夾 核心邏輯 ----- */
         window.openSaveModal = function(videoId) {
             if(!currentUser) { alert('請先登入帳號才能收藏影片！'); openAccountSettings(); return; }
             currentSaveVideoId = videoId;
@@ -326,7 +363,7 @@
                     const isSaved = f.video_ids && f.video_ids[videoId];
                     return `
                     <button onclick="toggleVideoInFolder('${f.id}', ${!!isSaved})" class="w-full text-left px-4 py-3.5 rounded-2xl border ${isSaved ? 'bg-blue-50 border-blue-200' : 'bg-white border-gray-100 hover:bg-gray-50'} flex justify-between items-center transition">
-                        <span class="font-bold text-sm text-gray-800">${f.emoji} ${f.name}</span>
+                        <span class="font-bold text-sm text-gray-800">${f.emoji || '📁'} ${f.name}</span>
                         <span class="text-lg">${isSaved ? '✅' : '<span class="text-gray-300">＋</span>'}</span>
                     </button>`;
                 }).join('');
@@ -338,10 +375,9 @@
 
         window.toggleVideoInFolder = function(folderId, isCurrentlySaved) {
             const nodeRef = ref(db, `folders/${folderId}/video_ids/${currentSaveVideoId}`);
-            if(isCurrentlySaved) set(nodeRef, null); // 移除
-            else set(nodeRef, true); // 加入
+            if(isCurrentlySaved) set(nodeRef, null); 
+            else set(nodeRef, true); 
             closeSaveModal();
-            // 彈出小提示
             const msg = document.createElement('div');
             msg.className = "fixed bottom-5 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-5 py-2 rounded-full text-sm font-bold z-[100] shadow-lg animate-fade-in";
             msg.innerText = isCurrentlySaved ? "已從資料夾移除" : "已加入資料夾";
@@ -349,7 +385,6 @@
             setTimeout(() => msg.remove(), 2000);
         };
 
-        // 輪播邏輯
         let randomPool = [];
         window.shuffleRandom = function() { renderRandom(true); };
         function renderRandom(reshuffle) {
@@ -366,7 +401,6 @@
             };
         }
 
-        // 帳號與 Firebase Auth
         window.openAccountSettings = function() { document.getElementById('account-modal').classList.remove('hidden'); };
         window.closeAccountModal = function() { document.getElementById('account-modal').classList.add('hidden'); };
         
@@ -402,7 +436,6 @@
                     updateAvatarDisplay(snap.val() || user.photoURL);
                 }, { onlyOnce: true });
 
-                // 載入該使用者的訂閱 Tag
                 onValue(ref(db, 'users/' + user.uid + '/subscribed_tags'), (snap) => {
                     subscribedTags = snap.val() ? Object.keys(snap.val()) : [];
                     renderSubs();
@@ -417,13 +450,14 @@
             }
         });
 
-        // 分頁切換
         window.switchLayer = function(layer) {
             document.querySelectorAll('.layer-section').forEach(el => el.classList.add('hidden'));
             document.getElementById(`layer-${layer}`).classList.remove('hidden');
             ['explore', 'subs', 'folders'].forEach(t => {
                 document.getElementById(`tab-${t}`).className = t === layer ? "px-4 py-2 text-sm font-bold rounded-lg bg-white shadow-sm text-gray-900 transition relative" : "px-4 py-2 text-sm font-bold rounded-lg text-gray-500 hover:text-gray-900 transition relative";
             });
+            // 切換分頁時，如果原本在看資料夾內容，將其重置回資料夾列表
+            if(layer === 'folders') closeFolderView();
         };
     </script>
 </body>
