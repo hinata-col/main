@@ -2,7 +2,6 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <!-- 優化行動端視窗設定，防止誤觸縮放，使操作更具 App 質感 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>留友看 Hinata Ver.</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -22,7 +21,7 @@
         .carousel-track { scroll-snap-type: x mandatory; scroll-behavior: smooth; }
         .carousel-slide { scroll-snap-align: center; }
         .dot { transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-        .dot.active { width: 20px; border-radius: 9999px; background-color: #0ea5e9; } /* 日向藍 active dot */
+        .dot.active { width: 20px; border-radius: 9999px; background-color: #0ea5e9; }
 
         /* 過場動畫 */
         @keyframes slideUp {
@@ -39,7 +38,7 @@
 </head>
 <body class="bg-slate-50/50 text-slate-800 font-sans antialiased pb-24 min-h-screen relative overflow-x-hidden select-none sm:select-text">
     
-    <!-- 日向坂天藍色主題柔和背景光暈 -->
+    <!-- 日向天藍色主題柔和背景光暈 -->
     <div class="absolute top-0 left-1/4 w-[400px] h-[400px] bg-sky-200/20 rounded-full filter blur-3xl pointer-events-none -z-10"></div>
     <div class="absolute top-1/4 right-1/4 w-[350px] h-[350px] bg-sky-100/30 rounded-full filter blur-3xl pointer-events-none -z-10"></div>
 
@@ -69,8 +68,21 @@
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 pt-2">
         <!-- 分類滾動區塊 -->
-        <section class="mb-6">
+        <section id="category-section" class="mb-6">
             <div id="category-scroll" class="flex gap-3 sm:gap-4 overflow-x-auto hide-scrollbar pb-1 scroll-smooth"></div>
+        </section>
+
+        <!-- [新增] 第四層：公開分享資料夾專用檢視區（預設隱藏） -->
+        <section id="layer-shared" class="layer-section hidden transition-opacity duration-300">
+            <div class="bg-gradient-to-r from-sky-400/10 to-transparent p-5 sm:p-6 rounded-3xl border border-sky-100 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <span id="shared-owner-badge" class="text-[10px] font-black uppercase tracking-wider bg-sky-100 text-sky-600 px-2.5 py-1 rounded-lg">公開分享</span>
+                    <h2 id="shared-folder-title" class="text-xl font-black text-slate-800 mt-2"></h2>
+                    <p id="shared-folder-desc" class="text-xs text-slate-400 mt-1"></p>
+                </div>
+                <button onclick="exitSharedView()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-black px-5 py-3 rounded-xl transition shadow-sm active:scale-95 whitespace-nowrap self-start sm:self-auto">🏠 前往首頁探索更多</button>
+            </div>
+            <div id="shared-videos-grid" class="masonry-grid"></div>
         </section>
 
         <!-- 第一層：首頁 -->
@@ -88,7 +100,7 @@
                 <div id="random-dots" class="flex justify-center gap-2 mt-3"></div>
             </div>
 
-            <!-- 搜尋框區塊（在隨機回味下方） -->
+            <!-- 搜尋框區塊 -->
             <div class="mb-6">
                 <div class="relative max-w-xl">
                     <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm">🔍</span>
@@ -107,34 +119,27 @@
             <div id="explore-grid" class="masonry-grid"><p class="text-slate-500 text-sm py-10 text-center col-span-full block w-full">正在同步最新資料...</p></div>
         </section>
 
-        <!-- 第二層：專屬訂閱（優化後的標籤搜尋與訂閱機制） -->
+        <!-- 第二層：專屬訂閱 -->
         <section id="layer-subs" class="layer-section hidden transition-opacity duration-300">
             <div class="mb-6 bg-white p-5 sm:p-6 rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.01)]">
                 <h2 class="text-sm sm:text-base font-black text-slate-800 tracking-wider mb-1.5">專屬標籤追蹤</h2>
                 <p class="text-xs text-slate-400 mb-4">點擊標籤直接檢視影片，點擊 ⭐ 新增/取消訂閱</p>
                 
-                <!-- 新增：標籤內部搜尋過濾，防止標籤爆炸 -->
                 <div class="relative max-w-xs mb-5">
                     <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">🔍</span>
                     <input id="tag-search-input" type="text" placeholder="快速尋找成員或活動標籤..." class="w-full bg-slate-50 border border-slate-100 rounded-xl py-2 pl-9 pr-4 text-xs focus:outline-none focus:ring-2 focus:ring-sky-200 transition-all" oninput="renderSubs()">
                 </div>
 
-                <!-- 訂閱分組：我的訂閱（置頂） -->
                 <div class="mb-4">
                     <h3 class="text-xs font-bold text-slate-400 mb-2.5 flex items-center gap-1"><span>⭐</span> 我的追蹤</h3>
-                    <div id="subs-tags-active" class="flex gap-2 flex-wrap">
-                        <!-- 已訂閱的標籤會在這裡置頂顯示 -->
-                    </div>
+                    <div id="subs-tags-active" class="flex gap-2 flex-wrap"></div>
                 </div>
 
                 <div class="border-t border-slate-100 my-4"></div>
 
-                <!-- 所有標籤 -->
                 <div>
                     <h3 class="text-xs font-bold text-slate-400 mb-2.5 flex items-center gap-1"><span>🏷️</span> 所有標籤</h3>
-                    <div id="subs-tags-all" class="flex gap-2 flex-wrap max-h-40 overflow-y-auto hide-scrollbar pr-1">
-                        <!-- 所有標籤在這邊列表 -->
-                    </div>
+                    <div id="subs-tags-all" class="flex gap-2 flex-wrap max-h-40 overflow-y-auto hide-scrollbar pr-1"></div>
                 </div>
             </div>
             
@@ -143,7 +148,6 @@
 
         <!-- 第三層：個人收藏夾 -->
         <section id="layer-folders" class="layer-section hidden transition-opacity duration-300">
-            <!-- 未登入提示 -->
             <div id="folder-login-prompt" class="hidden text-center py-16 bg-white rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.01)] max-w-md mx-auto">
                 <span class="text-4xl block mb-4">🔐</span>
                 <h3 class="text-base font-black text-slate-800 mb-2">這是您的專屬私密空間</h3>
@@ -156,9 +160,7 @@
                 <div class="flex justify-between items-center mb-2">
                     <h2 class="text-sm sm:text-base font-black text-slate-800 tracking-wider">我的收藏夾</h2>
                 </div>
-                <div id="folders-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <!-- 動態載入 -->
-                </div>
+                <div id="folders-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
             </div>
             
             <!-- 單一資料夾內容 -->
@@ -168,6 +170,8 @@
                         <span>⬅</span> 返回列表
                     </button>
                     <div class="flex items-center gap-2">
+                        <!-- [新增] 分享資料夾按鈕 -->
+                        <button id="btn-share-folder" class="text-xs font-bold text-sky-600 hover:bg-sky-50 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">🔗 分享</button>
                         <button id="btn-edit-folder" class="text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">⚙️ 修改</button>
                         <button id="btn-delete-folder" class="text-xs font-bold text-red-500 hover:text-red-700 hover:bg-red-50 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">🗑️ 刪除</button>
                     </div>
@@ -241,7 +245,7 @@
         let foldersRef = null; 
         const fallbackImage = "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&w=600&q=80";
 
-        // 日向藍主題卡片，移除深色背景與多餘邊框，保留平滑投影
+        // 卡片視覺微調
         function videoCardHtml(video) {
             let displayTitle = video.custom_title || video.original_title || video.original_excerpt || "未命名影片";
             const tagsArray = Array.isArray(video.tags) ? video.tags : [];
@@ -252,7 +256,6 @@
                     <img src="${video.thumbnail_url}" referrerpolicy="no-referrer" onerror="this.src='${fallbackImage}'" loading="lazy" class="absolute inset-0 w-full h-full object-cover transform group-hover:scale-105 transition-all duration-700 opacity-90">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-900/20 to-transparent"></div>
                     
-                    <!-- 使用日向天藍色修飾平台標籤 -->
                     <div class="absolute top-3 left-3 bg-sky-500/80 backdrop-blur-md text-white text-[9px] px-2.5 py-1 rounded-lg font-black border border-white/10 tracking-wide uppercase">${video.platform || 'LINK'}</div>
                     
                     <button onclick="event.stopPropagation(); openSaveModal('${video.id}')" title="加入收藏"
@@ -298,21 +301,17 @@
             renderGrid('explore-grid', list, '找不到影片。');
         };
 
-        // 重新設計的可擴充標籤面板（支援標籤過濾搜尋、已訂閱獨立分組）
         function renderSubs() {
             const tagSearchQuery = document.getElementById('tag-search-input').value.trim().toLowerCase();
             
-            // 收集所有標籤
             const tagsSet = new Set();
             allVideos.forEach(v => { if(!v.hidden && v.tags) v.tags.forEach(t => tagsSet.add(t)); });
             const allTagsArray = Array.from(tagsSet);
 
-            // 過濾符合搜尋條件的標籤
             const filteredTags = tagSearchQuery 
                 ? allTagsArray.filter(t => t.toLowerCase().includes(tagSearchQuery))
                 : allTagsArray;
 
-            // 1. 渲染「已追蹤/已訂閱」區塊（日向天藍配色）
             const activeTagsContainer = document.getElementById('subs-tags-active');
             if (subscribedTags.length === 0) {
                 activeTagsContainer.innerHTML = `<span class="text-xs text-slate-400 py-1 block">目前尚未訂閱任何標籤</span>`;
@@ -330,7 +329,6 @@
                 }).join('');
             }
 
-            // 2. 渲染「所有標籤（扣除已追蹤）」區塊，支援標籤內部搜尋
             const allTagsContainer = document.getElementById('subs-tags-all');
             const remainingTags = filteredTags.filter(t => !subscribedTags.includes(t));
 
@@ -350,9 +348,8 @@
                 }).join('');
             }
 
-            // 3. 影片網格資料過濾
             let filteredVideos = [];
-            let emptyMessage = '請選取上方的標籤以過濾動態影片';
+            let emptyMessage = '請點選上方標籤過濾影片';
 
             if (!activeTag) {
                 if(subscribedTags.length > 0) {
@@ -368,7 +365,7 @@
             renderGrid('subs-grid', filteredVideos, emptyMessage);
         }
 
-        window.renderSubs = renderSubs; // 掛載到全域
+        window.renderSubs = renderSubs;
 
         window.filterSubs = function(tag) { activeTag = tag; renderSubs(); };
 
@@ -410,6 +407,7 @@
             document.getElementById('folder-view').classList.remove('hidden');
             document.getElementById('folder-view-title').innerText = `${folder.emoji || '📁'} ${folder.name}`;
 
+            document.getElementById('btn-share-folder').onclick = () => shareFolder(folder);
             document.getElementById('btn-edit-folder').onclick = () => editFolder(folderId, folder.name, folder.emoji);
             document.getElementById('btn-delete-folder').onclick = () => deleteFolder(folderId, folder.name);
 
@@ -424,6 +422,32 @@
             document.getElementById('folders-main-view').classList.remove('hidden');
             document.getElementById('folder-view').classList.add('hidden');
         };
+
+        // [新增] 分享資料夾邏輯 (發佈到 shares/ 節點，實現未登入與無痕瀏覽)
+        function shareFolder(folder) {
+            const shareId = "s_" + Date.now();
+            const shareData = {
+                name: folder.name,
+                emoji: folder.emoji || '📁',
+                owner: currentUser.displayName || "日向坂推し",
+                video_ids: folder.video_ids || {},
+                created_at: Date.now()
+            };
+
+            set(ref(db, `shares/${shareId}`), shareData).then(() => {
+                const shareUrl = `${window.location.origin}${window.location.pathname}?share=${shareId}`;
+                
+                // 複製到剪貼簿
+                navigator.clipboard.writeText(shareUrl).then(() => {
+                    showToast("🔗 分享連結已複製到剪貼簿！");
+                }).catch(() => {
+                    prompt("因瀏覽器權限限制，請手動複製以下網址分享給好友：", shareUrl);
+                });
+            }).catch(err => {
+                console.error(err);
+                alert("分享失敗，請稍後再試。");
+            });
+        }
 
         function editFolder(folderId, oldName, oldEmoji) {
             const newName = prompt('請輸入新的資料夾名稱：', oldName);
@@ -452,6 +476,8 @@
         onValue(ref(db, 'videos'), (snapshot) => {
             allVideos = snapshot.val() ? Object.values(snapshot.val()) : [];
             renderExplore(); renderRandom(true); renderSubs();
+            // 如果當前在分享檢視頁，也需要觸發一次更新
+            checkSharedUrl();
         });
 
         window.openFolderCreate = function() {
@@ -548,6 +574,51 @@
             img.src = url; img.classList.remove('hidden');
         }
 
+        // [新增] 檢查並處理網址中是否有分享資料夾的 ID 路由
+        function checkSharedUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const shareId = urlParams.get('share');
+            if (!shareId) return;
+
+            // 隱藏頂部的分類滾動列與其他所有視頁，保留分享檢視
+            document.getElementById('category-section').classList.add('hidden');
+            document.querySelectorAll('.layer-section').forEach(el => el.classList.add('hidden'));
+            const sharedLayer = document.getElementById('layer-shared');
+            sharedLayer.classList.remove('hidden');
+
+            document.getElementById('shared-folder-title').innerText = "🔮 正在載入分享資料夾...";
+            document.getElementById('shared-folder-desc').innerText = "";
+
+            onValue(ref(db, `shares/${shareId}`), (snapshot) => {
+                const data = snapshot.val();
+                if (!data) {
+                    document.getElementById('shared-folder-title').innerText = "⚠️ 找不到分享資料夾";
+                    document.getElementById('shared-folder-desc').innerText = "該資料夾可能已被原作者刪除，或網址有誤。";
+                    renderGrid('shared-videos-grid', [], '查無影片內容');
+                    return;
+                }
+
+                document.getElementById('shared-folder-title').innerText = `${data.emoji || '📁'} ${data.name}`;
+                document.getElementById('shared-folder-desc').innerText = `由「${data.owner || '日向坂推し'}」分享的個人私房收藏清單`;
+
+                const videoIds = data.video_ids ? Object.keys(data.video_ids) : [];
+                const list = allVideos.filter(v => videoIds.includes(v.id));
+                list.sort((a, b) => b.created_at - a.created_at);
+
+                renderGrid('shared-videos-grid', list, '這個分享資料夾目前沒有影片喔！');
+            }, { onlyOnce: true });
+        }
+
+        // [新增] 離開分享檢視，乾淨返回首頁並重設 URL 參數
+        window.exitSharedView = function() {
+            // 清理網址參數不重整頁面
+            window.history.pushState({}, document.title, window.location.pathname);
+            
+            document.getElementById('category-section').classList.remove('hidden');
+            document.getElementById('layer-shared').classList.add('hidden');
+            switchLayer('explore');
+        };
+
         onAuthStateChanged(auth, (user) => {
             if (foldersRef) {
                 off(foldersRef); 
@@ -620,6 +691,9 @@
                 document.getElementById('account-img').classList.add('hidden');
                 renderSubs();
             }
+
+            // 初始化時檢查是否有公開分享連結路由
+            checkSharedUrl();
         });
 
         window.switchLayer = function(layer) {
