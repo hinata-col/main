@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-5SJQCZHPFC"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-5SJQCZHPFC');
-</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>留友看 Hinata Ver.</title>
@@ -521,16 +512,28 @@
         window.openSaveModal = function(videoId) {
             if(!currentUser) { alert('請先登入帳號才能收藏影片！'); openAccountSettings(); return; }
             currentSaveVideoId = videoId;
+            renderSaveModalList();
+            document.getElementById('save-modal').classList.remove('hidden');
+        };
+
+        function renderSaveModalList() {
+            const videoId = currentSaveVideoId;
             const list = document.getElementById('save-folder-list');
-            
+
+            const createRow = `
+                <button onclick="showInlineFolderCreate()" class="w-full text-left px-4 py-4 rounded-2xl border border-dashed border-sky-200 bg-sky-50/50 hover:bg-sky-50 flex items-center gap-2 transition duration-200">
+                    <span class="text-lg text-sky-500">＋</span>
+                    <span class="font-bold text-sm text-sky-600">建立新資料夾</span>
+                </button>`;
+
             if(allFolders.length === 0) {
                 list.innerHTML = `
-                    <div class="text-center py-6">
+                    <div class="text-center py-2">
                         <p class="text-sm text-slate-400 mb-4">你還沒有建立任何資料夾。</p>
-                        <button onclick="closeSaveModal(); openFolderCreate()" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-6 py-2.5 rounded-xl transition">建立新資料夾</button>
+                        ${createRow}
                     </div>`;
             } else {
-                list.innerHTML = allFolders.map(f => {
+                const folderRows = allFolders.map(f => {
                     const isSaved = f.video_ids && f.video_ids[videoId];
                     return `
                     <button onclick="toggleVideoInFolder('${f.id}', ${!!isSaved})" class="w-full text-left px-4 py-4 rounded-2xl border ${isSaved ? 'bg-sky-50 border-sky-200' : 'bg-white border-slate-100 hover:bg-slate-50'} flex justify-between items-center transition duration-200">
@@ -538,8 +541,40 @@
                         <span class="text-lg">${isSaved ? '✅' : '<span class="text-gray-300">＋</span>'}</span>
                     </button>`;
                 }).join('');
+                list.innerHTML = createRow + folderRows;
             }
-            document.getElementById('save-modal').classList.remove('hidden');
+        }
+
+        window.showInlineFolderCreate = function() {
+            const list = document.getElementById('save-folder-list');
+            list.innerHTML = `
+                <div class="px-1 py-2">
+                    <p class="text-xs font-bold text-slate-500 mb-3">建立新資料夾</p>
+                    <div class="flex gap-2 mb-3">
+                        <input id="inline-folder-emoji" type="text" maxlength="2" placeholder="📁" class="w-14 text-center bg-slate-50 border border-slate-100 rounded-xl py-3 text-lg focus:outline-none focus:ring-2 focus:ring-sky-200">
+                        <input id="inline-folder-name" type="text" placeholder="資料夾名稱" class="flex-1 bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-sky-200">
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="renderSaveModalList()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-3 rounded-xl transition">取消</button>
+                        <button onclick="confirmInlineFolderCreate()" class="flex-1 bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 rounded-xl transition">建立並加入</button>
+                    </div>
+                </div>`;
+            document.getElementById('inline-folder-name').focus();
+        };
+
+        window.confirmInlineFolderCreate = async function() {
+            const nameInput = document.getElementById('inline-folder-name');
+            const emojiInput = document.getElementById('inline-folder-emoji');
+            const name = nameInput.value.trim();
+            if(!name) { nameInput.focus(); return; }
+            const emoji = emojiInput.value.trim() || '📁';
+
+            const newFolderRef = push(ref(db, `users/${currentUser.uid}/folders`));
+            await set(newFolderRef, { name: name, emoji: emoji, created_at: Date.now() });
+            // 新資料夾建立後，直接把當前影片加進去
+            await set(ref(db, `users/${currentUser.uid}/folders/${newFolderRef.key}/video_ids/${currentSaveVideoId}`), true);
+            closeSaveModal();
+            showToast(`已建立「${emoji} ${name}」並加入影片`);
         };
 
         window.closeSaveModal = function() { document.getElementById('save-modal').classList.add('hidden'); };
