@@ -629,7 +629,7 @@
                 }
 
                 document.getElementById('shared-folder-title').innerText = `${data.emoji || '📁'} ${data.name}`;
-                document.getElementById('shared-folder-desc').innerText = `由「${data.owner || '日向坂推し'}」分享的個人私房收藏清單`;
+                document.getElementById('shared-folder-desc').innerText = ``;
 
                 const videoIds = data.video_ids ? Object.keys(data.video_ids) : [];
                 const list = allVideos.filter(v => videoIds.includes(v.id));
