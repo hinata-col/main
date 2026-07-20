@@ -83,7 +83,10 @@
                     <h2 id="shared-folder-title" class="text-xl font-black text-slate-800 mt-2"></h2>
                     <p id="shared-folder-desc" class="text-xs text-slate-400 mt-1"></p>
                 </div>
-                <button onclick="exitSharedView()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-black px-5 py-3 rounded-xl transition shadow-sm active:scale-95 whitespace-nowrap self-start sm:self-auto">🏠 前往首頁探索更多</button>
+                <div class="flex items-center gap-2 flex-shrink-0 self-start sm:self-auto">
+                    <button onclick="toggleViewMode()" class="view-toggle-btn text-xs font-bold bg-white border border-sky-100 rounded-xl px-3 py-2.5 text-slate-500 shadow-sm hover:bg-sky-50 transition active:scale-95">☰ 清單</button>
+                    <button onclick="exitSharedView()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-black px-5 py-3 rounded-xl transition shadow-sm active:scale-95 whitespace-nowrap">🏠 前往首頁探索更多</button>
+                </div>
             </div>
             <div id="shared-videos-grid" class="masonry-grid"></div>
         </section>
@@ -114,10 +117,13 @@
             <!-- 影片牆區塊 -->
             <div class="mb-4 sm:mb-6 flex justify-between items-center border-t border-slate-200/40 pt-6 sm:pt-8">
                 <h2 class="text-sm sm:text-base font-black text-slate-800 tracking-wider">影片牆</h2>
-                <select id="sort-select" onchange="renderExplore()" class="text-xs font-bold bg-white border border-slate-200/60 rounded-xl px-3 py-2 focus:outline-none cursor-pointer shadow-sm hover:bg-slate-50 transition">
-                    <option value="newest">最新加入</option>
-                    <option value="popular">最熱門</option>
-                </select>
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleViewMode()" class="view-toggle-btn text-xs font-bold bg-white border border-slate-200/60 rounded-xl px-3 py-2 text-slate-500 shadow-sm hover:bg-slate-50 transition active:scale-95">☰ 清單</button>
+                    <select id="sort-select" onchange="renderExplore()" class="text-xs font-bold bg-white border border-slate-200/60 rounded-xl px-3 py-2 focus:outline-none cursor-pointer shadow-sm hover:bg-slate-50 transition">
+                        <option value="newest">最新加入</option>
+                        <option value="popular">最熱門</option>
+                    </select>
+                </div>
             </div>
             <div id="explore-grid" class="masonry-grid"><p class="text-slate-500 text-sm py-10 text-center col-span-full block w-full">正在同步最新資料...</p></div>
         </section>
@@ -125,7 +131,10 @@
         <!-- 第二層：專屬訂閱 -->
         <section id="layer-subs" class="layer-section hidden transition-opacity duration-300">
             <div class="mb-6 bg-white p-5 sm:p-6 rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.01)]">
-                <h2 class="text-sm sm:text-base font-black text-slate-800 tracking-wider mb-1.5">專屬標籤追蹤</h2>
+                <div class="flex justify-between items-start mb-1.5 gap-3">
+                    <h2 class="text-sm sm:text-base font-black text-slate-800 tracking-wider">專屬標籤追蹤</h2>
+                    <button onclick="toggleViewMode()" class="view-toggle-btn text-xs font-bold bg-slate-50 border border-slate-200/60 rounded-xl px-3 py-2 text-slate-500 shadow-sm hover:bg-slate-100 transition active:scale-95 flex-shrink-0">☰ 清單</button>
+                </div>
                 <p class="text-xs text-slate-400 mb-4">點擊標籤直接檢視影片，點擊 ⭐ 新增/取消訂閱</p>
                 
                 <div class="relative max-w-xs mb-5">
@@ -173,6 +182,7 @@
                         <span>⬅</span> 返回列表
                     </button>
                     <div class="flex items-center gap-2">
+                        <button onclick="toggleViewMode()" class="view-toggle-btn text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">☰ 清單</button>
                         <!-- [新增] 分享資料夾按鈕 -->
                         <button id="btn-share-folder" class="text-xs font-bold text-sky-600 hover:bg-sky-50 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">🔗 分享</button>
                         <button id="btn-edit-folder" class="text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">⚙️ 修改</button>
@@ -246,6 +256,8 @@
         let subscribedTags = []; 
         let currentSaveVideoId = null; 
         let foldersRef = null; 
+        let viewMode = 'grid'; // 'grid' 大圖檢視 | 'list' 清單檢視
+        let lastGridData = {}; // 記住每個容器最後渲染的內容，供切換檢視時重繪
         const fallbackImage = "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&w=600&q=80";
 
         // 平台識別色設定
@@ -295,6 +307,31 @@
             `;
         }
 
+        // 清單檢視卡片
+        function videoListHtml(video) {
+            let displayTitle = video.custom_title || video.original_title || video.original_excerpt || "未命名影片";
+            const tagsArray = Array.isArray(video.tags) ? video.tags : [];
+            const tagsHtml = tagsArray.map(tag => `<span class="text-[9px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">#${tag}</span>`).join('');
+            const [platformLabel, platformClass, platformStyle] = platformBadgeStyle(video.platform);
+
+            return `
+                <div class="flex gap-3 sm:gap-4 bg-white rounded-2xl border border-slate-100/80 shadow-sm hover:shadow-md transition-all duration-300 p-3 cursor-pointer group" onclick="openVideo('${video.id}')">
+                    <div class="relative w-28 sm:w-40 flex-shrink-0 aspect-[4/3] rounded-xl overflow-hidden">
+                        <img src="${video.thumbnail_url}" referrerpolicy="no-referrer" onerror="this.src='${fallbackImage}'" loading="lazy" class="absolute inset-0 w-full h-full object-cover transform group-hover:scale-105 transition-all duration-700">
+                        <div class="absolute top-1.5 left-1.5 backdrop-blur-md text-[8px] px-2 py-0.5 rounded-md font-black border tracking-wide uppercase ${platformClass}" style="${platformStyle}">${platformLabel}</div>
+                    </div>
+                    <div class="flex-1 min-w-0 flex flex-col py-0.5">
+                        <h3 class="font-bold text-[13px] sm:text-sm leading-snug text-slate-800 mb-1.5">${displayTitle}</h3>
+                        ${video.description ? `<p class="text-[11px] sm:text-xs text-slate-400 leading-relaxed mb-2">${video.description}</p>` : ''}
+                        <div class="mt-auto flex items-center gap-1.5 flex-wrap">${tagsHtml}</div>
+                    </div>
+                    <button onclick="event.stopPropagation(); openSaveModal('${video.id}')" title="加入收藏" class="self-start flex-shrink-0 bg-slate-50 hover:bg-slate-100 text-slate-400 hover:text-sky-500 w-8 h-8 rounded-full flex items-center justify-center transition active:scale-90">
+                        <span class="text-xs">📁</span>
+                    </button>
+                </div>
+            `;
+        }
+
         window.openVideo = function(videoId) {
             const video = allVideos.find(v => v.id === videoId);
             if (!video) return;
@@ -305,15 +342,33 @@
         };
 
         function renderGrid(containerId, list, emptyMessage) {
+            lastGridData[containerId] = { list, emptyMessage };
             const container = document.getElementById(containerId);
             if(list.length > 0) {
-                container.classList.add('masonry-grid');
-                container.innerHTML = list.map(v => `<div class="masonry-item">${videoCardHtml(v)}</div>`).join('');
+                if (viewMode === 'list') {
+                    container.classList.remove('masonry-grid');
+                    container.innerHTML = `<div class="flex flex-col gap-3">${list.map(v => videoListHtml(v)).join('')}</div>`;
+                } else {
+                    container.classList.add('masonry-grid');
+                    container.innerHTML = list.map(v => `<div class="masonry-item">${videoCardHtml(v)}</div>`).join('');
+                }
             } else {
                 container.classList.remove('masonry-grid'); 
                 container.innerHTML = `<div class="py-12 text-center text-slate-400 text-sm w-full">${emptyMessage}</div>`;
             }
         }
+
+        // 切換大圖／清單檢視，並讓所有已渲染過的影片牆（首頁、訂閱、收藏夾、分享頁）套用同一個設定
+        window.toggleViewMode = function() {
+            viewMode = viewMode === 'grid' ? 'list' : 'grid';
+            document.querySelectorAll('.view-toggle-btn').forEach(btn => {
+                btn.innerHTML = viewMode === 'grid' ? '☰ 清單' : '⣿ 大圖';
+            });
+            Object.keys(lastGridData).forEach(containerId => {
+                const { list, emptyMessage } = lastGridData[containerId];
+                renderGrid(containerId, list, emptyMessage);
+            });
+        };
 
         window.renderExplore = function() {
             const keyword = document.getElementById('search-input').value.trim().toLowerCase();
