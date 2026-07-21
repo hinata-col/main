@@ -63,7 +63,8 @@
         <nav class="max-w-7xl mx-auto px-4 sm:px-6 pb-3 flex">
             <div class="bg-slate-200/40 p-1 rounded-2xl flex w-fit shadow-inner">
                 <button onclick="switchLayer('explore')" id="tab-explore" class="px-4 sm:px-5 py-2 text-xs font-black rounded-xl bg-white shadow-sm text-slate-900 transition-all duration-300">🏠 首頁</button>
-                <button onclick="switchLayer('subs')" id="tab-subs" class="px-4 sm:px-5 py-2 text-xs font-black rounded-xl text-slate-500 hover:text-slate-900 transition-all duration-300">🔔 專屬訂閱</button>
+                <button onclick="switchLayer('subs')" id="tab-subs" class="px-4 sm:px-5 py-2 text-xs font-black rounded-xl text-slate-500 hover:text-slate-900 transition-all duration-300">🔔 訂閱標籤</button>
+                <button onclick="switchLayer('playlists')" id="tab-playlists" class="px-4 sm:px-5 py-2 text-xs font-black rounded-xl text-slate-500 hover:text-slate-900 transition-all duration-300">✨ 精華區</button>
                 <button onclick="switchLayer('folders')" id="tab-folders" class="px-4 sm:px-5 py-2 text-xs font-black rounded-xl text-slate-500 hover:text-slate-900 transition-all duration-300">📁 個人收藏</button>
             </div>
         </nav>
@@ -158,7 +159,31 @@
             <div id="subs-grid" class="masonry-grid"><p class="text-slate-500 text-sm py-10 text-center col-span-full block w-full">請點選上方標籤過濾影片</p></div>
         </section>
 
-        <!-- 第三層：個人收藏夾 -->
+        <!-- 第三層：精華區（主題懶人包） -->
+        <section id="layer-playlists" class="layer-section hidden transition-opacity duration-300">
+            <!-- 懶人包列表 -->
+            <div id="playlists-main-view" class="space-y-4">
+                <div class="flex justify-between items-center mb-2">
+                    <h2 class="text-sm sm:text-base font-black text-slate-800 tracking-wider">✨ 主題懶人包</h2>
+                </div>
+                <div id="playlists-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+            </div>
+
+            <!-- 單一懶人包內容 -->
+            <div id="playlist-view" class="hidden">
+                <div class="flex flex-wrap justify-between items-center gap-3 mb-5">
+                    <button onclick="closePlaylistView()" class="flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-slate-900 transition bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">
+                        <span>⬅</span> 返回列表
+                    </button>
+                    <button onclick="toggleViewMode()" class="view-toggle-btn text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">☰ 清單</button>
+                </div>
+                <h2 id="playlist-view-title" class="text-lg sm:text-xl font-black text-slate-800 tracking-wider mb-1.5"></h2>
+                <p id="playlist-view-desc" class="text-xs text-slate-400 mb-5"></p>
+                <div id="playlist-videos-grid" class="masonry-grid"></div>
+            </div>
+        </section>
+
+        <!-- 第四層：個人收藏夾 -->
         <section id="layer-folders" class="layer-section hidden transition-opacity duration-300">
             <div id="folder-login-prompt" class="hidden text-center py-16 bg-white rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.01)] max-w-md mx-auto">
                 <span class="text-4xl block mb-4">🔐</span>
@@ -250,6 +275,7 @@
         const auth = getAuth(app);
 
         let allVideos = [];
+        let allPlaylists = [];
         let allFolders = [];
         let currentUser = null;
         let activeTag = null;
@@ -362,7 +388,7 @@
         window.toggleViewMode = function() {
             viewMode = viewMode === 'grid' ? 'list' : 'grid';
             document.querySelectorAll('.view-toggle-btn').forEach(btn => {
-                btn.innerHTML = viewMode === 'grid' ? '☰ 清單' : '⣿ 大圖';
+                btn.innerHTML = viewMode === 'grid' ? '☰ 清單檢視' : '⣿ 大圖檢視';
             });
             Object.keys(lastGridData).forEach(containerId => {
                 const { list, emptyMessage } = lastGridData[containerId];
@@ -553,10 +579,72 @@
 
         onValue(ref(db, 'videos'), (snapshot) => {
             allVideos = snapshot.val() ? Object.values(snapshot.val()) : [];
-            renderExplore(); renderRandom(true); renderSubs();
+            renderExplore(); renderRandom(true); renderSubs(); renderPlaylistsPage();
+            if(!document.getElementById('playlist-view').classList.contains('hidden')) {
+                openPlaylistView(document.getElementById('playlist-view').dataset.playlistId);
+            }
             // 如果當前在分享檢視頁，也需要觸發一次更新
             checkSharedUrl();
         });
+
+        // [新增] 精華區：讀取 Google 試算表 Playlists 分頁經由 GAS 寫入的 /playlists 節點
+        // 預期資料格式：playlists/{playlistId} = { name, emoji, description, order, video_ids: [videoId, ...] }
+        onValue(ref(db, 'playlists'), (snapshot) => {
+            const data = snapshot.val() || {};
+            allPlaylists = Object.keys(data).map(id => ({ id, ...data[id] }));
+            allPlaylists.sort((a, b) => (a.order || 0) - (b.order || 0));
+            renderPlaylistsPage();
+        });
+
+        function getPlaylistVideoIds(playlist) {
+            if (!playlist.video_ids) return [];
+            return Array.isArray(playlist.video_ids) ? playlist.video_ids.filter(Boolean) : Object.keys(playlist.video_ids);
+        }
+
+        function renderPlaylistsPage() {
+            const container = document.getElementById('playlists-container');
+            if (!container) return;
+            if (allPlaylists.length === 0) {
+                container.innerHTML = '<p class="text-slate-500 text-sm py-10 text-center col-span-full">目前尚無精華懶人包，敬請期待！</p>';
+                return;
+            }
+            container.innerHTML = allPlaylists.map(p => {
+                const count = getPlaylistVideoIds(p).length;
+                return `
+                <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 flex items-center justify-between cursor-pointer hover:shadow-md hover:border-slate-200 transition-all duration-200 active:scale-[0.98]" onclick="openPlaylistView('${p.id}')">
+                    <div class="flex items-center gap-4">
+                        <div class="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-2xl border border-slate-100">${p.emoji || '✨'}</div>
+                        <div>
+                            <h2 class="text-base font-extrabold text-slate-900">${p.name}</h2>
+                            <p class="text-xs text-slate-400 mt-1">${p.description ? p.description + '・' : ''}共 ${count} 部影片</p>
+                        </div>
+                    </div>
+                    <div class="text-slate-300 pr-2">➔</div>
+                </div>`;
+            }).join('');
+        }
+
+        window.openPlaylistView = function(playlistId) {
+            const playlist = allPlaylists.find(p => p.id === playlistId);
+            if (!playlist) return;
+
+            document.getElementById('playlists-main-view').classList.add('hidden');
+            const playlistViewEl = document.getElementById('playlist-view');
+            playlistViewEl.classList.remove('hidden');
+            playlistViewEl.dataset.playlistId = playlistId;
+            document.getElementById('playlist-view-title').innerText = `${playlist.emoji || '✨'} ${playlist.name}`;
+            document.getElementById('playlist-view-desc').innerText = playlist.description || '';
+
+            const ids = getPlaylistVideoIds(playlist);
+            let list = allVideos.filter(v => ids.includes(v.id));
+            list.sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
+            renderGrid('playlist-videos-grid', list, '這個懶人包目前還沒有收錄影片喔！');
+        };
+
+        window.closePlaylistView = function() {
+            document.getElementById('playlists-main-view').classList.remove('hidden');
+            document.getElementById('playlist-view').classList.add('hidden');
+        };
 
         window.openFolderCreate = function() {
             if(!currentUser) { alert('請先登入帳號才能建立資料夾！'); openAccountSettings(); return; }
@@ -821,12 +909,13 @@
         window.switchLayer = function(layer) {
             document.querySelectorAll('.layer-section').forEach(el => el.classList.add('hidden'));
             document.getElementById(`layer-${layer}`).classList.remove('hidden');
-            ['explore', 'subs', 'folders'].forEach(t => {
+            ['explore', 'subs', 'playlists', 'folders'].forEach(t => {
                 document.getElementById(`tab-${t}`).className = t === layer 
                     ? "px-5 py-2 text-xs font-black rounded-xl bg-white shadow-sm text-slate-900 transition-all duration-300" 
                     : "px-5 py-2 text-xs font-black rounded-xl text-slate-500 hover:text-slate-900 transition-all duration-300";
             });
             if(layer === 'folders') closeFolderView();
+            if(layer === 'playlists') closePlaylistView();
         };
     </script>
 </body>
