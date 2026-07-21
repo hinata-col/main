@@ -85,7 +85,7 @@
                     <p id="shared-folder-desc" class="text-xs text-slate-400 mt-1"></p>
                 </div>
                 <div class="flex items-center gap-2 flex-shrink-0 self-start sm:self-auto">
-                    <button onclick="toggleViewMode()" class="view-toggle-btn text-xs font-bold bg-white border border-sky-100 rounded-xl px-3 py-2.5 text-slate-500 shadow-sm hover:bg-sky-50 transition active:scale-95">☰ 清單</button>
+                    <button onclick="toggleViewMode()" class="view-toggle-btn text-xs font-bold bg-white border border-sky-100 rounded-xl px-3 py-2.5 text-slate-500 shadow-sm hover:bg-sky-50 transition active:scale-95">☰ 清單檢視</button>
                     <button onclick="exitSharedView()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-black px-5 py-3 rounded-xl transition shadow-sm active:scale-95 whitespace-nowrap">🏠 前往首頁探索更多</button>
                 </div>
             </div>
@@ -119,7 +119,7 @@
             <div class="mb-4 sm:mb-6 flex justify-between items-center border-t border-slate-200/40 pt-6 sm:pt-8">
                 <h2 class="text-sm sm:text-base font-black text-slate-800 tracking-wider">影片牆</h2>
                 <div class="flex items-center gap-2">
-                    <button onclick="toggleViewMode()" class="view-toggle-btn text-xs font-bold bg-white border border-slate-200/60 rounded-xl px-3 py-2 text-slate-500 shadow-sm hover:bg-slate-50 transition active:scale-95">☰ 清單</button>
+                    <button onclick="toggleViewMode()" class="view-toggle-btn text-xs font-bold bg-white border border-slate-200/60 rounded-xl px-3 py-2 text-slate-500 shadow-sm hover:bg-slate-50 transition active:scale-95">☰ 清單檢視</button>
                     <select id="sort-select" onchange="renderExplore()" class="text-xs font-bold bg-white border border-slate-200/60 rounded-xl px-3 py-2 focus:outline-none cursor-pointer shadow-sm hover:bg-slate-50 transition">
                         <option value="newest">最新加入</option>
                         <option value="popular">最熱門</option>
@@ -134,7 +134,7 @@
             <div class="mb-6 bg-white p-5 sm:p-6 rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.01)]">
                 <div class="flex justify-between items-start mb-1.5 gap-3">
                     <h2 class="text-sm sm:text-base font-black text-slate-800 tracking-wider">專屬標籤追蹤</h2>
-                    <button onclick="toggleViewMode()" class="view-toggle-btn text-xs font-bold bg-slate-50 border border-slate-200/60 rounded-xl px-3 py-2 text-slate-500 shadow-sm hover:bg-slate-100 transition active:scale-95 flex-shrink-0">☰ 清單</button>
+                    <button onclick="toggleViewMode()" class="view-toggle-btn text-xs font-bold bg-slate-50 border border-slate-200/60 rounded-xl px-3 py-2 text-slate-500 shadow-sm hover:bg-slate-100 transition active:scale-95 flex-shrink-0">☰ 清單檢視</button>
                 </div>
                 <p class="text-xs text-slate-400 mb-4">點擊標籤直接檢視影片，點擊 ⭐ 新增/取消訂閱</p>
                 
@@ -175,8 +175,9 @@
                     <button onclick="closePlaylistView()" class="flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-slate-900 transition bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">
                         <span>⬅</span> 返回列表
                     </button>
-                    <button onclick="toggleViewMode()" class="view-toggle-btn text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">☰ 清單</button>
+                    <button onclick="toggleViewMode()" class="view-toggle-btn text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">☰ 清單檢視</button>
                 </div>
+                <img id="playlist-view-cover" src="" class="hidden w-full aspect-[21/9] object-cover rounded-2xl mb-4 border border-slate-100">
                 <h2 id="playlist-view-title" class="text-lg sm:text-xl font-black text-slate-800 tracking-wider mb-1.5"></h2>
                 <p id="playlist-view-desc" class="text-xs text-slate-400 mb-5"></p>
                 <div id="playlist-videos-grid" class="masonry-grid"></div>
@@ -207,7 +208,7 @@
                         <span>⬅</span> 返回列表
                     </button>
                     <div class="flex items-center gap-2">
-                        <button onclick="toggleViewMode()" class="view-toggle-btn text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">☰ 清單</button>
+                        <button onclick="toggleViewMode()" class="view-toggle-btn text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">☰ 清單檢視</button>
                         <!-- [新增] 分享資料夾按鈕 -->
                         <button id="btn-share-folder" class="text-xs font-bold text-sky-600 hover:bg-sky-50 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">🔗 分享</button>
                         <button id="btn-edit-folder" class="text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">⚙️ 修改</button>
@@ -591,7 +592,9 @@
         // 預期資料格式：playlists/{playlistId} = { name, emoji, description, order, video_ids: [videoId, ...] }
         onValue(ref(db, 'playlists'), (snapshot) => {
             const data = snapshot.val() || {};
-            allPlaylists = Object.keys(data).map(id => ({ id, ...data[id] }));
+            allPlaylists = Object.keys(data)
+                .map(id => ({ id, ...data[id] }))
+                .filter(p => !p.hidden);
             allPlaylists.sort((a, b) => (a.order || 0) - (b.order || 0));
             renderPlaylistsPage();
         });
@@ -610,16 +613,19 @@
             }
             container.innerHTML = allPlaylists.map(p => {
                 const count = getPlaylistVideoIds(p).length;
+                const coverHtml = p.cover_image
+                    ? `<img src="${p.cover_image}" referrerpolicy="no-referrer" loading="lazy" onerror="this.src='${fallbackImage}'" class="w-14 h-14 rounded-2xl object-cover border border-slate-100 flex-shrink-0">`
+                    : `<div class="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-2xl border border-slate-100 flex-shrink-0">✨</div>`;
                 return `
                 <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 flex items-center justify-between cursor-pointer hover:shadow-md hover:border-slate-200 transition-all duration-200 active:scale-[0.98]" onclick="openPlaylistView('${p.id}')">
-                    <div class="flex items-center gap-4">
-                        <div class="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-2xl border border-slate-100">${p.emoji || '✨'}</div>
-                        <div>
-                            <h2 class="text-base font-extrabold text-slate-900">${p.name}</h2>
+                    <div class="flex items-center gap-4 min-w-0">
+                        ${coverHtml}
+                        <div class="min-w-0">
+                            <h2 class="text-base font-extrabold text-slate-900 truncate">${p.name}</h2>
                             <p class="text-xs text-slate-400 mt-1">${p.description ? p.description + '・' : ''}共 ${count} 部影片</p>
                         </div>
                     </div>
-                    <div class="text-slate-300 pr-2">➔</div>
+                    <div class="text-slate-300 pr-2 flex-shrink-0">➔</div>
                 </div>`;
             }).join('');
         }
@@ -632,8 +638,16 @@
             const playlistViewEl = document.getElementById('playlist-view');
             playlistViewEl.classList.remove('hidden');
             playlistViewEl.dataset.playlistId = playlistId;
-            document.getElementById('playlist-view-title').innerText = `${playlist.emoji || '✨'} ${playlist.name}`;
+            document.getElementById('playlist-view-title').innerText = playlist.name;
             document.getElementById('playlist-view-desc').innerText = playlist.description || '';
+            const coverEl = document.getElementById('playlist-view-cover');
+            if (playlist.cover_image) {
+                coverEl.src = playlist.cover_image;
+                coverEl.classList.remove('hidden');
+            } else {
+                coverEl.classList.add('hidden');
+                coverEl.src = '';
+            }
 
             const ids = getPlaylistVideoIds(playlist);
             let list = allVideos.filter(v => ids.includes(v.id));
