@@ -503,8 +503,8 @@
                     emptyMessage = '您追蹤的標籤中目前沒有新影片';
                 }
             } else {
-                filteredVideos = allVideos.filter(v => !v.hidden && v.tags && v.tags.some(t => activeTags.includes(t)));
-                emptyMessage = `目前沒有 ${activeTags.map(t => '#' + t).join(' / ')} 的影片`;
+                filteredVideos = allVideos.filter(v => !v.hidden && v.tags && activeTags.every(t => v.tags.includes(t)));
+                emptyMessage = `目前沒有同時符合 ${activeTags.map(t => '#' + t).join(' + ')} 的影片`;
             }
 
             filteredVideos.sort((a, b) => b.created_at - a.created_at);
