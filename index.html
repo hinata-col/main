@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-5SJQCZHPFC"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-5SJQCZHPFC');
-</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>留友看 Hinata Ver.</title>
@@ -327,7 +318,7 @@
         let allPlaylists = [];
         let allFolders = [];
         let currentUser = null;
-        let activeTag = null;
+        let activeTags = [];
         let subscribedTags = []; 
         let currentSaveVideoId = null; 
         let foldersRef = null; 
@@ -474,7 +465,7 @@
                 activeTagsContainer.innerHTML = subscribedTags.map(tag => {
                     return `
                     <div class="inline-flex items-center border border-sky-200 bg-sky-50 rounded-xl shadow-sm overflow-hidden transition hover:border-sky-300">
-                        <button onclick="filterSubs('${tag}')" class="px-3 py-1.5 text-xs font-black ${activeTag === tag ? 'bg-sky-500 text-white' : 'text-sky-600 hover:bg-sky-100/50'} transition">
+                        <button onclick="filterSubs('${tag}')" class="px-3 py-1.5 text-xs font-black ${activeTags.includes(tag) ? 'bg-sky-500 text-white' : 'text-sky-600 hover:bg-sky-100/50'} transition">
                             #${tag}
                         </button>
                         <button onclick="toggleTagSub('${tag}')" class="px-2.5 py-1.5 text-xs bg-transparent border-l border-sky-100 hover:bg-red-50 transition" title="取消訂閱">
@@ -493,7 +484,7 @@
                 allTagsContainer.innerHTML = remainingTags.map(tag => {
                     return `
                     <div class="inline-flex items-center border border-slate-200/60 bg-white rounded-xl shadow-sm overflow-hidden transition hover:border-slate-300">
-                        <button onclick="filterSubs('${tag}')" class="px-3 py-1.5 text-xs font-bold ${activeTag === tag ? 'bg-slate-900 text-white' : 'text-slate-700 hover:bg-slate-50'} transition">
+                        <button onclick="filterSubs('${tag}')" class="px-3 py-1.5 text-xs font-bold ${activeTags.includes(tag) ? 'bg-slate-900 text-white' : 'text-slate-700 hover:bg-slate-50'} transition">
                             #${tag}
                         </button>
                         <button onclick="toggleTagSub('${tag}')" class="px-2.5 py-1.5 text-xs bg-transparent border-l border-slate-100 hover:bg-sky-50 transition" title="訂閱此標籤">
@@ -506,14 +497,14 @@
             let filteredVideos = [];
             let emptyMessage = '請點選上方標籤過濾影片';
 
-            if (!activeTag) {
+            if (activeTags.length === 0) {
                 if(subscribedTags.length > 0) {
                     filteredVideos = allVideos.filter(v => !v.hidden && v.tags && v.tags.some(t => subscribedTags.includes(t)));
                     emptyMessage = '您追蹤的標籤中目前沒有新影片';
                 }
             } else {
-                filteredVideos = allVideos.filter(v => !v.hidden && v.tags && v.tags.includes(activeTag));
-                emptyMessage = `目前沒有 #${activeTag} 的影片`;
+                filteredVideos = allVideos.filter(v => !v.hidden && v.tags && v.tags.some(t => activeTags.includes(t)));
+                emptyMessage = `目前沒有 ${activeTags.map(t => '#' + t).join(' / ')} 的影片`;
             }
 
             filteredVideos.sort((a, b) => b.created_at - a.created_at);
@@ -522,7 +513,14 @@
 
         window.renderSubs = renderSubs;
 
-        window.filterSubs = function(tag) { activeTag = tag; renderSubs(); };
+        window.filterSubs = function(tag) {
+            if (activeTags.includes(tag)) {
+                activeTags = activeTags.filter(t => t !== tag);
+            } else {
+                activeTags.push(tag);
+            }
+            renderSubs();
+        };
 
         window.toggleTagSub = function(tag) {
             if(!currentUser) { alert('請先登入帳號才能訂閱 Tag！'); openAccountSettings(); return; }
