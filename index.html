@@ -228,7 +228,27 @@
             <h2 class="text-sm sm:text-base font-black mb-4 text-slate-900">帳號設定</h2>
             
             <div id="login-section" class="hidden">
-                <p class="text-xs text-slate-400 mb-6 leading-relaxed">登入後即可建立您的專屬收藏夾、訂閱標籤，並在不同裝置間同步。</p>
+                <p class="text-xs text-slate-400 mb-4 leading-relaxed">登入後即可建立您的專屬收藏夾、訂閱標籤，並在不同裝置間同步。</p>
+                <div class="bg-sky-50/70 border border-sky-100 rounded-2xl p-3.5 mb-5 space-y-2.5">
+                    <div class="flex items-start gap-2">
+                        <span class="text-sm leading-none mt-0.5">🔐</span>
+                        <p class="text-[11px] text-slate-500 leading-relaxed">
+                            登入採用 Google 官方 OAuth 驗證，帳號密碼由 Google 直接處理，本站不會經手也不會取得您的密碼。
+                        </p>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="text-sm leading-none mt-0.5">🛡️</span>
+                        <p class="text-[11px] text-slate-500 leading-relaxed">
+                            所有資料傳輸皆採 HTTPS 加密，登入與瀏覽過程中的資訊都在加密環境下進行，防範封包攔截風險。
+                        </p>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="text-sm leading-none mt-0.5">🙅</span>
+                        <p class="text-[11px] text-slate-500 leading-relaxed">
+                            登入資料僅用於儲存您的收藏與訂閱設定，不會用於其他用途或提供給第三方。
+                        </p>
+                    </div>
+                </div>
                 <button onclick="handleLogin()" class="w-full bg-sky-500 hover:bg-sky-600 text-white font-extrabold py-3.5 rounded-2xl transition shadow-md active:scale-95">使用 Google 帳號登入</button>
             </div>
 
