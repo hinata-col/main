@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5SJQCZHPFC"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-5SJQCZHPFC');
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>留友看 Hinata Ver.</title>
@@ -37,6 +46,25 @@
         }
         .animate-slide-up { animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         .animate-fade-in { animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+        /* 縮圖載入中骨架屏效果 */
+        @keyframes shimmer {
+            0% { background-position: -400px 0; }
+            100% { background-position: 400px 0; }
+        }
+        .thumb-skeleton {
+            background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 37%, #f1f5f9 63%);
+            background-size: 400px 100%;
+            animation: shimmer 1.6s ease-in-out infinite;
+        }
+        .thumb-img {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        .thumb-img.loaded {
+            opacity: 0.9;
+        }
+        .thumb-img.loaded.thumb-img-list { opacity: 1; }
     </style>
 </head>
 <body class="bg-slate-50/50 text-slate-800 font-sans antialiased pb-24 min-h-screen relative overflow-x-hidden select-none sm:select-text">
@@ -335,7 +363,8 @@
 
             return `
                 <div class="relative w-full aspect-[3/4] rounded-3xl overflow-hidden cursor-pointer group shadow-[0_4px_20px_rgb(14,165,233,0.02)] hover:shadow-xl transition-all duration-300 hover:-translate-y-1" onclick="openVideo('${video.id}')">
-                    <img src="${video.thumbnail_url}" referrerpolicy="no-referrer" onerror="this.src='${fallbackImage}'" loading="lazy" class="absolute inset-0 w-full h-full object-cover transform group-hover:scale-105 transition-all duration-700 opacity-90">
+                    <div class="absolute inset-0 thumb-skeleton"></div>
+                    <img src="${video.thumbnail_url}" referrerpolicy="no-referrer" onerror="this.src='${fallbackImage}'; this.classList.add('loaded');" onload="this.classList.add('loaded')" loading="lazy" class="thumb-img absolute inset-0 w-full h-full object-cover transform group-hover:scale-105 transition-all duration-700">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-900/20 to-transparent"></div>
                     
                     <div class="absolute top-3 left-3 backdrop-blur-md text-[9px] px-2.5 py-1 rounded-lg font-black border tracking-wide uppercase ${platformClass}" style="${platformStyle}">${platformLabel}</div>
@@ -364,7 +393,8 @@
             return `
                 <div class="flex gap-3 sm:gap-4 bg-white rounded-2xl border border-slate-100/80 shadow-sm hover:shadow-md transition-all duration-300 p-3 cursor-pointer group" onclick="openVideo('${video.id}')">
                     <div class="relative w-28 sm:w-40 flex-shrink-0 aspect-[4/3] rounded-xl overflow-hidden">
-                        <img src="${video.thumbnail_url}" referrerpolicy="no-referrer" onerror="this.src='${fallbackImage}'" loading="lazy" class="absolute inset-0 w-full h-full object-cover transform group-hover:scale-105 transition-all duration-700">
+                        <div class="absolute inset-0 thumb-skeleton"></div>
+                        <img src="${video.thumbnail_url}" referrerpolicy="no-referrer" onerror="this.src='${fallbackImage}'; this.classList.add('loaded');" onload="this.classList.add('loaded')" loading="lazy" class="thumb-img thumb-img-list absolute inset-0 w-full h-full object-cover transform group-hover:scale-105 transition-all duration-700">
                         <div class="absolute top-1.5 left-1.5 backdrop-blur-md text-[8px] px-2 py-0.5 rounded-md font-black border tracking-wide uppercase ${platformClass}" style="${platformStyle}">${platformLabel}</div>
                     </div>
                     <div class="flex-1 min-w-0 flex flex-col py-0.5">
