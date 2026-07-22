@@ -71,7 +71,9 @@
                 <span class="bg-gradient-to-r from-sky-400 to-sky-500 bg-clip-text text-transparent">留友看</span> <span class="text-[10px] sm:text-xs font-bold text-sky-400/80 tracking-normal">Hinata Ver.</span>
             </h1>
             <div class="flex items-center gap-2.5">
-                <button onclick="openFolderCreate()" title="新增收藏分類" class="w-9 h-9 rounded-full bg-white shadow-sm border border-slate-100/80 flex items-center justify-center text-base transition hover:bg-slate-50 active:scale-90">📁</button>
+                <button onclick="openMembersModal()" title="相關連結" class="w-12 h-12 rounded-full bg-white shadow-sm border border-slate-100/80 flex items-center justify-center text-base transition hover:bg-slate-50 active:scale-90 overflow-hidden p-1.5">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Hinatazaka46_logomark_2021.svg" alt="日向坂46" class="w-full h-full object-contain">
+                </button>
                 <button id="account-btn" onclick="openAccountSettings()" title="登入 / 我的帳號" class="w-9 h-9 rounded-full bg-sky-500 text-white flex items-center justify-center text-sm font-bold transition overflow-hidden shadow-sm active:scale-90 ring-2 ring-white">
                     <span id="account-initial">?</span>
                     <img id="account-img" class="w-full h-full object-cover hidden" src="" alt="avatar">
@@ -81,9 +83,9 @@
 
         <nav class="max-w-7xl mx-auto px-4 sm:px-6 pb-3 flex">
             <div class="bg-slate-200/40 p-1 rounded-2xl flex w-fit shadow-inner">
-                <button onclick="switchLayer('explore')" id="tab-explore" class="px-4 sm:px-5 py-2 text-xs font-black rounded-xl bg-white shadow-sm text-slate-900 transition-all duration-300">🏠 首頁</button>
+                <button onclick="switchLayer('explore')" id="tab-explore" class="px-4 sm:px-5 py-2 text-xs font-black rounded-xl bg-white shadow-sm text-slate-900 transition-all duration-300">📺 首頁</button>
                 <button onclick="switchLayer('subs')" id="tab-subs" class="px-4 sm:px-5 py-2 text-xs font-black rounded-xl text-slate-500 hover:text-slate-900 transition-all duration-300">🔔 訂閱標籤</button>
-                <button onclick="switchLayer('playlists')" id="tab-playlists" class="px-4 sm:px-5 py-2 text-xs font-black rounded-xl text-slate-500 hover:text-slate-900 transition-all duration-300">✨ 精華區</button>
+                <button onclick="switchLayer('playlists')" id="tab-playlists" class="px-4 sm:px-5 py-2 text-xs font-black rounded-xl text-slate-500 hover:text-slate-900 transition-all duration-300">🌈 精華區</button>
                 <button onclick="switchLayer('folders')" id="tab-folders" class="px-4 sm:px-5 py-2 text-xs font-black rounded-xl text-slate-500 hover:text-slate-900 transition-all duration-300">📁 個人收藏</button>
             </div>
         </nav>
@@ -105,7 +107,7 @@
                 </div>
                 <div class="flex items-center gap-2 flex-shrink-0 self-start sm:self-auto">
                     <button onclick="toggleViewMode()" class="view-toggle-btn text-xs font-bold bg-white border border-sky-100 rounded-xl px-3 py-2.5 text-slate-500 shadow-sm hover:bg-sky-50 transition active:scale-95">☰ 清單檢視</button>
-                    <button onclick="exitSharedView()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-black px-5 py-3 rounded-xl transition shadow-sm active:scale-95 whitespace-nowrap">🏠 前往首頁探索更多</button>
+                    <button onclick="exitSharedView()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-black px-5 py-3 rounded-xl transition shadow-sm active:scale-95 whitespace-nowrap">📺 前往首頁探索更多</button>
                 </div>
             </div>
             <div id="shared-videos-grid" class="masonry-grid"></div>
@@ -130,7 +132,7 @@
             <div class="mb-6">
                 <div class="relative max-w-xl">
                     <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm">🔍</span>
-                    <input id="search-input" type="text" placeholder="搜尋影片標籤或標題..." class="w-full bg-white border border-slate-100 rounded-2xl py-3 pl-11 pr-5 text-sm shadow-[0_4px_20px_rgb(0,0,0,0.01)] focus:outline-none focus:ring-2 focus:ring-sky-200 transition-all duration-300" oninput="renderExplore()">
+                    <input id="search-input" type="text" placeholder="搜尋影片標籤或標題..." class="w-full bg-white border border-slate-100 rounded-2xl py-3 pl-11 pr-5 text-sm shadow-[0_4px_20px_rgb(0,0,0,0.01)] focus:outline-none focus:ring-2 focus:ring-sky-200 transition-all duration-300" oninput="resetExploreAndRender()">
                 </div>
             </div>
 
@@ -139,13 +141,19 @@
                 <h2 class="text-sm sm:text-base font-black text-slate-800 tracking-wider">影片牆</h2>
                 <div class="flex items-center gap-2">
                     <button onclick="toggleViewMode()" class="view-toggle-btn text-xs font-bold bg-white border border-slate-200/60 rounded-xl px-3 py-2 text-slate-500 shadow-sm hover:bg-slate-50 transition active:scale-95">☰ 清單檢視</button>
-                    <select id="sort-select" onchange="renderExplore()" class="text-xs font-bold bg-white border border-slate-200/60 rounded-xl px-3 py-2 focus:outline-none cursor-pointer shadow-sm hover:bg-slate-50 transition">
+                    <select id="sort-select" onchange="resetExploreAndRender()" class="text-xs font-bold bg-white border border-slate-200/60 rounded-xl px-3 py-2 focus:outline-none cursor-pointer shadow-sm hover:bg-slate-50 transition">
                         <option value="newest">最新加入</option>
                         <option value="popular">最熱門</option>
                     </select>
                 </div>
             </div>
             <div id="explore-grid" class="masonry-grid"><p class="text-slate-500 text-sm py-10 text-center col-span-full block w-full">正在同步最新資料...</p></div>
+
+            <!-- [新增] 分頁載入：只顯示部分影片，捲到底再載入更多 -->
+            <div id="explore-load-more-wrap" class="hidden flex flex-col items-center gap-2 mt-6">
+                <span id="explore-load-more-count" class="text-[11px] text-slate-400"></span>
+                <button onclick="loadMoreExplore()" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-black px-6 py-3 rounded-full shadow-sm transition active:scale-95">載入更多影片</button>
+            </div>
         </section>
 
         <!-- 第二層：專屬訂閱 -->
@@ -183,7 +191,7 @@
             <!-- 懶人包列表 -->
             <div id="playlists-main-view" class="space-y-4">
                 <div class="flex justify-between items-center mb-2">
-                    <h2 class="text-sm sm:text-base font-black text-slate-800 tracking-wider">✨ 主題懶人包</h2>
+                    <h2 class="text-sm sm:text-base font-black text-slate-800 tracking-wider">🌈 主題懶人包</h2>
                 </div>
                 <div id="playlists-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
             </div>
@@ -295,9 +303,34 @@
         </div>
     </div>
 
+    <!-- [新增] 成員名鑑彈窗：現役 + 畢業生一覽，點擊圖示可前往官方連結 -->
+    <!-- ⚠️ 注意：內容資料在 <script> 區塊的 HINATAZAKA_MEMBERS 陣列，目前僅為「格式範例」，
+         尚未填入完整、已核對過的成員名單與官方連結，正式上線前請務必先核對過一輪 -->
+    <div id="members-modal" class="fixed inset-0 bg-slate-950/20 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4 transition-opacity duration-300" onclick="if(event.target===this) closeMembersModal()">
+        <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[85vh] p-6 shadow-2xl relative border border-slate-100 animate-slide-up flex flex-col">
+            <button onclick="closeMembersModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-900 text-xl font-bold w-8 h-8 flex items-center justify-center">&times;</button>
+            <h2 class="text-sm sm:text-base font-black mb-1 text-slate-900 flex items-center gap-1.5"><img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Hinatazaka46_logomark_2021.svg" alt="" class="w-4 h-4">相關連結</h2>
+            <p class="text-[11px] text-slate-400 mb-4">日向坂46 與成員相關官方帳號，點擊圖示可前往連結</p>
+
+            <div class="flex items-center gap-2 mb-4 flex-shrink-0">
+                <div class="bg-slate-200/40 p-1 rounded-2xl flex w-fit shadow-inner">
+                    <button onclick="switchMembersTab('active')" id="members-tab-active" class="px-4 py-2 text-xs font-black rounded-xl bg-white shadow-sm text-slate-900 transition-all duration-300">現役成員</button>
+                    <button onclick="switchMembersTab('og')" id="members-tab-og" class="px-4 py-2 text-xs font-black rounded-xl text-slate-500 hover:text-slate-900 transition-all duration-300">畢業生 OG</button>
+                </div>
+            </div>
+
+            <div class="relative max-w-xs mb-4 flex-shrink-0">
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">🔍</span>
+                <input id="members-search-input" type="text" placeholder="搜尋成員姓名..." class="w-full bg-slate-50 border border-slate-100 rounded-xl py-2 pl-9 pr-4 text-xs focus:outline-none focus:ring-2 focus:ring-sky-200 transition-all" oninput="renderMembersGrid()">
+            </div>
+
+            <div id="members-grid" class="grid grid-cols-3 sm:grid-cols-4 gap-4 overflow-y-auto hide-scrollbar pr-1 flex-1 content-start"></div>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getDatabase, ref, onValue, push, set, update, off } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+        import { getDatabase, ref, onValue, push, set, update, off, query, orderByChild, limitToLast } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -325,6 +358,88 @@
         let viewMode = 'grid'; // 'grid' 大圖檢視 | 'list' 清單檢視
         let lastGridData = {}; // 記住每個容器最後渲染的內容，供切換檢視時重繪
         const fallbackImage = "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&w=600&q=80";
+        let membersTab = 'active'; // 'active' 現役 | 'og' 畢業生
+
+        // [新增] 首頁影片牆分頁顯示相關設定
+        const EXPLORE_PAGE_SIZE = 30;
+        let exploreDisplayCount = EXPLORE_PAGE_SIZE;
+
+        // [新增] 成員名鑑資料
+        // ⚠️ 這裡目前只是「資料格式範例」，不是完整且已核對過的成員名單！
+        // type: 'active' 現役 | 'og' 畢業生
+        // avatar 請填官方認證圖片網址；official/x/instagram 請填官方認證連結，沒有的欄位留空字串即可
+        // 正式使用前，請把下方範例換成核對過的真實名單（之後可以請 Claude 協助整理草稿再一起確認）
+        const HINATAZAKA_MEMBERS = [
+            {
+                id: 'group_official',
+                name: '日向坂46（官方帳號）',
+                type: 'active',
+                avatar: 'https://play-lh.googleusercontent.com/pV43--2ukYhZiflPnLxHJxraZtGfpbpr-okBiV9nqWGWiKmfLl1PovJvHS7b7VCEp0fqJGKMBskFRwGplHms5c0=w240-h480-rw',
+                official: 'https://www.hinatazaka46.com/',
+                x: 'https://twitter.com/hinatazaka46',
+                instagram: 'https://www.instagram.com/hinatazaka46/',
+                youtubeMusic: 'https://www.youtube.com/@46officialyoutubechannel99',
+                youtubeVariety: 'https://www.youtube.com/@hinatazakachannel',
+                tiktok: 'https://www.tiktok.com/@hinatazakanews'
+            },
+
+            // ===== 現役成員 =====
+            // 二期生
+            { id: 'kanamura_miku', name: '金村美玖', type: 'active', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/miku.jpg', official: '', x: '', instagram: 'https://www.instagram.com/miku_osushi/' },
+
+            // 三期生
+            { id: 'kamimura_hinano', name: '上村ひなの', type: 'active', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/hinano.jpg', official: '', x: '', instagram: 'https://www.instagram.com/hinanokamimura.official/' },
+            { id: 'takahashi_mikuni', name: '髙橋未来虹', type: 'active', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/mikuni.jpg', official: '', x: '', instagram: 'https://www.instagram.com/mikuni.takahashi__/' },
+            { id: 'morimoto_marie', name: '森本茉莉', type: 'active', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/marie.jpg', official: '', x: '', instagram: 'https://www.instagram.com/mariemorimoto_official/' },
+            { id: 'yamaguchi_haruyo', name: '山口陽世', type: 'active', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/paru.jpg', official: '', x: '', instagram: 'https://www.instagram.com/haruyoyamaguchi.official/' },
+
+            // 四期生
+            { id: 'ishizuka_tamaki', name: '石塚瑶季', type: 'active', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/tamaki.jpg', official: '', x: '', instagram: 'https://www.instagram.com/ishizukatamaki_official/' },
+            { id: 'konishi_nanami', name: '小西夏菜実', type: 'active', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/konishi.jpg', official: '', x: '', instagram: 'https://www.instagram.com/konishi773_official/' },
+            { id: 'shimizu_rio', name: '清水理央', type: 'active', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/rio.jpg', official: '', x: '', instagram: 'https://www.instagram.com/rio_shimizu.official/' },
+            { id: 'hirao_honoka', name: '平尾帆夏', type: 'active', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/hiraho.jpg', official: '', x: '', instagram: 'https://www.instagram.com/hiraho.official/' },
+            { id: 'hiraoka_mitsuki', name: '平岡海月', type: 'active', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/michan.jpg', official: '', x: '', instagram: 'https://www.instagram.com/mitsuki.hiraoka/' },
+            { id: 'miyachi_sumire', name: '宮地すみれ', type: 'active', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/sumire.jpg', official: '', x: '', instagram: 'https://www.instagram.com/sumire_miyachi_/' },
+            { id: 'yamashita_haruka', name: '山下葉留花', type: 'active', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/haruharu.jpg', official: '', x: '', instagram: 'https://www.instagram.com/haruka.yamashita.official/' },
+            { id: 'takeuchi_kirari', name: '竹内希来里', type: 'active', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/kirari.jpg', official: '', x: '', instagram: 'https://www.instagram.com/kirari.takeuchi_official/' },
+            { id: 'fujishima_kaho', name: '藤嶌果歩', type: 'active', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/kaho.jpg', official: '', x: '', instagram: 'https://www.instagram.com/kaho.fujishima_official/' },
+
+            // ===== 畢業成員 =====
+            // 一期生
+            {
+                id: 'kato_shiho', name: '加藤史帆', type: 'og', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/shiho.jpg',
+                official: 'https://shihokato.com/',
+                fc: 'https://yodel-app.com/s/yodel/page/shiho_kato?ima=1425',
+                x: 'https://x.com/kato_staff',
+                instagram: 'https://www.instagram.com/katoshi.official/'
+            },
+            { id: 'sasaki_kumi', name: '佐々木久美', type: 'og', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/kumi.jpg', official: '', x: '', instagram: 'https://www.instagram.com/kumisasaki_/' },
+            { id: 'sasaki_mirei', name: '佐々木美玲', type: 'og', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/mipan.jpg', official: '', x: '', instagram: 'https://www.instagram.com/mireisasaki_official/' },
+            { id: 'saito_kyoko', name: '齊藤京子', type: 'og', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/kyoko.jpg', official: '', x: '', instagram: 'https://www.instagram.com/saitokyoko_official/' },
+            { id: 'higashimura_mei', name: '東村芽依', type: 'og', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/mei.jpg', official: '', x: '', instagram: 'https://www.instagram.com/mei.higashimura/' },
+            { id: 'takamoto_ayaka', name: '高本彩花', type: 'og', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/aya.jpg', official: '', x: '', instagram: 'https://www.instagram.com/ayacheri._.official/' },
+            { id: 'ushio_sarina', name: '潮紗理菜', type: 'og', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/ushio.jpg', official: '', x: '', instagram: 'https://www.instagram.com/ushiosarina8_8/' },
+            { id: 'kageyama_yuka', name: '影山優佳', type: 'og', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/kage.jpg', official: '', x: '', instagram: 'https://www.instagram.com/kageyamayuka_official/' },
+            { id: 'takase_mana', name: '高瀬愛奈', type: 'og', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/manafi.jpg', official: '', x: '', instagram: 'https://www.instagram.com/mana_takase_/' },
+            { id: 'iguchi_mao', name: '井口眞緒', type: 'og', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/mao.jpg', official: '', x: '', instagram: 'https://www.instagram.com/iguchi.mao/' },
+            { id: 'nagahama_neru', name: '長濱ねる', type: 'og', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/neru.jpg', official: '', x: '', instagram: 'https://www.instagram.com/nerunagahama_/' },
+
+            // 二期生
+            {
+                id: 'nibu_akari', name: '丹生明里', type: 'og', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/nibuchan.jpg',
+                official: 'https://akarinibu.com/',
+                fc: 'https://yodel-app.com/s/yodel/page/akari_nibu?ima=1245',
+                x: 'https://x.com/nibuchan_staff',
+                instagram: 'https://www.instagram.com/nibuchan_akari/',
+                youtube: 'https://www.youtube.com/@nibuchannel'
+            },
+            { id: 'watanabe_miho', name: '渡邉美穗', type: 'og', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/miho.jpg', official: '', x: '', instagram: 'https://www.instagram.com/mihowatanabe_/' },
+            { id: 'matsuda_konoka', name: '松田好花', type: 'og', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/konoka.jpg', official: '', x: '', instagram: 'https://www.instagram.com/matsudakonoka.yahos/' },
+            { id: 'tomita_suzuka', name: '富田鈴花', type: 'og', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/suzy.jpg', official: '', x: '', instagram: 'https://www.instagram.com/suzy.tomita/' },
+            { id: 'kawata_hina', name: '河田陽菜', type: 'og', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/hina.jpg', official: '', x: '', instagram: 'https://www.instagram.com/hina17_kawata/' },
+            { id: 'hamagishi_hiyori', name: '濱岸ひより', type: 'og', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/hiyotan.jpg', official: '', x: '', instagram: 'https://www.instagram.com/hiyotan928_official/' },
+            { id: 'miyata_manamo', name: '宮田愛萌', type: 'og', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/manamo.jpg', official: '', x: '', instagram: 'https://www.instagram.com/manamomiyata_official/' }
+        ];
 
         // 平台識別色設定
         function platformBadgeStyle(platform) {
@@ -433,8 +548,12 @@
                 btn.innerHTML = viewMode === 'grid' ? '☰ 清單檢視' : '⣿ 大圖檢視';
             });
             Object.keys(lastGridData).forEach(containerId => {
-                const { list, emptyMessage } = lastGridData[containerId];
-                renderGrid(containerId, list, emptyMessage);
+                const data = lastGridData[containerId];
+                if (data.type === 'folder') {
+                    renderFolderGrid(data.folderId, data.list);
+                } else {
+                    renderGrid(containerId, data.list, data.emptyMessage);
+                }
             });
         };
 
@@ -444,7 +563,33 @@
             let list = allVideos.filter(v => !v.hidden);
             if (keyword) list = list.filter(v => (v.custom_title + v.original_title + v.tags?.join('')).toLowerCase().includes(keyword));
             list.sort((a, b) => sortMode === 'popular' ? (b.view_count || 0) - (a.view_count || 0) : b.created_at - a.created_at);
-            renderGrid('explore-grid', list, '找不到影片。');
+
+            // [新增] 首頁影片牆分批顯示：搜尋／排序永遠是對「全部資料」做的（結果不受分頁影響），
+            // 只是畫面上一次只渲染 exploreDisplayCount 筆，捲到底再載入更多，減少初次渲染與圖片載入量
+            const total = list.length;
+            const visibleList = list.slice(0, exploreDisplayCount);
+            renderGrid('explore-grid', visibleList, '找不到影片。');
+
+            const loadMoreWrap = document.getElementById('explore-load-more-wrap');
+            if (loadMoreWrap) {
+                if (total > visibleList.length) {
+                    loadMoreWrap.classList.remove('hidden');
+                    document.getElementById('explore-load-more-count').innerText = `已顯示 ${visibleList.length} / ${total} 部`;
+                } else {
+                    loadMoreWrap.classList.add('hidden');
+                }
+            }
+        };
+
+        // [新增] 搜尋關鍵字或排序方式改變時，顯示筆數重設回第一頁，避免出現奇怪的殘留筆數
+        window.resetExploreAndRender = function() {
+            exploreDisplayCount = EXPLORE_PAGE_SIZE;
+            renderExplore();
+        };
+
+        window.loadMoreExplore = function() {
+            exploreDisplayCount += EXPLORE_PAGE_SIZE;
+            renderExplore();
         };
 
         function renderSubs() {
@@ -529,52 +674,247 @@
             else set(nodeRef, true); 
         };
 
+        // [新增] 依 order 欄位排序資料夾；沒有 order 的（新建立的）用 created_at 當備援，會自然排到最後
+        function sortedFolders() {
+            return [...allFolders].sort((a, b) => (a.order ?? a.created_at ?? 0) - (b.order ?? b.created_at ?? 0));
+        }
+
+        // [新增] 計算「全部收藏」去重後的影片總數
+        function allSavedVideoIdSet() {
+            const set = new Set();
+            allFolders.forEach(f => { if (f.video_ids) Object.keys(f.video_ids).forEach(id => set.add(id)); });
+            return set;
+        }
+
         function renderFoldersPage() {
             const container = document.getElementById('folders-container');
             if(!currentUser) return;
-            if(allFolders.length === 0) {
-                container.innerHTML = '<p class="text-slate-500 text-sm py-10 text-center col-span-full">尚未建立任何資料夾，快點擊頂部 📁 新增吧！</p>';
+            const sorted = sortedFolders();
+            const allSavedCount = allSavedVideoIdSet().size;
+
+            const allSavedCard = `
+                <div class="bg-gradient-to-br from-sky-50 to-white rounded-3xl p-5 shadow-sm border border-sky-100 flex items-center justify-between cursor-pointer hover:shadow-md hover:border-sky-200 transition-all duration-200 active:scale-[0.98]" onclick="openFolderView('__all__')">
+                    <div class="flex items-center gap-4">
+                        <div class="w-14 h-14 bg-sky-100 rounded-2xl flex items-center justify-center text-2xl border border-sky-200">⭐</div>
+                        <div>
+                            <h2 class="text-base font-extrabold text-slate-900">全部收藏</h2>
+                            <p class="text-xs text-sky-500 mt-1">已收錄 ${allSavedCount} 部影片・彙整所有資料夾</p>
+                        </div>
+                    </div>
+                    <div class="text-sky-300 pr-2">➔</div>
+                </div>`;
+
+            if(sorted.length === 0) {
+                container.innerHTML = allSavedCard + '<p class="text-slate-500 text-sm py-10 text-center col-span-full">尚未建立任何資料夾，快點擊頂部 📁 新增吧！</p>';
                 return;
             }
-            container.innerHTML = allFolders.map(f => {
+            container.innerHTML = allSavedCard + sorted.map((f, idx) => {
                 const count = f.video_ids ? Object.keys(f.video_ids).length : 0;
                 return `
-                <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 flex items-center justify-between cursor-pointer hover:shadow-md hover:border-slate-200 transition-all duration-200 active:scale-[0.98]" onclick="openFolderView('${f.id}')">
-                    <div class="flex items-center gap-4">
-                        <div class="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-2xl border border-slate-100">${f.emoji || '📁'}</div>
-                        <div>
-                            <h2 class="text-base font-extrabold text-slate-900">${f.name}</h2>
+                <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 flex items-center justify-between hover:shadow-md hover:border-slate-200 transition-all duration-200">
+                    <div class="flex items-center gap-4 cursor-pointer flex-1 min-w-0 active:scale-[0.98] transition" onclick="openFolderView('${f.id}')">
+                        <div class="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-2xl border border-slate-100 flex-shrink-0">${f.emoji || '📁'}</div>
+                        <div class="min-w-0">
+                            <h2 class="text-base font-extrabold text-slate-900 truncate">${f.name}</h2>
                             <p class="text-xs text-slate-400 mt-1">已收錄 ${count} 部影片</p>
                         </div>
                     </div>
-                    <div class="text-slate-300 pr-2">➔</div>
+                    <div class="flex items-center gap-1 flex-shrink-0 pl-2">
+                        <button onclick="moveFolder('${f.id}','up')" ${idx === 0 ? 'disabled' : ''} title="上移" class="w-7 h-7 rounded-full bg-slate-50 hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center text-xs text-slate-500 active:scale-90 transition">▲</button>
+                        <button onclick="moveFolder('${f.id}','down')" ${idx === sorted.length - 1 ? 'disabled' : ''} title="下移" class="w-7 h-7 rounded-full bg-slate-50 hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center text-xs text-slate-500 active:scale-90 transition">▼</button>
+                    </div>
                 </div>`;
             }).join('');
         }
 
+        // [新增] 上移／下移資料夾：每次都把目前排序結果重新寫入連續的 order 數值，
+        // 這樣就算舊資料夾原本沒有 order 欄位，第一次操作後也會自動補上
+        window.moveFolder = function(folderId, direction) {
+            if (!currentUser) return;
+            const sorted = sortedFolders();
+            const idx = sorted.findIndex(f => f.id === folderId);
+            if (idx === -1) return;
+            const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
+            if (swapIdx < 0 || swapIdx >= sorted.length) return;
+
+            [sorted[idx], sorted[swapIdx]] = [sorted[swapIdx], sorted[idx]];
+
+            const updates = {};
+            sorted.forEach((f, i) => {
+                updates[`users/${currentUser.uid}/folders/${f.id}/order`] = i;
+            });
+            update(ref(db), updates);
+        };
+
         window.openFolderView = function(folderId) {
-            const folder = allFolders.find(f => f.id === folderId);
-            if(!folder) return;
-            
             document.getElementById('folders-main-view').classList.add('hidden');
             document.getElementById('folder-view').classList.remove('hidden');
+
+            const shareBtn = document.getElementById('btn-share-folder');
+            const editBtn = document.getElementById('btn-edit-folder');
+            const deleteBtn = document.getElementById('btn-delete-folder');
+
+            // [新增] 「全部收藏」是彙整所有資料夾的虛擬檢視，不是真實資料夾，
+            // 不能分享／修改／刪除，也不支援自訂排序（因為影片可能同時來自好幾個資料夾）
+            if (folderId === '__all__') {
+                document.getElementById('folder-view-title').innerText = `⭐ 全部收藏`;
+                shareBtn.classList.add('hidden');
+                editBtn.classList.add('hidden');
+                deleteBtn.classList.add('hidden');
+
+                const videoIdSet = allSavedVideoIdSet();
+                let list = allVideos.filter(v => videoIdSet.has(v.id));
+                list.sort((a, b) => b.created_at - a.created_at);
+
+                lastGridData['folder-videos-grid'] = { type: 'grid_only', folderId: '__all__', list, emptyMessage: '目前還沒有收藏任何影片喔！' };
+                renderGrid('folder-videos-grid', list, '目前還沒有收藏任何影片喔！');
+                return;
+            }
+
+            const folder = allFolders.find(f => f.id === folderId);
+            if(!folder) return;
+
             document.getElementById('folder-view-title').innerText = `${folder.emoji || '📁'} ${folder.name}`;
+            shareBtn.classList.remove('hidden');
+            editBtn.classList.remove('hidden');
+            deleteBtn.classList.remove('hidden');
 
-            document.getElementById('btn-share-folder').onclick = () => shareFolder(folder);
-            document.getElementById('btn-edit-folder').onclick = () => editFolder(folderId, folder.name, folder.emoji);
-            document.getElementById('btn-delete-folder').onclick = () => deleteFolder(folderId, folder.name);
+            shareBtn.onclick = () => shareFolder(folder);
+            editBtn.onclick = () => editFolder(folderId, folder.name, folder.emoji);
+            deleteBtn.onclick = () => deleteFolder(folderId, folder.name);
 
-            const videoIds = folder.video_ids ? Object.keys(folder.video_ids) : [];
-            let list = allVideos.filter(v => videoIds.includes(v.id));
-            
-            list.sort((a, b) => b.created_at - a.created_at);
-            renderGrid('folder-videos-grid', list, '這個資料夾目前還沒有收藏影片喔！');
+            renderFolderVideos(folderId);
         };
 
         window.closeFolderView = function() {
             document.getElementById('folders-main-view').classList.remove('hidden');
             document.getElementById('folder-view').classList.add('hidden');
         };
+
+        // [新增] 依資料夾自訂的 video_order 排序渲染影片；沒排過序的影片會依收藏時間自動補到最後
+        function renderFolderVideos(folderId) {
+            const folder = allFolders.find(f => f.id === folderId);
+            if (!folder) return;
+            const videoIds = folder.video_ids ? Object.keys(folder.video_ids) : [];
+            let orderArr = Array.isArray(folder.video_order) ? folder.video_order.filter(id => videoIds.includes(id)) : [];
+            const missing = videoIds.filter(id => !orderArr.includes(id))
+                .map(id => allVideos.find(v => v.id === id))
+                .filter(Boolean)
+                .sort((a, b) => b.created_at - a.created_at)
+                .map(v => v.id);
+            orderArr = [...orderArr, ...missing];
+
+            const list = orderArr.map(id => allVideos.find(v => v.id === id)).filter(Boolean);
+            renderFolderGrid(folderId, list);
+        }
+
+        // [新增] 上移／下移資料夾內的影片：每次都把完整排序寫回 video_order，
+        // 順便處理舊資料夾第一次使用排序功能時的自動補值
+        window.moveVideoInFolder = function(folderId, videoId, direction) {
+            if (!currentUser) return;
+            const folder = allFolders.find(f => f.id === folderId);
+            if (!folder) return;
+            const videoIds = folder.video_ids ? Object.keys(folder.video_ids) : [];
+            let orderArr = Array.isArray(folder.video_order) ? folder.video_order.filter(id => videoIds.includes(id)) : [];
+            const missing = videoIds.filter(id => !orderArr.includes(id))
+                .map(id => allVideos.find(v => v.id === id))
+                .filter(Boolean)
+                .sort((a, b) => b.created_at - a.created_at)
+                .map(v => v.id);
+            orderArr = [...orderArr, ...missing];
+
+            const idx = orderArr.indexOf(videoId);
+            if (idx === -1) return;
+            const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
+            if (swapIdx < 0 || swapIdx >= orderArr.length) return;
+            [orderArr[idx], orderArr[swapIdx]] = [orderArr[swapIdx], orderArr[idx]];
+
+            set(ref(db, `users/${currentUser.uid}/folders/${folderId}/video_order`), orderArr).then(() => {
+                renderFolderVideos(folderId);
+            });
+        };
+
+        // [新增] 資料夾專用的影片卡片／清單樣式，比一般影片牆多了上移／下移按鈕
+        function folderVideoCardHtml(video, folderId, idx, total) {
+            let displayTitle = video.custom_title || video.original_title || video.original_excerpt || "未命名影片";
+            const tagsArray = Array.isArray(video.tags) ? video.tags : [];
+            const tagsHtml = tagsArray.map(tag => `<span class="text-[9px] font-semibold text-slate-300 bg-white/10 backdrop-blur-sm px-2 py-0.5 rounded-full">#${tag}</span>`).join('');
+            const [platformLabel, platformClass, platformStyle] = platformBadgeStyle(video.platform);
+
+            return `
+                <div class="relative w-full aspect-[3/4] rounded-3xl overflow-hidden cursor-pointer group shadow-[0_4px_20px_rgb(14,165,233,0.02)] hover:shadow-xl transition-all duration-300 hover:-translate-y-1" onclick="openVideo('${video.id}')">
+                    <div class="absolute inset-0 thumb-skeleton"></div>
+                    <img src="${video.thumbnail_url}" referrerpolicy="no-referrer" onerror="this.src='${fallbackImage}'; this.classList.add('loaded');" onload="this.classList.add('loaded')" loading="lazy" class="thumb-img absolute inset-0 w-full h-full object-cover transform group-hover:scale-105 transition-all duration-700">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-900/20 to-transparent"></div>
+
+                    <div class="absolute top-3 left-3 backdrop-blur-md text-[9px] px-2.5 py-1 rounded-lg font-black border tracking-wide uppercase ${platformClass}" style="${platformStyle}">${platformLabel}</div>
+
+                    <div class="absolute top-3 right-3 flex flex-col gap-1.5 z-10">
+                        <button onclick="event.stopPropagation(); moveVideoInFolder('${folderId}','${video.id}','up')" ${idx === 0 ? 'disabled' : ''} title="上移" class="bg-slate-900/40 hover:bg-slate-900/80 backdrop-blur-md text-white w-8 h-8 rounded-full flex items-center justify-center transition border border-white/10 active:scale-90 disabled:opacity-30 disabled:cursor-not-allowed">
+                            <span class="text-[10px]">▲</span>
+                        </button>
+                        <button onclick="event.stopPropagation(); moveVideoInFolder('${folderId}','${video.id}','down')" ${idx === total - 1 ? 'disabled' : ''} title="下移" class="bg-slate-900/40 hover:bg-slate-900/80 backdrop-blur-md text-white w-8 h-8 rounded-full flex items-center justify-center transition border border-white/10 active:scale-90 disabled:opacity-30 disabled:cursor-not-allowed">
+                            <span class="text-[10px]">▼</span>
+                        </button>
+                    </div>
+
+                    <div class="absolute bottom-0 left-0 p-4 w-full text-white">
+                        <h3 class="font-bold text-[13px] sm:text-[14px] leading-snug mb-1.5 drop-shadow-md line-clamp-2">${displayTitle}</h3>
+                        ${video.description ? `<p class="text-[10px] sm:text-[11px] text-slate-300 line-clamp-1 mb-2 opacity-90">${video.description}</p>` : ''}
+                        <div class="flex items-center gap-1.5 overflow-hidden whitespace-nowrap w-full text-ellipsis mt-1">${tagsHtml}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function folderVideoListHtml(video, folderId, idx, total) {
+            let displayTitle = video.custom_title || video.original_title || video.original_excerpt || "未命名影片";
+            const tagsArray = Array.isArray(video.tags) ? video.tags : [];
+            const tagsHtml = tagsArray.map(tag => `<span class="text-[9px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">#${tag}</span>`).join('');
+            const [platformLabel, platformClass, platformStyle] = platformBadgeStyle(video.platform);
+
+            return `
+                <div class="flex gap-3 sm:gap-4 bg-white rounded-2xl border border-slate-100/80 shadow-sm hover:shadow-md transition-all duration-300 p-3 cursor-pointer group" onclick="openVideo('${video.id}')">
+                    <div class="relative w-28 sm:w-40 flex-shrink-0 aspect-[4/3] rounded-xl overflow-hidden">
+                        <div class="absolute inset-0 thumb-skeleton"></div>
+                        <img src="${video.thumbnail_url}" referrerpolicy="no-referrer" onerror="this.src='${fallbackImage}'; this.classList.add('loaded');" onload="this.classList.add('loaded')" loading="lazy" class="thumb-img thumb-img-list absolute inset-0 w-full h-full object-cover transform group-hover:scale-105 transition-all duration-700">
+                        <div class="absolute top-1.5 left-1.5 backdrop-blur-md text-[8px] px-2 py-0.5 rounded-md font-black border tracking-wide uppercase ${platformClass}" style="${platformStyle}">${platformLabel}</div>
+                    </div>
+                    <div class="flex-1 min-w-0 flex flex-col py-0.5">
+                        <h3 class="font-bold text-[13px] sm:text-sm leading-snug text-slate-800 mb-1.5">${displayTitle}</h3>
+                        ${video.description ? `<p class="text-[11px] sm:text-xs text-slate-400 leading-relaxed mb-2">${video.description}</p>` : ''}
+                        <div class="mt-auto flex items-center gap-1.5 flex-wrap">${tagsHtml}</div>
+                    </div>
+                    <div class="flex flex-col gap-1.5 flex-shrink-0 self-start">
+                        <button onclick="event.stopPropagation(); moveVideoInFolder('${folderId}','${video.id}','up')" ${idx === 0 ? 'disabled' : ''} title="上移" class="bg-slate-50 hover:bg-slate-100 text-slate-400 hover:text-sky-500 w-8 h-8 rounded-full flex items-center justify-center transition active:scale-90 disabled:opacity-30 disabled:cursor-not-allowed">
+                            <span class="text-[10px]">▲</span>
+                        </button>
+                        <button onclick="event.stopPropagation(); moveVideoInFolder('${folderId}','${video.id}','down')" ${idx === total - 1 ? 'disabled' : ''} title="下移" class="bg-slate-50 hover:bg-slate-100 text-slate-400 hover:text-sky-500 w-8 h-8 rounded-full flex items-center justify-center transition active:scale-90 disabled:opacity-30 disabled:cursor-not-allowed">
+                            <span class="text-[10px]">▼</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // [新增] 資料夾專用的渲染函式（含上移／下移按鈕），供 renderFolderVideos 與 toggleViewMode 共用
+        function renderFolderGrid(folderId, list) {
+            lastGridData['folder-videos-grid'] = { type: 'folder', folderId, list, emptyMessage: '這個資料夾目前還沒有收藏影片喔！' };
+            const container = document.getElementById('folder-videos-grid');
+            if (list.length === 0) {
+                container.classList.remove('masonry-grid');
+                container.innerHTML = `<div class="py-12 text-center text-slate-400 text-sm w-full">這個資料夾目前還沒有收藏影片喔！</div>`;
+                return;
+            }
+            const total = list.length;
+            if (viewMode === 'list') {
+                container.classList.remove('masonry-grid');
+                container.innerHTML = `<div class="flex flex-col gap-3">${list.map((v, idx) => folderVideoListHtml(v, folderId, idx, total)).join('')}</div>`;
+            } else {
+                container.classList.add('masonry-grid');
+                container.innerHTML = list.map((v, idx) => `<div class="masonry-item">${folderVideoCardHtml(v, folderId, idx, total)}</div>`).join('');
+            }
+        }
 
         // [新增] 分享資料夾邏輯 (發佈到 shares/ 節點，實現未登入與無痕瀏覽)
         function shareFolder(folder) {
@@ -626,11 +966,30 @@
             }
         }
 
+        // [新增] 分頁載入策略：
+        // 1) 先用較小的查詢（只抓最新 EXPLORE_PAGE_SIZE 筆）快速讓首頁有畫面可看
+        // 2) 全量資料在背景同時抓取，抓到之後接手成為唯一資料來源，
+        //    確保搜尋／標籤／資料夾等需要完整資料的功能不受影響
+        let videosFullyLoaded = false;
+
+        const recentVideosQuery = query(ref(db, 'videos'), orderByChild('created_at'), limitToLast(EXPLORE_PAGE_SIZE));
+        onValue(recentVideosQuery, (snapshot) => {
+            if (videosFullyLoaded) return; // 全量資料已經抵達並接手，這裡不再需要動作
+            allVideos = snapshot.val() ? Object.values(snapshot.val()) : [];
+            renderExplore(); renderRandom(true); renderSubs(); renderPlaylistsPage();
+        }, { onlyOnce: true });
+
         onValue(ref(db, 'videos'), (snapshot) => {
             allVideos = snapshot.val() ? Object.values(snapshot.val()) : [];
+            videosFullyLoaded = true;
             renderExplore(); renderRandom(true); renderSubs(); renderPlaylistsPage();
             if(!document.getElementById('playlist-view').classList.contains('hidden')) {
                 openPlaylistView(document.getElementById('playlist-view').dataset.playlistId);
+            }
+            // [新增] 如果當前正開著資料夾檢視（含「全部收藏」），影片資料更新時也一併刷新
+            if(!document.getElementById('folder-view').classList.contains('hidden')) {
+                const activeFolderId = lastGridData['folder-videos-grid'] ? lastGridData['folder-videos-grid'].folderId : null;
+                if (activeFolderId) openFolderView(activeFolderId);
             }
             // 如果當前在分享檢視頁，也需要觸發一次更新
             checkSharedUrl();
@@ -663,7 +1022,7 @@
                 const count = getPlaylistVideoIds(p).length;
                 const coverHtml = p.cover_image
                     ? `<img src="${p.cover_image}" referrerpolicy="no-referrer" loading="lazy" onerror="this.src='${fallbackImage}'" class="w-14 h-14 rounded-2xl object-cover border border-slate-100 flex-shrink-0">`
-                    : `<div class="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-2xl border border-slate-100 flex-shrink-0">✨</div>`;
+                    : `<div class="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-2xl border border-slate-100 flex-shrink-0">🌈</div>`;
                 return `
                 <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 flex items-center justify-between cursor-pointer hover:shadow-md hover:border-slate-200 transition-all duration-200 active:scale-[0.98]" onclick="openPlaylistView('${p.id}')">
                     <div class="flex items-center gap-4 min-w-0">
@@ -713,7 +1072,7 @@
             const name = prompt('新分類名稱：');
             if(!name) return;
             const emoji = prompt('代表 emoji (留空預設📁)：') || '📁';
-            push(ref(db, `users/${currentUser.uid}/folders`), { name: name.trim(), emoji: emoji, created_at: Date.now() });
+            push(ref(db, `users/${currentUser.uid}/folders`), { name: name.trim(), emoji: emoji, created_at: Date.now(), order: Date.now() });
         };
 
         window.openSaveModal = function(videoId) {
@@ -777,7 +1136,7 @@
             const emoji = emojiInput.value.trim() || '📁';
 
             const newFolderRef = push(ref(db, `users/${currentUser.uid}/folders`));
-            await set(newFolderRef, { name: name, emoji: emoji, created_at: Date.now() });
+            await set(newFolderRef, { name: name, emoji: emoji, created_at: Date.now(), order: Date.now() });
             // 新資料夾建立後，直接把當前影片加進去
             await set(ref(db, `users/${currentUser.uid}/folders/${newFolderRef.key}/video_ids/${currentSaveVideoId}`), true);
             closeSaveModal();
@@ -792,6 +1151,60 @@
             else set(nodeRef, true); 
             closeSaveModal();
             showToast(isCurrentlySaved ? "已從資料夾移除" : "已加入資料夾");
+        };
+
+        // [新增] 成員名鑑彈窗邏輯：圖片只在彈窗打開、實際渲染時才會開始載入，不影響首頁初始速度
+        window.openMembersModal = function() {
+            document.getElementById('members-modal').classList.remove('hidden');
+            renderMembersGrid();
+        };
+        window.closeMembersModal = function() {
+            document.getElementById('members-modal').classList.add('hidden');
+        };
+        window.switchMembersTab = function(tab) {
+            membersTab = tab;
+            const activeClass = "px-4 py-2 text-xs font-black rounded-xl bg-white shadow-sm text-slate-900 transition-all duration-300";
+            const inactiveClass = "px-4 py-2 text-xs font-black rounded-xl text-slate-500 hover:text-slate-900 transition-all duration-300";
+            document.getElementById('members-tab-active').className = tab === 'active' ? activeClass : inactiveClass;
+            document.getElementById('members-tab-og').className = tab === 'og' ? activeClass : inactiveClass;
+            renderMembersGrid();
+        };
+
+        function memberCardHtml(m) {
+            const avatarHtml = m.avatar
+                ? `<img src="${m.avatar}" referrerpolicy="no-referrer" loading="lazy" onload="this.classList.add('loaded')" onerror="this.src='${fallbackImage}'; this.classList.add('loaded');" class="thumb-img absolute inset-0 w-full h-full object-cover">`
+                : `<div class="absolute inset-0 flex items-center justify-center text-lg bg-slate-50">🎀</div>`;
+            return `
+            <div class="flex flex-col items-center gap-1.5">
+                <div class="relative w-16 h-16 rounded-full overflow-hidden border border-slate-100 shadow-sm bg-slate-50">
+                    <div class="absolute inset-0 thumb-skeleton"></div>
+                    ${avatarHtml}
+                </div>
+                <span class="text-[11px] font-bold text-slate-700 text-center leading-tight w-full truncate" title="${m.name}">${m.name}</span>
+                <div class="flex items-center gap-1 flex-wrap justify-center">
+                    ${m.official ? `<a href="${m.official}" target="_blank" rel="noopener" title="官方網站" class="w-5 h-5 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-[9px] transition">🌐</a>` : ''}
+                    ${m.fc ? `<a href="${m.fc}" target="_blank" rel="noopener" title="Fanclub" class="w-5 h-5 rounded-full bg-sky-100 hover:bg-sky-200 flex items-center justify-center text-[9px] transition">🎫</a>` : ''}
+                    ${m.x ? `<a href="${m.x}" target="_blank" rel="noopener" title="X（Twitter）" class="w-5 h-5 rounded-full bg-black text-white flex items-center justify-center text-[8px] font-black transition hover:opacity-80">X</a>` : ''}
+                    ${m.instagram ? `<a href="${m.instagram}" target="_blank" rel="noopener" title="Instagram" class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] transition hover:opacity-80" style="background:linear-gradient(45deg,#7024C4,#C21975,#F58529);">📷</a>` : ''}
+                    ${m.youtube ? `<a href="${m.youtube}" target="_blank" rel="noopener" title="YouTube" class="w-5 h-5 rounded-full text-white flex items-center justify-center text-[8px] transition hover:opacity-80" style="background-color:#FF0000;">▶</a>` : ''}
+                    ${m.youtubeMusic ? `<a href="${m.youtubeMusic}" target="_blank" rel="noopener" title="YouTube（音樂）" class="w-5 h-5 rounded-full text-white flex items-center justify-center text-[8px] transition hover:opacity-80" style="background-color:#FF0000;">🎵</a>` : ''}
+                    ${m.youtubeVariety ? `<a href="${m.youtubeVariety}" target="_blank" rel="noopener" title="YouTube（節目）" class="w-5 h-5 rounded-full text-white flex items-center justify-center text-[8px] transition hover:opacity-80" style="background-color:#FF0000;">📺</a>` : ''}
+                    ${m.tiktok ? `<a href="${m.tiktok}" target="_blank" rel="noopener" title="TikTok" class="w-5 h-5 rounded-full bg-black text-white flex items-center justify-center text-[9px] transition hover:opacity-80">🎶</a>` : ''}
+                </div>
+            </div>`;
+        }
+
+        window.renderMembersGrid = function() {
+            const keyword = document.getElementById('members-search-input').value.trim().toLowerCase();
+            let list = HINATAZAKA_MEMBERS.filter(m => m.type === membersTab);
+            if (keyword) list = list.filter(m => m.name.toLowerCase().includes(keyword));
+
+            const container = document.getElementById('members-grid');
+            if (list.length === 0) {
+                container.innerHTML = `<p class="text-slate-400 text-xs col-span-full text-center py-10">找不到符合的成員</p>`;
+                return;
+            }
+            container.innerHTML = list.map(m => memberCardHtml(m)).join('');
         };
 
         function showToast(text) {
@@ -912,26 +1325,24 @@
                 onValue(foldersRef, (snapshot) => {
                     allFolders = snapshot.val() ? Object.entries(snapshot.val()).map(([id, f]) => ({ id, ...f })) : [];
                     
-                    document.getElementById('category-scroll').innerHTML = allFolders.map(f => `
+                    document.getElementById('category-scroll').innerHTML = sortedFolders().map(f => `
                         <div class="flex flex-col items-center gap-1.5 flex-shrink-0 cursor-pointer group" onclick="switchLayer('folders'); openFolderView('${f.id}')">
-                            <div class="relative w-15 h-15 rounded-2xl bg-white border border-slate-100 shadow-sm flex items-center justify-center text-2xl transform group-hover:scale-105 group-hover:border-slate-200 transition-all duration-300">
+                            <div class="relative w-14 h-14 rounded-2xl bg-white border border-slate-100 shadow-sm flex items-center justify-center text-2xl transform group-hover:scale-105 group-hover:border-slate-200 transition-all duration-300">
                                 ${f.emoji || '📁'}
                             </div>
                             <span class="text-xs font-bold text-slate-600 max-w-[64px] truncate group-hover:text-sky-500 transition">${f.name}</span>
                         </div>
                     `).join('') + `
                         <div class="flex flex-col items-center gap-1.5 flex-shrink-0 cursor-pointer group" onclick="openFolderCreate()">
-                            <div class="w-15 h-15 rounded-2xl border-2 border-dashed border-slate-300 flex items-center justify-center text-xl text-slate-400 group-hover:border-sky-400 group-hover:text-sky-500 transition-all duration-300">＋</div>
+                            <div class="w-14 h-14 rounded-2xl border-2 border-dashed border-slate-300 flex items-center justify-center text-xl text-slate-400 group-hover:border-sky-400 group-hover:text-sky-500 transition-all duration-300">＋</div>
                             <span class="text-xs font-bold text-slate-400 group-hover:text-slate-500 transition">新分類</span>
                         </div>
                     `;
                     renderFoldersPage();
                     
                     if(!document.getElementById('folder-view').classList.contains('hidden')) {
-                        const currentTitle = document.getElementById('folder-view-title').innerText;
-                        const folderName = currentTitle.substring(currentTitle.indexOf(' ') + 1); 
-                        const f = allFolders.find(x => x.name === folderName);
-                        if(f) openFolderView(f.id);
+                        const activeFolderId = lastGridData['folder-videos-grid'] ? lastGridData['folder-videos-grid'].folderId : null;
+                        if (activeFolderId) openFolderView(activeFolderId);
                     }
                 });
 
@@ -949,7 +1360,7 @@
                 
                 document.getElementById('category-scroll').innerHTML = `
                     <div class="flex flex-col items-center gap-1.5 flex-shrink-0 cursor-pointer group" onclick="openFolderCreate()">
-                        <div class="w-15 h-15 rounded-2xl border-2 border-dashed border-slate-300 flex items-center justify-center text-xl text-slate-400 group-hover:border-sky-400 group-hover:text-sky-500 transition-all duration-300">＋</div>
+                        <div class="w-14 h-14 rounded-2xl border-2 border-dashed border-slate-300 flex items-center justify-center text-xl text-slate-400 group-hover:border-sky-400 group-hover:text-sky-500 transition-all duration-300">＋</div>
                         <span class="text-xs font-bold text-slate-400 group-hover:text-slate-500 transition">建立資料夾</span>
                     </div>
                 `;
