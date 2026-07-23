@@ -202,7 +202,11 @@
                     <button onclick="closePlaylistView()" class="flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-slate-900 transition bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">
                         <span>⬅</span> 返回列表
                     </button>
-                    <button onclick="toggleViewMode()" class="view-toggle-btn text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">☰ 清單檢視</button>
+                    <div class="flex items-center gap-2">
+                        <button onclick="toggleViewMode()" class="view-toggle-btn text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">☰ 清單檢視</button>
+                        <!-- [新增] 分享懶人包按鈕 -->
+                        <button onclick="sharePlaylistCurrent()" class="text-xs font-bold text-sky-600 hover:bg-sky-50 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">🔗 分享</button>
+                    </div>
                 </div>
                 <img id="playlist-view-cover" src="" class="hidden w-full aspect-[21/9] object-cover rounded-2xl mb-4 border border-slate-100">
                 <h2 id="playlist-view-title" class="text-lg sm:text-xl font-black text-slate-800 tracking-wider mb-1.5"></h2>
@@ -834,6 +838,23 @@
             });
         };
 
+        // [新增] 取消收藏：把影片從指定資料夾的 video_ids 移除（不影響影片本身或其他資料夾）
+        window.removeVideoFromFolder = function(folderId, videoId) {
+            if (!currentUser) return;
+            const folder = allFolders.find(f => f.id === folderId);
+            const video = allVideos.find(v => v.id === videoId);
+            const title = video ? (video.custom_title || video.original_title || '這部影片') : '這部影片';
+            if (!confirm(`確定要將「${title}」從「${folder ? folder.name : '此資料夾'}」中取消收藏嗎？`)) return;
+
+            set(ref(db, `users/${currentUser.uid}/folders/${folderId}/video_ids/${videoId}`), null).then(() => {
+                showToast("已取消收藏");
+                renderFolderVideos(folderId);
+            }).catch(err => {
+                console.error(err);
+                alert("移除失敗，請稍後再試。");
+            });
+        };
+
         // [新增] 資料夾專用的影片卡片／清單樣式，比一般影片牆多了上移／下移按鈕
         function folderVideoCardHtml(video, folderId, idx, total) {
             let displayTitle = video.custom_title || video.original_title || video.original_excerpt || "未命名影片";
@@ -855,6 +876,10 @@
                         </button>
                         <button onclick="event.stopPropagation(); moveVideoInFolder('${folderId}','${video.id}','down')" ${idx === total - 1 ? 'disabled' : ''} title="下移" class="bg-slate-900/40 hover:bg-slate-900/80 backdrop-blur-md text-white w-8 h-8 rounded-full flex items-center justify-center transition border border-white/10 active:scale-90 disabled:opacity-30 disabled:cursor-not-allowed">
                             <span class="text-[10px]">▼</span>
+                        </button>
+                        <!-- [新增] 取消收藏按鈕 -->
+                        <button onclick="event.stopPropagation(); removeVideoFromFolder('${folderId}','${video.id}')" title="取消收藏" class="bg-red-500/50 hover:bg-red-500/90 backdrop-blur-md text-white w-8 h-8 rounded-full flex items-center justify-center transition border border-white/10 active:scale-90">
+                            <span class="text-[10px]">🗑</span>
                         </button>
                     </div>
 
@@ -891,6 +916,10 @@
                         </button>
                         <button onclick="event.stopPropagation(); moveVideoInFolder('${folderId}','${video.id}','down')" ${idx === total - 1 ? 'disabled' : ''} title="下移" class="bg-slate-50 hover:bg-slate-100 text-slate-400 hover:text-sky-500 w-8 h-8 rounded-full flex items-center justify-center transition active:scale-90 disabled:opacity-30 disabled:cursor-not-allowed">
                             <span class="text-[10px]">▼</span>
+                        </button>
+                        <!-- [新增] 取消收藏按鈕 -->
+                        <button onclick="event.stopPropagation(); removeVideoFromFolder('${folderId}','${video.id}')" title="取消收藏" class="bg-red-50 hover:bg-red-100 text-red-400 hover:text-red-600 w-8 h-8 rounded-full flex items-center justify-center transition active:scale-90">
+                            <span class="text-[10px]">🗑</span>
                         </button>
                     </div>
                 </div>
@@ -1065,6 +1094,44 @@
         window.closePlaylistView = function() {
             document.getElementById('playlists-main-view').classList.remove('hidden');
             document.getElementById('playlist-view').classList.add('hidden');
+        };
+
+        // [新增] 分享精華區懶人包邏輯：與資料夾分享共用同一個 shares/ 節點格式，
+        // 這樣分享出去的連結，未登入或無痕瀏覽的使用者也能直接開啟同一個檢視頁
+        function sharePlaylist(playlist) {
+            const shareId = "sp_" + Date.now();
+            const ids = getPlaylistVideoIds(playlist);
+            const videoIdsMap = {};
+            ids.forEach(id => { videoIdsMap[id] = true; });
+
+            const shareData = {
+                name: playlist.name,
+                emoji: playlist.emoji || '🌈',
+                owner: currentUser ? (currentUser.displayName || "日向坂推し") : "精華整理",
+                video_ids: videoIdsMap,
+                created_at: Date.now()
+            };
+
+            set(ref(db, `shares/${shareId}`), shareData).then(() => {
+                const shareUrl = `${window.location.origin}${window.location.pathname}?share=${shareId}`;
+
+                navigator.clipboard.writeText(shareUrl).then(() => {
+                    showToast("🔗 分享連結已複製到剪貼簿！");
+                }).catch(() => {
+                    prompt("因瀏覽器權限限制，請手動複製以下網址分享給好友：", shareUrl);
+                });
+            }).catch(err => {
+                console.error(err);
+                alert("分享失敗，請稍後再試。");
+            });
+        }
+
+        // [新增] 取得目前正在檢視的懶人包並觸發分享
+        window.sharePlaylistCurrent = function() {
+            const playlistId = document.getElementById('playlist-view').dataset.playlistId;
+            const playlist = allPlaylists.find(p => p.id === playlistId);
+            if (!playlist) return;
+            sharePlaylist(playlist);
         };
 
         window.openFolderCreate = function() {
