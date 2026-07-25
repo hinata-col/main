@@ -1566,6 +1566,15 @@
             const pool = oshiMembersPool();
             const gens = [...new Set(pool.map(m => m.gen))].sort((a, b) => a - b);
 
+            // 記住目前每個期別 <details> 的展開狀態，避免重繪時被重置
+            const prevOpenState = {};
+            gridEl.querySelectorAll('details[data-gen]').forEach(d => {
+                prevOpenState[d.getAttribute('data-gen')] = d.open;
+            });
+            const isGenOpen = (gen) => Object.prototype.hasOwnProperty.call(prevOpenState, String(gen))
+                ? prevOpenState[String(gen)]
+                : gen === gens[0]; // 第一次渲染時，預設只展開第一個期別
+
             gridEl.innerHTML = gens.map(gen => {
                 const membersInGen = pool.filter(m => m.gen === gen);
                 const selectedCount = membersInGen.filter(m =>
@@ -1594,7 +1603,7 @@
                 }).join('');
 
                 return `
-                    <details class="col-span-4 group mb-1" ${gen === gens[0] ? 'open' : ''}>
+                    <details class="col-span-4 group mb-1" data-gen="${gen}" ${isGenOpen(gen) ? 'open' : ''}>
                         <summary class="list-none flex items-center justify-between cursor-pointer py-2 px-1 select-none">
                             <span class="flex items-center gap-2 text-xs font-black text-slate-800">
                                 <span class="inline-block transition-transform text-slate-400 text-[10px] group-open:rotate-90">▶</span>
