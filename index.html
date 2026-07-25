@@ -324,14 +324,14 @@
 
                     <div id="oshi-share-view" class="hidden">
                         <div id="oshi-share-card" style="background:linear-gradient(160deg,#eaf6ff 0%,#ffffff 65%);border:1px solid #d3ecfb;border-radius:24px;padding:22px 18px;position:relative;overflow:hidden;" class="mb-3">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Hinatazaka46_logomark_2021.svg" style="position:absolute;top:16px;right:16px;width:29px;height:36px;object-fit:contain;opacity:0.25;pointer-events:none;">
+                            <img class="oshi-avatar-img" data-src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Hinatazaka46_logomark_2021.svg" src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Hinatazaka46_logomark_2021.svg" style="position:absolute;top:16px;right:16px;width:29px;height:36px;object-fit:contain;opacity:0.25;pointer-events:none;">
                             <div style="text-align:center;font-size:11px;font-weight:900;color:#1d6d96;letter-spacing:2px;margin-bottom:20px;">MY OSHI CARD・我的日向坂</div>
                             <div id="oshi-share-oshi-block" style="display:flex;flex-wrap:wrap;justify-content:center;gap:20px;margin-bottom:24px;"></div>
                             <div style="text-align:center;font-size:10px;font-weight:900;color:#1d6d96;letter-spacing:2px;margin-bottom:12px;">気になる・在意的成員</div>
                             <div id="oshi-share-watch-block" style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-bottom:8px;"></div>
                             <div style="text-align:center;font-size:10px;color:#94a3b8;margin-top:16px;">☀️一生一緒日向坂</div>
                         </div>
-                        <button onclick="downloadOshiShareCard()" class="w-full bg-sky-500 hover:bg-sky-600 text-white text-xs font-black py-3 rounded-2xl transition shadow-md active:scale-95">📥 下載分享卡圖片</button>
+                        <button id="oshi-share-download-btn" onclick="downloadOshiShareCard()" class="w-full bg-sky-500 hover:bg-sky-600 text-white text-xs font-black py-3 rounded-2xl transition shadow-md active:scale-95">📥 下載分享卡圖片</button>
                     </div>
                 </div>
 
@@ -494,7 +494,7 @@
         // 頭像網址請從官網／官方帳號另外抓取後填入 avatar 欄位，目前先留空，畫面會自動用姓名首字當備援
         const OSHI_MEMBERS = [
             // 一期生（全員畢業）
-            { id: 'kato_shiho', name: '加藤史帆', gen: 1, graduated: true, avatar: 'https://shihokato.com/images/14/ad4/274952f41666ea421c63cba433e96.png' },
+            { id: 'kato_shiho', name: '加藤史帆', gen: 1, graduated: true, avatar: '' },
             { id: 'sasaki_kumi', name: '佐々木久美', gen: 1, graduated: true, avatar: '' },
             { id: 'saito_kyoko', name: '齊藤京子', gen: 1, graduated: true, avatar: '' },
             { id: 'sasaki_mirei', name: '佐々木美玲', gen: 1, graduated: true, avatar: '' },
@@ -1595,7 +1595,7 @@
                     if(!m) return '';
                     const since = oshiState.map[id];
                     const avatarHtml = m.avatar
-                        ? `<img src="${m.avatar}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 4px #ffffff, 0 0 0 8px #fbbf24;">`
+                        ? `<img class="oshi-avatar-img" data-src="${m.avatar}" src="${m.avatar}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 4px #ffffff, 0 0 0 8px #fbbf24;">`
                         : `<div style="width:80px;height:80px;border-radius:50%;box-shadow:0 0 0 4px #ffffff, 0 0 0 8px #fbbf24;background:#fde68a;color:#b45309;font-weight:900;font-size:24px;display:flex;align-items:center;justify-content:center;">${m.name.slice(0,1)}</div>`;
                     return `
                         <div style="display:flex;flex-direction:column;align-items:center;text-align:center;">
@@ -1616,7 +1616,7 @@
                     const m = oshiMembersPool().find(mm => mm.id === id);
                     if(!m) return '';
                     const avatarHtml = m.avatar
-                        ? `<img src="${m.avatar}" style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid #ff8fa3;">`
+                        ? `<img class="oshi-avatar-img" data-src="${m.avatar}" src="${m.avatar}" style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid #ff8fa3;">`
                         : `<div style="width:44px;height:44px;border-radius:50%;border:2px solid #ff8fa3;background:#f1f5f9;color:#64748b;font-weight:900;font-size:12px;display:flex;align-items:center;justify-content:center;">${m.name.slice(0,1)}</div>`;
                     return `
                         <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:56px;">
@@ -1627,17 +1627,69 @@
             }
         }
 
-        window.downloadOshiShareCard = function() {
+        // [修正] 圖片轉 base64 快取：官方網站的圖片沒有開放 CORS，
+        // 直接讓 html2canvas 讀取一定會失敗（圖片被跳過留空）。
+        // 這裡改成：下載前先把每張頭像透過代理服務抓下來，轉成 base64 dataURL，
+        // 再把 <img src> 換成 dataURL 後才截圖。data URL 沒有「來源」的問題，
+        // 不會讓 canvas 被判定為汙染（tainted），可以穩定匯出成圖片。
+        const avatarDataUrlCache = {};
+        async function toAvatarDataUrl(url) {
+            if(!url) return null;
+            if(url.startsWith('data:')) return url;
+            if(avatarDataUrlCache[url]) return avatarDataUrlCache[url];
+            const candidates = [
+                `https://images.weserv.nl/?url=${encodeURIComponent(url.replace(/^https?:\/\//i, ''))}&w=300&h=300&fit=cover&a=top`,
+                `https://corsproxy.io/?url=${encodeURIComponent(url)}`
+            ];
+            for(const proxyUrl of candidates) {
+                try {
+                    const res = await fetch(proxyUrl, { cache: 'no-store' });
+                    if(!res.ok) continue;
+                    const blob = await res.blob();
+                    if(!blob.type.startsWith('image/')) continue;
+                    const dataUrl = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result);
+                        reader.onerror = reject;
+                        reader.readAsDataURL(blob);
+                    });
+                    avatarDataUrlCache[url] = dataUrl;
+                    return dataUrl;
+                } catch(err) {
+                    console.warn('頭像代理失敗，換下一個來源', url, err);
+                }
+            }
+            return null; // 全部代理都失敗，維持原圖（截圖時該張會留空）
+        }
+
+        window.downloadOshiShareCard = async function() {
             const card = document.getElementById('oshi-share-card');
-            html2canvas(card, { backgroundColor: '#ffffff', scale: 2, useCORS: true, allowTaint: false, logging: false }).then(canvas => {
+            const btn = document.getElementById('oshi-share-download-btn');
+            const originalBtnHtml = btn ? btn.innerHTML : '';
+            if(btn) { btn.disabled = true; btn.classList.add('opacity-60'); btn.innerHTML = '⏳ 圖片準備中，請稍候...'; }
+
+            try {
+                const imgs = Array.from(card.querySelectorAll('img.oshi-avatar-img, img'));
+                await Promise.all(imgs.map(async (img) => {
+                    const original = img.dataset.src || img.src;
+                    const dataUrl = await toAvatarDataUrl(original);
+                    if(dataUrl) img.src = dataUrl;
+                }));
+
+                const canvas = await html2canvas(card, { backgroundColor: '#ffffff', scale: 2, useCORS: true, allowTaint: true, logging: false });
                 const link = document.createElement('a');
                 link.download = 'my-oshi-card.png';
                 link.href = canvas.toDataURL('image/png');
                 link.click();
-            }).catch(err => {
+
+                // 截圖完成後把畫面上的頭像換回原始網址，避免佔用記憶體
+                imgs.forEach(img => { if(img.dataset.src) img.src = img.dataset.src; });
+            } catch(err) {
                 console.error('分享卡截圖失敗', err);
-                alert('圖片產生失敗，可能是頭像圖片來源不支援跨網域讀取，請稍後再試。');
-            });
+                alert('圖片產生失敗，請稍後再試一次；若持續失敗，可能是網路暫時無法連線到圖片代理服務。');
+            } finally {
+                if(btn) { btn.disabled = false; btn.classList.remove('opacity-60'); btn.innerHTML = originalBtnHtml; }
+            }
         };
 
         // [新增] 檢查並處理網址中是否有分享資料夾的 ID 路由
