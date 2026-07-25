@@ -1663,31 +1663,47 @@
         }
 
         window.downloadOshiShareCard = async function() {
-            const card = document.getElementById('oshi-share-card');
+            const originalCard = document.getElementById('oshi-share-card');
             const btn = document.getElementById('oshi-share-download-btn');
             const originalBtnHtml = btn ? btn.innerHTML : '';
             if(btn) { btn.disabled = true; btn.classList.add('opacity-60'); btn.innerHTML = '⏳ 圖片準備中，請稍候...'; }
 
+            // 在畫面外建立一份卡片的複製品，所有處理都只動這份複製品，
+            // 完全不影響使用者眼前正在看的畫面，也不怕過程中被其他操作打斷。
+            const clone = originalCard.cloneNode(true);
+            clone.style.position = 'fixed';
+            clone.style.left = '-9999px';
+            clone.style.top = '0';
+            clone.style.margin = '0';
+            clone.style.width = originalCard.offsetWidth + 'px';
+            document.body.appendChild(clone);
+
             try {
-                const imgs = Array.from(card.querySelectorAll('img.oshi-avatar-img, img'));
-                await Promise.all(imgs.map(async (img) => {
-                    const original = img.dataset.src || img.src;
+                const imgs = Array.from(clone.querySelectorAll('img'));
+                await Promise.all(imgs.map(async (imgEl) => {
+                    const original = imgEl.getAttribute('data-src') || imgEl.getAttribute('src');
                     const dataUrl = await toAvatarDataUrl(original);
-                    if(dataUrl) img.src = dataUrl;
+                    if(!dataUrl) return; // 轉換失敗就維持原圖，該張可能會截不到
+                    await new Promise((resolve) => {
+                        imgEl.onload = resolve;
+                        imgEl.onerror = resolve;
+                        imgEl.src = dataUrl; // 務必等這張圖片真的載入完成才繼續
+                    });
                 }));
 
-                const canvas = await html2canvas(card, { backgroundColor: '#ffffff', scale: 2, useCORS: true, allowTaint: true, logging: false });
+                // 保險：多等兩個 frame，確保瀏覽器把剛換上的圖片實際畫出來
+                await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+                const canvas = await html2canvas(clone, { backgroundColor: '#ffffff', scale: 2, useCORS: true, allowTaint: true, logging: false });
                 const link = document.createElement('a');
                 link.download = 'my-oshi-card.png';
                 link.href = canvas.toDataURL('image/png');
                 link.click();
-
-                // 截圖完成後把畫面上的頭像換回原始網址，避免佔用記憶體
-                imgs.forEach(img => { if(img.dataset.src) img.src = img.dataset.src; });
             } catch(err) {
                 console.error('分享卡截圖失敗', err);
                 alert('圖片產生失敗，請稍後再試一次；若持續失敗，可能是網路暫時無法連線到圖片代理服務。');
             } finally {
+                document.body.removeChild(clone);
                 if(btn) { btn.disabled = false; btn.classList.remove('opacity-60'); btn.innerHTML = originalBtnHtml; }
             }
         };
