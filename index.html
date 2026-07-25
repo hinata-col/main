@@ -1638,7 +1638,7 @@
             if(url.startsWith('data:')) return url;
             if(avatarDataUrlCache[url]) return avatarDataUrlCache[url];
             const candidates = [
-                `https://images.weserv.nl/?url=${encodeURIComponent(url.replace(/^https?:\/\//i, ''))}&w=300&h=300&fit=cover&a=top`,
+                `https://images.weserv.nl/?url=${encodeURIComponent(url.replace(/^https?:\/\//i, ''))}`,
                 `https://corsproxy.io/?url=${encodeURIComponent(url)}`
             ];
             for(const proxyUrl of candidates) {
