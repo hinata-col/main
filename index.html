@@ -323,13 +323,13 @@
                     </div>
 
                     <div id="oshi-share-view" class="hidden">
-                        <div id="oshi-share-card" class="bg-gradient-to-br from-sky-50 to-white border border-sky-100 rounded-3xl p-5 relative overflow-hidden mb-3">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Hinatazaka46_logomark_2021.svg" crossorigin="anonymous" class="absolute top-4 right-4 w-9 h-9 opacity-25 pointer-events-none">
-                            <div class="text-center text-[11px] font-black text-sky-600 tracking-widest mb-5">MY OSHI CARD・我的日向坂</div>
-                            <div id="oshi-share-oshi-block" class="flex flex-wrap justify-center gap-5 mb-6"></div>
-                            <div class="text-center text-[10px] font-black text-sky-600 tracking-widest mb-3">気になる・在意的成員</div>
-                            <div id="oshi-share-watch-block" class="flex flex-wrap justify-center gap-3 mb-2"></div>
-                            <div class="text-center text-[10px] text-slate-400 mt-4">☀️一生一緒日向坂</div>
+                        <div id="oshi-share-card" style="background:linear-gradient(160deg,#eaf6ff 0%,#ffffff 65%);border:1px solid #d3ecfb;border-radius:24px;padding:22px 18px;position:relative;overflow:hidden;" class="mb-3">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Hinatazaka46_logomark_2021.svg" crossorigin="anonymous" style="position:absolute;top:16px;right:16px;width:36px;height:36px;opacity:0.25;pointer-events:none;">
+                            <div style="text-align:center;font-size:11px;font-weight:900;color:#1d6d96;letter-spacing:2px;margin-bottom:20px;">MY OSHI CARD・我的日向坂</div>
+                            <div id="oshi-share-oshi-block" style="display:flex;flex-wrap:wrap;justify-content:center;gap:20px;margin-bottom:24px;"></div>
+                            <div style="text-align:center;font-size:10px;font-weight:900;color:#1d6d96;letter-spacing:2px;margin-bottom:12px;">気になる・在意的成員</div>
+                            <div id="oshi-share-watch-block" style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-bottom:8px;"></div>
+                            <div style="text-align:center;font-size:10px;color:#94a3b8;margin-top:16px;">☀️一生一緒日向坂</div>
                         </div>
                         <button onclick="downloadOshiShareCard()" class="w-full bg-sky-500 hover:bg-sky-600 text-white text-xs font-black py-3 rounded-2xl transition shadow-md active:scale-95">📥 下載分享卡圖片</button>
                     </div>
@@ -508,10 +508,10 @@
             { id: 'kakizaki_memi', name: '柿崎芽実', gen: 1, graduated: true, avatar: '' },
 
             // 二期生（金村、小坂現役，其餘畢業）
-            { id: 'nibu_akari', name: '丹生明里', gen: 2, graduated: true, avatar: '' },
-            { id: 'kanamura_miku', name: '金村美玖', gen: 2, graduated: false, avatar: '' },
+            { id: 'nibu_akari', name: '丹生明里', gen: 2, graduated: true, avatar: 'https://akarinibu.com/images/14/631/aa26978eabf303ccc494ee07276ca.jpg' },
+            { id: 'kanamura_miku', name: '金村美玖', gen: 2, graduated: false, avatar: 'https://cdn.hinatazaka46.com/images/14/ce8/27d3cdf85a9b6c4cf7550f02268b0/200_320_102400.jpg' },
             { id: 'watanabe_miho', name: '渡邉美穂', gen: 2, graduated: true, avatar: '' },
-            { id: 'kosaka_nao', name: '小坂菜緒', gen: 2, graduated: false, avatar: '' },
+            { id: 'kosaka_nao', name: '小坂菜緒', gen: 2, graduated: false, avatar: 'https://cdn.hinatazaka46.com/images/14/051/33c12865773283a9d981ed3942e3f/200_320_102400.jpg' },
             { id: 'matsuda_konoka', name: '松田好花', gen: 2, graduated: true, avatar: '' },
             { id: 'tomita_suzuka', name: '富田鈴花', gen: 2, graduated: true, avatar: '' },
             { id: 'kawata_hina', name: '河田陽菜', gen: 2, graduated: true, avatar: '' },
@@ -1588,21 +1588,21 @@
 
             const oshiIds = Object.keys(oshiState.map);
             if(oshiIds.length === 0) {
-                oshiBlockEl.innerHTML = `<div class="text-[11px] text-slate-400">尚未選擇本命</div>`;
+                oshiBlockEl.innerHTML = `<div style="font-size:11px;color:#94a3b8;">尚未選擇本命</div>`;
             } else {
                 oshiBlockEl.innerHTML = oshiIds.map(id => {
                     const m = oshiMembersPool().find(mm => mm.id === id);
                     if(!m) return '';
                     const since = oshiState.map[id];
                     const avatarHtml = m.avatar
-                        ? `<img src="${m.avatar}" class="w-20 h-20 rounded-full object-cover ring-4 ring-white shadow-[0_0_0_4px_#fbbf24]">`
-                        : `<div class="w-20 h-20 rounded-full ring-4 ring-white shadow-[0_0_0_4px_#fbbf24] bg-amber-200 text-amber-700 font-black text-2xl flex items-center justify-center">${m.name.slice(0,1)}</div>`;
+                        ? `<img src="${m.avatar}" crossorigin="anonymous" style="width:80px;height:80px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 4px #ffffff, 0 0 0 8px #fbbf24;">`
+                        : `<div style="width:80px;height:80px;border-radius:50%;box-shadow:0 0 0 4px #ffffff, 0 0 0 8px #fbbf24;background:#fde68a;color:#b45309;font-weight:900;font-size:24px;display:flex;align-items:center;justify-content:center;">${m.name.slice(0,1)}</div>`;
                     return `
-                        <div class="flex flex-col items-center text-center">
+                        <div style="display:flex;flex-direction:column;align-items:center;text-align:center;">
                             ${avatarHtml}
-                            <div class="text-[9px] font-black text-sky-600 tracking-wider mt-2.5">推しメン・本命</div>
-                            <div class="text-sm font-black text-slate-800 mt-0.5">${m.name}</div>
-                            <div class="text-[11px] text-sky-600 mt-1">已經陪伴了<b class="text-lg text-amber-500 mx-0.5">${daysSinceOshi(since)}</b>天！</div>
+                            <div style="font-size:9px;font-weight:900;color:#1d6d96;letter-spacing:1px;margin-top:10px;">推しメン・本命</div>
+                            <div style="font-size:14px;font-weight:900;color:#1f2a33;margin-top:2px;">${m.name}</div>
+                            <div style="font-size:11px;color:#1d6d96;margin-top:4px;">已經陪伴了<b style="font-size:18px;color:#f4b400;margin:0 3px;">${daysSinceOshi(since)}</b>天！</div>
                         </div>`;
                 }).join('');
             }
@@ -1610,18 +1610,18 @@
             const watchBlockEl = document.getElementById('oshi-share-watch-block');
             const watchIds = Object.keys(oshiState.watch);
             if(watchIds.length === 0) {
-                watchBlockEl.innerHTML = `<div class="text-[11px] text-slate-400">尚未選擇在意的成員</div>`;
+                watchBlockEl.innerHTML = `<div style="font-size:11px;color:#94a3b8;">尚未選擇在意的成員</div>`;
             } else {
                 watchBlockEl.innerHTML = watchIds.map(id => {
                     const m = oshiMembersPool().find(mm => mm.id === id);
                     if(!m) return '';
                     const avatarHtml = m.avatar
-                        ? `<img src="${m.avatar}" class="w-11 h-11 rounded-full object-cover border-2 border-rose-300">`
-                        : `<div class="w-11 h-11 rounded-full border-2 border-rose-300 bg-slate-100 text-slate-500 font-black text-xs flex items-center justify-center">${m.name.slice(0,1)}</div>`;
+                        ? `<img src="${m.avatar}" crossorigin="anonymous" style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid #ff8fa3;">`
+                        : `<div style="width:44px;height:44px;border-radius:50%;border:2px solid #ff8fa3;background:#f1f5f9;color:#64748b;font-weight:900;font-size:12px;display:flex;align-items:center;justify-content:center;">${m.name.slice(0,1)}</div>`;
                     return `
-                        <div class="flex flex-col items-center gap-1 w-14">
+                        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:56px;">
                             ${avatarHtml}
-                            <span class="text-[9.5px] text-center leading-tight">${m.name}</span>
+                            <span style="font-size:9.5px;text-align:center;line-height:1.25;">${m.name}</span>
                         </div>`;
                 }).join('');
             }
@@ -1629,11 +1629,14 @@
 
         window.downloadOshiShareCard = function() {
             const card = document.getElementById('oshi-share-card');
-            html2canvas(card, { backgroundColor: '#ffffff', scale: 2 }).then(canvas => {
+            html2canvas(card, { backgroundColor: '#ffffff', scale: 2, useCORS: true, allowTaint: false, logging: false }).then(canvas => {
                 const link = document.createElement('a');
                 link.download = 'my-oshi-card.png';
                 link.href = canvas.toDataURL('image/png');
                 link.click();
+            }).catch(err => {
+                console.error('分享卡截圖失敗', err);
+                alert('圖片產生失敗，可能是頭像圖片來源不支援跨網域讀取，請稍後再試。');
             });
         };
 
