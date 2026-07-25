@@ -324,7 +324,7 @@
 
                     <div id="oshi-share-view" class="hidden">
                         <div id="oshi-share-card" style="background:linear-gradient(160deg,#eaf6ff 0%,#ffffff 65%);border:1px solid #d3ecfb;border-radius:24px;padding:22px 18px;position:relative;overflow:hidden;" class="mb-3">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Hinatazaka46_logomark_2021.svg" crossorigin="anonymous" style="position:absolute;top:16px;right:16px;width:36px;height:36px;opacity:0.25;pointer-events:none;">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Hinatazaka46_logomark_2021.svg" style="position:absolute;top:16px;right:16px;width:29px;height:36px;object-fit:contain;opacity:0.25;pointer-events:none;">
                             <div style="text-align:center;font-size:11px;font-weight:900;color:#1d6d96;letter-spacing:2px;margin-bottom:20px;">MY OSHI CARD・我的日向坂</div>
                             <div id="oshi-share-oshi-block" style="display:flex;flex-wrap:wrap;justify-content:center;gap:20px;margin-bottom:24px;"></div>
                             <div style="text-align:center;font-size:10px;font-weight:900;color:#1d6d96;letter-spacing:2px;margin-bottom:12px;">気になる・在意的成員</div>
@@ -511,7 +511,7 @@
             { id: 'nibu_akari', name: '丹生明里', gen: 2, graduated: true, avatar: 'https://akarinibu.com/images/14/631/aa26978eabf303ccc494ee07276ca.jpg' },
             { id: 'kanamura_miku', name: '金村美玖', gen: 2, graduated: false, avatar: 'https://cdn.hinatazaka46.com/images/14/ce8/27d3cdf85a9b6c4cf7550f02268b0/200_320_102400.jpg' },
             { id: 'watanabe_miho', name: '渡邉美穂', gen: 2, graduated: true, avatar: '' },
-            { id: 'kosaka_nao', name: '小坂菜緒', gen: 2, graduated: false, avatar: 'https://cdn.hinatazaka46.com/images/14/051/33c12865773283a9d981ed3942e3f/200_320_102400.jpg' },
+            { id: 'kosaka_nao', name: '小坂菜緒', gen: 2, graduated: false, avatar: '' },
             { id: 'matsuda_konoka', name: '松田好花', gen: 2, graduated: true, avatar: '' },
             { id: 'tomita_suzuka', name: '富田鈴花', gen: 2, graduated: true, avatar: '' },
             { id: 'kawata_hina', name: '河田陽菜', gen: 2, graduated: true, avatar: '' },
@@ -1595,7 +1595,7 @@
                     if(!m) return '';
                     const since = oshiState.map[id];
                     const avatarHtml = m.avatar
-                        ? `<img src="${m.avatar}" crossorigin="anonymous" style="width:80px;height:80px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 4px #ffffff, 0 0 0 8px #fbbf24;">`
+                        ? `<img src="${m.avatar}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 4px #ffffff, 0 0 0 8px #fbbf24;">`
                         : `<div style="width:80px;height:80px;border-radius:50%;box-shadow:0 0 0 4px #ffffff, 0 0 0 8px #fbbf24;background:#fde68a;color:#b45309;font-weight:900;font-size:24px;display:flex;align-items:center;justify-content:center;">${m.name.slice(0,1)}</div>`;
                     return `
                         <div style="display:flex;flex-direction:column;align-items:center;text-align:center;">
@@ -1616,7 +1616,7 @@
                     const m = oshiMembersPool().find(mm => mm.id === id);
                     if(!m) return '';
                     const avatarHtml = m.avatar
-                        ? `<img src="${m.avatar}" crossorigin="anonymous" style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid #ff8fa3;">`
+                        ? `<img src="${m.avatar}" style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid #ff8fa3;">`
                         : `<div style="width:44px;height:44px;border-radius:50%;border:2px solid #ff8fa3;background:#f1f5f9;color:#64748b;font-weight:900;font-size:12px;display:flex;align-items:center;justify-content:center;">${m.name.slice(0,1)}</div>`;
                     return `
                         <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:56px;">
