@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>留友看 Hinata Ver.</title>
     <link rel="icon" type="image/jpeg" href="https://cdn.hinatazaka46.com/images/14/1e6/c3049a93d54c3f9a8ded4694e158b/400_320_102400.jpg">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         html { overflow-x: hidden; width: 100%; }
@@ -284,14 +285,58 @@
             </div>
 
             <div id="profile-section" class="hidden">
-                <p class="text-xs font-bold text-slate-800 mb-3">選擇預設頭像</p>
-                <div class="grid grid-cols-4 gap-3 mb-8" id="avatar-choices">
-                    <img src="https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/POKA1.png" class="w-14 h-14 rounded-full cursor-pointer hover:ring-4 hover:ring-sky-100 transition avatar-option" onclick="selectAvatar(this.src)">
-                    <img src="https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/POKA2.png" class="w-14 h-14 rounded-full cursor-pointer hover:ring-4 hover:ring-sky-100 transition avatar-option" onclick="selectAvatar(this.src)">
-                    <img src="https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/POKA3.png" class="w-14 h-14 rounded-full cursor-pointer hover:ring-4 hover:ring-sky-100 transition avatar-option" onclick="selectAvatar(this.src)">
-                    <img src="https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/POKA4.png" class="w-14 h-14 rounded-full cursor-pointer hover:ring-4 hover:ring-sky-100 transition avatar-option" onclick="selectAvatar(this.src)">
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="bg-slate-200/40 p-1 rounded-2xl flex w-fit shadow-inner">
+                        <button onclick="switchProfileTab('avatar')" id="ptab-avatar" class="px-4 py-2 text-xs font-black rounded-xl bg-white shadow-sm text-slate-900 transition-all duration-300">🖼️ 頭像設定</button>
+                        <button onclick="switchProfileTab('oshi')" id="ptab-oshi" class="px-4 py-2 text-xs font-black rounded-xl text-slate-500 hover:text-slate-900 transition-all duration-300">☀️ 本命設定</button>
+                    </div>
                 </div>
-                <button onclick="handleLogout()" class="w-full bg-slate-50 text-red-500 font-extrabold py-3.5 rounded-2xl hover:bg-red-50 transition border border-slate-100 active:scale-95">登出帳號</button>
+
+                <!-- 頭像設定 -->
+                <div id="profile-avatar-view">
+                    <p class="text-xs font-bold text-slate-800 mb-3">選擇預設頭像</p>
+                    <div class="grid grid-cols-4 gap-3 mb-8" id="avatar-choices">
+                        <img src="https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/POKA1.png" class="w-14 h-14 rounded-full cursor-pointer hover:ring-4 hover:ring-sky-100 transition avatar-option" onclick="selectAvatar(this.src)">
+                        <img src="https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/POKA2.png" class="w-14 h-14 rounded-full cursor-pointer hover:ring-4 hover:ring-sky-100 transition avatar-option" onclick="selectAvatar(this.src)">
+                        <img src="https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/POKA3.png" class="w-14 h-14 rounded-full cursor-pointer hover:ring-4 hover:ring-sky-100 transition avatar-option" onclick="selectAvatar(this.src)">
+                        <img src="https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/POKA4.png" class="w-14 h-14 rounded-full cursor-pointer hover:ring-4 hover:ring-sky-100 transition avatar-option" onclick="selectAvatar(this.src)">
+                    </div>
+                </div>
+
+                <!-- 本命設定 -->
+                <div id="profile-oshi-view" class="hidden">
+                    <div class="flex gap-2 mb-4">
+                        <button onclick="switchOshiSubTab('edit')" id="oshi-subtab-edit" class="flex-1 text-[11px] font-black py-2 rounded-full border-2 transition">✏️ 編輯</button>
+                        <button onclick="switchOshiSubTab('share')" id="oshi-subtab-share" class="flex-1 text-[11px] font-black py-2 rounded-full border-2 transition">🖼️ 分享卡</button>
+                    </div>
+
+                    <div id="oshi-edit-view">
+                        <div id="oshi-current-list" class="space-y-2.5 mb-4 max-h-40 overflow-y-auto hide-scrollbar"></div>
+
+                        <div class="flex gap-2 mb-3">
+                            <button onclick="setOshiMode('oshi')" id="oshi-mode-oshi" class="flex-1 text-[11px] font-black py-2.5 rounded-xl border-2 transition active:scale-95">☀️ 選本命（可複選）</button>
+                            <button onclick="setOshiMode('watch')" id="oshi-mode-watch" class="flex-1 text-[11px] font-black py-2.5 rounded-xl border-2 transition active:scale-95">♥ 在意成員（複選）</button>
+                        </div>
+                        <p id="oshi-mode-hint" class="text-[10.5px] text-slate-400 mb-3"></p>
+
+                        <div id="oshi-member-grid" class="grid grid-cols-4 gap-3 max-h-56 overflow-y-auto hide-scrollbar pr-1 mb-2"></div>
+                    </div>
+
+                    <div id="oshi-share-view" class="hidden">
+                        <div id="oshi-share-card" class="bg-gradient-to-br from-sky-50 to-white border border-sky-100 rounded-3xl p-5 relative overflow-hidden mb-3">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Hinatazaka46_logomark_2021.svg" crossorigin="anonymous" class="absolute top-4 right-4 w-9 h-9 opacity-25 pointer-events-none">
+                            <div class="text-center text-[11px] font-black text-sky-600 tracking-widest mb-5">MY OSHI CARD・我的日向坂</div>
+                            <div id="oshi-share-oshi-block" class="flex flex-wrap justify-center gap-5 mb-6"></div>
+                            <div class="text-center text-[10px] font-black text-sky-600 tracking-widest mb-3">気になる・在意的成員</div>
+                            <div id="oshi-share-watch-block" class="flex flex-wrap justify-center gap-3 mb-2"></div>
+                            <div class="text-center text-[10px] text-slate-400 mt-4">☀️一生一緒日向坂</div>
+                        </div>
+                        <button onclick="downloadOshiShareCard()" class="w-full bg-sky-500 hover:bg-sky-600 text-white text-xs font-black py-3 rounded-2xl transition shadow-md active:scale-95">📥 下載分享卡圖片</button>
+                    </div>
+                </div>
+
+
+                <button onclick="handleLogout()" class="w-full bg-slate-50 text-red-500 font-extrabold py-3.5 rounded-2xl hover:bg-red-50 transition border border-slate-100 active:scale-95 mt-4">登出帳號</button>
             </div>
         </div>
     </div>
@@ -443,6 +488,67 @@
             { id: 'kawata_hina', name: '河田陽菜', type: 'og', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/hina.jpg', official: '', x: '', instagram: 'https://www.instagram.com/hina17_kawata/' },
             { id: 'hamagishi_hiyori', name: '濱岸ひより', type: 'og', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/hiyotan.jpg', official: '', x: '', instagram: 'https://www.instagram.com/hiyotan928_official/' },
             { id: 'miyata_manamo', name: '宮田愛萌', type: 'og', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/manamo.jpg', official: '', x: '', instagram: 'https://www.instagram.com/manamomiyata_official/' }
+        ];
+
+        // ===== 本命設定專用：完整成員名單（與上方「成員名鑑」HINATAZAKA_MEMBERS 各自獨立，互不影響） =====
+        // 頭像網址請從官網／官方帳號另外抓取後填入 avatar 欄位，目前先留空，畫面會自動用姓名首字當備援
+        const OSHI_MEMBERS = [
+            // 一期生（全員畢業）
+            { id: 'kato_shiho', name: '加藤史帆', gen: 1, graduated: true, avatar: 'https://shihokato.com/images/14/ad4/274952f41666ea421c63cba433e96.png' },
+            { id: 'sasaki_kumi', name: '佐々木久美', gen: 1, graduated: true, avatar: '' },
+            { id: 'saito_kyoko', name: '齊藤京子', gen: 1, graduated: true, avatar: '' },
+            { id: 'sasaki_mirei', name: '佐々木美玲', gen: 1, graduated: true, avatar: '' },
+            { id: 'ushio_sarina', name: '潮紗理菜', gen: 1, graduated: true, avatar: '' },
+            { id: 'kageyama_yuka', name: '影山優佳', gen: 1, graduated: true, avatar: '' },
+            { id: 'higashimura_mei', name: '東村芽依', gen: 1, graduated: true, avatar: '' },
+            { id: 'takamoto_ayaka', name: '高本彩花', gen: 1, graduated: true, avatar: '' },
+            { id: 'takase_mana', name: '高瀬愛奈', gen: 1, graduated: true, avatar: '' },
+            { id: 'iguchi_mao', name: '井口眞緒', gen: 1, graduated: true, avatar: '' },
+            { id: 'nagahama_neru', name: '長濱ねる', gen: 1, graduated: true, avatar: '' },
+            { id: 'kakizaki_memi', name: '柿崎芽実', gen: 1, graduated: true, avatar: '' },
+
+            // 二期生（金村、小坂現役，其餘畢業）
+            { id: 'nibu_akari', name: '丹生明里', gen: 2, graduated: true, avatar: '' },
+            { id: 'kanamura_miku', name: '金村美玖', gen: 2, graduated: false, avatar: '' },
+            { id: 'watanabe_miho', name: '渡邉美穂', gen: 2, graduated: true, avatar: '' },
+            { id: 'kosaka_nao', name: '小坂菜緒', gen: 2, graduated: false, avatar: '' },
+            { id: 'matsuda_konoka', name: '松田好花', gen: 2, graduated: true, avatar: '' },
+            { id: 'tomita_suzuka', name: '富田鈴花', gen: 2, graduated: true, avatar: '' },
+            { id: 'kawata_hina', name: '河田陽菜', gen: 2, graduated: true, avatar: '' },
+            { id: 'hamagishi_hiyori', name: '濱岸ひより', gen: 2, graduated: true, avatar: '' },
+            { id: 'miyata_manamo', name: '宮田愛萌', gen: 2, graduated: true, avatar: '' },
+
+            // 三期生（全員現役）
+            { id: 'kamimura_hinano', name: '上村ひなの', gen: 3, graduated: false, avatar: '' },
+            { id: 'takahashi_mikuni', name: '髙橋未来虹', gen: 3, graduated: false, avatar: '' },
+            { id: 'morimoto_mari', name: '森本茉莉', gen: 3, graduated: false, avatar: '' },
+            { id: 'yamaguchi_hinata', name: '山口陽世', gen: 3, graduated: false, avatar: '' },
+
+            // 四期生（岸帆夏辭退）
+            { id: 'shogenji_yoko', name: '正源司陽子', gen: 4, graduated: false, avatar: '' },
+            { id: 'fujishima_kaho', name: '藤嶌果歩', gen: 4, graduated: false, avatar: '' },
+            { id: 'konishi_nanami', name: '小西夏菜実', gen: 4, graduated: false, avatar: '' },
+            { id: 'hiraoka_mizuki', name: '平岡海月', gen: 4, graduated: false, avatar: '' },
+            { id: 'yamashita_haruka', name: '山下葉留花', gen: 4, graduated: false, avatar: '' },
+            { id: 'miyachi_sumire', name: '宮地すみれ', gen: 4, graduated: false, avatar: '' },
+            { id: 'shimizu_rio', name: '清水理央', gen: 4, graduated: false, avatar: '' },
+            { id: 'ishizuka_tamaki', name: '石塚瑶季', gen: 4, graduated: false, avatar: '' },
+            { id: 'hirao_honoka', name: '平尾帆夏', gen: 4, graduated: false, avatar: '' },
+            { id: 'takeuchi_kirari', name: '竹内希来里', gen: 4, graduated: false, avatar: '' },
+            { id: 'watanabe_rina', name: '渡辺莉奈', gen: 4, graduated: false, avatar: '' },
+            { id: 'kishi_honoka', name: '岸帆夏', gen: 4, graduated: true, avatar: '' }, // 辭退，非畢業卒業
+
+            // 五期生（全員現役）
+            { id: 'ono_manami', name: '大野愛実', gen: 5, graduated: false, avatar: '' },
+            { id: 'katayama_saki', name: '片山紗希', gen: 5, graduated: false, avatar: '' },
+            { id: 'sato_yu', name: '佐藤優羽', gen: 5, graduated: false, avatar: '' },
+            { id: 'matsuo_sakura', name: '松尾桜', gen: 5, graduated: false, avatar: '' },
+            { id: 'takai_rika', name: '高井俐香', gen: 5, graduated: false, avatar: '' },
+            { id: 'ota_mizuki', name: '大田美月', gen: 5, graduated: false, avatar: '' },
+            { id: 'sakai_niina', name: '坂井新奈', gen: 5, graduated: false, avatar: '' },
+            { id: 'kuramori_hinano', name: '蔵盛妃那乃', gen: 5, graduated: false, avatar: '' },
+            { id: 'shimoda_izuki', name: '下田衣珠季', gen: 5, graduated: false, avatar: '' },
+            { id: 'tsuruzaki_nika', name: '鶴崎仁香', gen: 5, graduated: false, avatar: '' },
         ];
 
         // 平台識別色設定
@@ -1326,6 +1432,211 @@
             img.src = url; img.classList.remove('hidden');
         }
 
+        // ===== 帳號設定：頭像 / 本命 分頁切換 =====
+        window.switchProfileTab = function(tab) {
+            const isAvatar = tab === 'avatar';
+            document.getElementById('profile-avatar-view').classList.toggle('hidden', !isAvatar);
+            document.getElementById('profile-oshi-view').classList.toggle('hidden', isAvatar);
+            document.getElementById('ptab-avatar').className = isAvatar
+                ? "px-4 py-2 text-xs font-black rounded-xl bg-white shadow-sm text-slate-900 transition-all duration-300"
+                : "px-4 py-2 text-xs font-black rounded-xl text-slate-500 hover:text-slate-900 transition-all duration-300";
+            document.getElementById('ptab-oshi').className = !isAvatar
+                ? "px-4 py-2 text-xs font-black rounded-xl bg-white shadow-sm text-slate-900 transition-all duration-300"
+                : "px-4 py-2 text-xs font-black rounded-xl text-slate-500 hover:text-slate-900 transition-all duration-300";
+            if(!isAvatar) { switchOshiSubTab('edit'); renderOshiSection(); }
+        };
+
+        // ===== 本命設定：編輯 / 分享卡 子分頁切換 =====
+        let oshiSubTab = 'edit';
+        window.switchOshiSubTab = function(tab) {
+            oshiSubTab = tab;
+            const isEdit = tab === 'edit';
+            document.getElementById('oshi-edit-view').classList.toggle('hidden', !isEdit);
+            document.getElementById('oshi-share-view').classList.toggle('hidden', isEdit);
+            document.getElementById('oshi-subtab-edit').className = "flex-1 text-[11px] font-black py-2 rounded-full border-2 transition " +
+                (isEdit ? "bg-slate-900 border-slate-900 text-white" : "bg-white border-slate-100 text-slate-500");
+            document.getElementById('oshi-subtab-share').className = "flex-1 text-[11px] font-black py-2 rounded-full border-2 transition " +
+                (!isEdit ? "bg-slate-900 border-slate-900 text-white" : "bg-white border-slate-100 text-slate-500");
+            if(!isEdit) renderOshiShareCard();
+        };
+
+        // ===== 本命設定：資料狀態 =====
+        // oshiState.map : { memberId: '2024-06-01' }（本命 + 起始日，可複選）
+        // oshiState.watch : { memberId: true }（在意成員，可複選）
+        let oshiState = { map: {}, watch: {} };
+        let oshiMode = 'oshi'; // 'oshi' | 'watch'
+
+        function oshiMembersPool() {
+            // 本命設定用的完整名單，跟「成員名鑑」HINATAZAKA_MEMBERS 是各自獨立的兩份資料
+            return OSHI_MEMBERS;
+        }
+
+        function daysSinceOshi(dateStr) {
+            if(!dateStr) return 0;
+            const start = new Date(dateStr);
+            const diff = Math.floor((new Date() - start) / (1000 * 60 * 60 * 24));
+            return Math.max(diff, 0);
+        }
+
+        window.setOshiMode = function(mode) {
+            oshiMode = mode;
+            renderOshiSection();
+        };
+
+        window.toggleOshiMember = function(id) {
+            if(!currentUser) return;
+            if(oshiMode === 'oshi') {
+                if(Object.prototype.hasOwnProperty.call(oshiState.map, id)) {
+                    delete oshiState.map[id];
+                } else {
+                    oshiState.map[id] = new Date().toISOString().slice(0, 10);
+                }
+            } else {
+                if(oshiState.watch[id]) delete oshiState.watch[id];
+                else oshiState.watch[id] = true;
+            }
+            saveOshiState();
+            renderOshiSection();
+        };
+
+        window.removeOshiMember = function(id, ev) {
+            if(ev) ev.stopPropagation();
+            delete oshiState.map[id];
+            saveOshiState();
+            renderOshiSection();
+        };
+
+        window.updateOshiSince = function(id, value) {
+            oshiState.map[id] = value;
+            saveOshiState();
+            renderOshiSection();
+        };
+
+        function saveOshiState() {
+            if(!currentUser) return;
+            set(ref(db, 'users/' + currentUser.uid + '/oshi'), oshiState);
+        }
+
+        function renderOshiSection() {
+            // 模式按鈕外觀
+            const btnOshi = document.getElementById('oshi-mode-oshi');
+            const btnWatch = document.getElementById('oshi-mode-watch');
+            if(!btnOshi) return;
+            btnOshi.className = "flex-1 text-[11px] font-black py-2.5 rounded-xl border-2 transition active:scale-95 " +
+                (oshiMode === 'oshi' ? "bg-amber-400 border-amber-400 text-white" : "bg-white border-slate-100 text-slate-500");
+            btnWatch.className = "flex-1 text-[11px] font-black py-2.5 rounded-xl border-2 transition active:scale-95 " +
+                (oshiMode === 'watch' ? "bg-rose-400 border-rose-400 text-white" : "bg-white border-slate-100 text-slate-500");
+            document.getElementById('oshi-mode-hint').innerText = oshiMode === 'oshi'
+                ? "點成員頭像加入／移除本命，可複選，各自記錄陪伴起始日"
+                : "點成員頭像加入／移除在意名單，可複選";
+
+            // 本命清單
+            const listEl = document.getElementById('oshi-current-list');
+            const oshiIds = Object.keys(oshiState.map);
+            if(oshiIds.length === 0) {
+                listEl.innerHTML = `<div class="text-center text-[11px] text-slate-400 border-2 border-dashed border-slate-100 rounded-2xl py-4">尚未選擇本命，在下方名單點選成員吧</div>`;
+            } else {
+                listEl.innerHTML = oshiIds.map(id => {
+                    const m = oshiMembersPool().find(mm => mm.id === id);
+                    if(!m) return '';
+                    const since = oshiState.map[id];
+                    const avatarHtml = m.avatar
+                        ? `<img src="${m.avatar}" onerror="this.replaceWith(Object.assign(document.createElement('div'), {className:'w-11 h-11 rounded-full flex-shrink-0 ring-2 ring-amber-300 bg-amber-200 text-amber-700 font-black text-sm flex items-center justify-center', innerText:'${m.name.slice(0,1)}'}))" class="w-11 h-11 rounded-full object-cover flex-shrink-0 ring-2 ring-amber-300">`
+                        : `<div class="w-11 h-11 rounded-full flex-shrink-0 ring-2 ring-amber-300 bg-amber-200 text-amber-700 font-black text-sm flex items-center justify-center">${m.name.slice(0,1)}</div>`;
+                    return `
+                        <div class="flex items-center gap-3 bg-amber-50/60 border border-amber-100 rounded-2xl p-2.5">
+                            ${avatarHtml}
+                            <div class="flex-1 min-w-0">
+                                <p class="text-xs font-black text-slate-800 truncate">${m.name}</p>
+                                <div class="flex items-center gap-1.5 mt-1">
+                                    <span class="text-[10px] font-bold bg-white text-amber-600 px-2 py-0.5 rounded-full">陪伴 ${daysSinceOshi(since)} 天</span>
+                                    <input type="date" value="${since}" onchange="updateOshiSince('${id}', this.value)" class="text-[10px] border border-amber-100 rounded-lg px-1.5 py-0.5">
+                                </div>
+                            </div>
+                            <button onclick="removeOshiMember('${id}', event)" class="w-6 h-6 rounded-full bg-white text-slate-400 hover:text-red-500 flex items-center justify-center flex-shrink-0 text-xs">✕</button>
+                        </div>`;
+                }).join('');
+            }
+
+            // 成員選擇格
+            const gridEl = document.getElementById('oshi-member-grid');
+            gridEl.innerHTML = oshiMembersPool().map(m => {
+                const isOshi = Object.prototype.hasOwnProperty.call(oshiState.map, m.id);
+                const isWatch = !!oshiState.watch[m.id];
+                const ringClass = isOshi ? "ring-4 ring-amber-300" : isWatch ? "ring-4 ring-rose-300" : "ring-2 ring-transparent";
+                const badge = isOshi ? `<span class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-amber-400 text-white text-[9px] flex items-center justify-center">☀</span>`
+                    : isWatch ? `<span class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-rose-400 text-white text-[9px] flex items-center justify-center">♥</span>` : '';
+                const memberAvatarHtml = m.avatar
+                    ? `<img src="${m.avatar}" onerror="this.replaceWith(Object.assign(document.createElement('div'), {className:'w-14 h-14 rounded-full transition ${ringClass} bg-slate-200 text-slate-500 font-black text-base flex items-center justify-center', innerText:'${m.name.slice(0,1)}'}))" class="w-14 h-14 rounded-full object-cover transition ${ringClass} group-hover:-translate-y-0.5">`
+                    : `<div class="w-14 h-14 rounded-full transition ${ringClass} bg-slate-200 text-slate-500 font-black text-base flex items-center justify-center">${m.name.slice(0,1)}</div>`;
+                return `
+                    <button onclick="toggleOshiMember('${m.id}')" class="flex flex-col items-center gap-1 group">
+                        <div class="relative">
+                            ${memberAvatarHtml}
+                            ${badge}
+                        </div>
+                        <span class="text-[10px] font-bold text-slate-600 text-center leading-tight">${m.name}</span>
+                    </button>`;
+            }).join('');
+
+            renderOshiShareCard();
+        }
+
+        function renderOshiShareCard() {
+            const oshiBlockEl = document.getElementById('oshi-share-oshi-block');
+            if(!oshiBlockEl) return; // 分享卡尚未渲染過就先跳過
+
+            const oshiIds = Object.keys(oshiState.map);
+            if(oshiIds.length === 0) {
+                oshiBlockEl.innerHTML = `<div class="text-[11px] text-slate-400">尚未選擇本命</div>`;
+            } else {
+                oshiBlockEl.innerHTML = oshiIds.map(id => {
+                    const m = oshiMembersPool().find(mm => mm.id === id);
+                    if(!m) return '';
+                    const since = oshiState.map[id];
+                    const avatarHtml = m.avatar
+                        ? `<img src="${m.avatar}" class="w-20 h-20 rounded-full object-cover ring-4 ring-white shadow-[0_0_0_4px_#fbbf24]">`
+                        : `<div class="w-20 h-20 rounded-full ring-4 ring-white shadow-[0_0_0_4px_#fbbf24] bg-amber-200 text-amber-700 font-black text-2xl flex items-center justify-center">${m.name.slice(0,1)}</div>`;
+                    return `
+                        <div class="flex flex-col items-center text-center">
+                            ${avatarHtml}
+                            <div class="text-[9px] font-black text-sky-600 tracking-wider mt-2.5">推しメン・本命</div>
+                            <div class="text-sm font-black text-slate-800 mt-0.5">${m.name}</div>
+                            <div class="text-[11px] text-sky-600 mt-1">已經陪伴了<b class="text-lg text-amber-500 mx-0.5">${daysSinceOshi(since)}</b>天！</div>
+                        </div>`;
+                }).join('');
+            }
+
+            const watchBlockEl = document.getElementById('oshi-share-watch-block');
+            const watchIds = Object.keys(oshiState.watch);
+            if(watchIds.length === 0) {
+                watchBlockEl.innerHTML = `<div class="text-[11px] text-slate-400">尚未選擇在意的成員</div>`;
+            } else {
+                watchBlockEl.innerHTML = watchIds.map(id => {
+                    const m = oshiMembersPool().find(mm => mm.id === id);
+                    if(!m) return '';
+                    const avatarHtml = m.avatar
+                        ? `<img src="${m.avatar}" class="w-11 h-11 rounded-full object-cover border-2 border-rose-300">`
+                        : `<div class="w-11 h-11 rounded-full border-2 border-rose-300 bg-slate-100 text-slate-500 font-black text-xs flex items-center justify-center">${m.name.slice(0,1)}</div>`;
+                    return `
+                        <div class="flex flex-col items-center gap-1 w-14">
+                            ${avatarHtml}
+                            <span class="text-[9.5px] text-center leading-tight">${m.name}</span>
+                        </div>`;
+                }).join('');
+            }
+        }
+
+        window.downloadOshiShareCard = function() {
+            const card = document.getElementById('oshi-share-card');
+            html2canvas(card, { backgroundColor: '#ffffff', scale: 2 }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'my-oshi-card.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        };
+
         // [新增] 檢查並處理網址中是否有分享資料夾的 ID 路由
         function checkSharedUrl() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -1417,6 +1728,12 @@
                     updateAvatarDisplay(snap.val() || user.photoURL);
                 }, { onlyOnce: true });
 
+                onValue(ref(db, 'users/' + user.uid + '/oshi'), (snap) => {
+                    const data = snap.val();
+                    oshiState = { map: (data && data.map) || {}, watch: (data && data.watch) || {} };
+                    if(!document.getElementById('profile-oshi-view').classList.contains('hidden')) renderOshiSection();
+                }, { onlyOnce: true });
+
                 onValue(ref(db, 'users/' + user.uid + '/subscribed_tags'), (snap) => {
                     subscribedTags = snap.val() ? Object.keys(snap.val()) : [];
                     renderSubs();
@@ -1424,6 +1741,7 @@
             } else {
                 subscribedTags = [];
                 allFolders = [];
+                oshiState = { map: {}, watch: {} };
                 
                 document.getElementById('category-scroll').innerHTML = `
                     <div class="flex flex-col items-center gap-1.5 flex-shrink-0 cursor-pointer group" onclick="openFolderCreate()">
