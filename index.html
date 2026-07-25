@@ -498,7 +498,7 @@
             { id: 'kato_shiho', name: '加藤史帆', gen: 1, graduated: true, avatar: 'https://shihokato.com/images/14/ad4/274952f41666ea421c63cba433e96.png' },
             { id: 'sasaki_kumi', name: '佐々木久美', gen: 1, graduated: true, avatar: 'https://kumisasaki.com/images/14/270/e456b246894eaca456ca4f28f7d58.jpg' },
             { id: 'saito_kyoko', name: '齊藤京子', gen: 1, graduated: true, avatar: 'https://fam-fansite.imgix.net/shared_file/4947/dc4b4753-b84c-48bd-beaf-c4e69c0109cf.png?auto=format&s=1e0c3432a21696cea4fe903c92398b34' },
-            { id: 'sasaki_mirei', name: '佐々木美玲', gen: 1, graduated: true, avatar: 'https://static.wikia.nocookie.net/akb48/images/1/1e/Sasaki_Mirei_Queen-B.jpg' },
+            { id: 'sasaki_mirei', name: '佐々木美玲', gen: 1, graduated: true, avatar: 'https://static.wikia.nocookie.net/akb48/images/1/1e/Sasaki_Mirei_Queen-B.jpg/revision/latest?cb=20250710064925' },
             { id: 'ushio_sarina', name: '潮紗理菜', gen: 1, graduated: true, avatar: 'https://static.wikia.nocookie.net/akb48/images/9/9e/Ushio_Sarina_Cent_Force_2024.jpg/revision/latest?cb=20240906102628' },
             { id: 'kageyama_yuka', name: '影山優佳', gen: 1, graduated: true, avatar: 'https://static.wikia.nocookie.net/akb48/images/c/c1/Kageyama_Yuka_Production_Ogi_Profile.jpg/revision/latest?cb=20231013073530' },
             { id: 'higashimura_mei', name: '東村芽依', gen: 1, graduated: true, avatar: 'https://static.wikia.nocookie.net/akb48/images/e/e2/Higashimura_Mei_Twin_Planet_2025.jpg/revision/latest?cb=20251128052037' },
@@ -1525,7 +1525,7 @@
             const btnWatch = document.getElementById('oshi-mode-watch');
             if(!btnOshi) return;
             btnOshi.className = "flex-1 text-[11px] font-black py-2.5 rounded-xl border-2 transition active:scale-95 " +
-                (oshiMode === 'oshi' ? "bg-amber-400 border-amber-400 text-white" : "bg-white border-slate-100 text-slate-500");
+                (oshiMode === 'oshi' ? "bg-sky-400 border-sky-400 text-white" : "bg-white border-slate-100 text-slate-500");
             btnWatch.className = "flex-1 text-[11px] font-black py-2.5 rounded-xl border-2 transition active:scale-95 " +
                 (oshiMode === 'watch' ? "bg-rose-400 border-rose-400 text-white" : "bg-white border-slate-100 text-slate-500");
             document.getElementById('oshi-mode-hint').innerText = oshiMode === 'oshi'
@@ -1543,16 +1543,16 @@
                     if(!m) return '';
                     const since = oshiState.map[id];
                     const avatarHtml = m.avatar
-                        ? `<img src="${m.avatar}" onerror="this.replaceWith(Object.assign(document.createElement('div'), {className:'w-11 h-11 rounded-full flex-shrink-0 ring-2 ring-amber-300 bg-amber-200 text-amber-700 font-black text-sm flex items-center justify-center', innerText:'${m.name.slice(0,1)}'}))" class="w-11 h-11 rounded-full object-cover flex-shrink-0 ring-2 ring-amber-300">`
-                        : `<div class="w-11 h-11 rounded-full flex-shrink-0 ring-2 ring-amber-300 bg-amber-200 text-amber-700 font-black text-sm flex items-center justify-center">${m.name.slice(0,1)}</div>`;
+                        ? `<img src="${m.avatar}" onerror="this.replaceWith(Object.assign(document.createElement('div'), {className:'w-11 h-11 rounded-full flex-shrink-0 ring-2 ring-sky-300 bg-sky-200 text-sky-700 font-black text-sm flex items-center justify-center', innerText:'${m.name.slice(0,1)}'}))" class="w-11 h-11 rounded-full object-cover flex-shrink-0 ring-2 ring-sky-300">`
+                        : `<div class="w-11 h-11 rounded-full flex-shrink-0 ring-2 ring-sky-300 bg-sky-200 text-sky-700 font-black text-sm flex items-center justify-center">${m.name.slice(0,1)}</div>`;
                     return `
-                        <div class="flex items-center gap-3 bg-amber-50/60 border border-amber-100 rounded-2xl p-2.5">
+                        <div class="flex items-center gap-3 bg-sky-50/60 border border-sky-100 rounded-2xl p-2.5">
                             ${avatarHtml}
                             <div class="flex-1 min-w-0">
                                 <p class="text-xs font-black text-slate-800 truncate">${m.name}</p>
                                 <div class="flex items-center gap-1.5 mt-1">
-                                    <span class="text-[10px] font-bold bg-white text-amber-600 px-2 py-0.5 rounded-full">陪伴 ${daysSinceOshi(since)} 天</span>
-                                    <input type="date" value="${since}" onchange="updateOshiSince('${id}', this.value)" class="text-[10px] border border-amber-100 rounded-lg px-1.5 py-0.5">
+                                    <span class="text-[10px] font-bold bg-white text-sky-600 px-2 py-0.5 rounded-full">陪伴 ${daysSinceOshi(since)} 天</span>
+                                    <input type="date" value="${since}" onchange="updateOshiSince('${id}', this.value)" class="text-[10px] border border-sky-100 rounded-lg px-1.5 py-0.5">
                                 </div>
                             </div>
                             <button onclick="removeOshiMember('${id}', event)" class="w-6 h-6 rounded-full bg-white text-slate-400 hover:text-red-500 flex items-center justify-center flex-shrink-0 text-xs">✕</button>
@@ -1572,13 +1572,13 @@
                     Object.prototype.hasOwnProperty.call(oshiState.map, m.id) || !!oshiState.watch[m.id]
                 ).length;
                 const countBadge = selectedCount > 0
-                    ? `<span class="text-[10px] font-bold bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full">已選 ${selectedCount}</span>` : '';
+                    ? `<span class="text-[10px] font-bold bg-sky-100 text-sky-700 px-1.5 py-0.5 rounded-full">已選 ${selectedCount}</span>` : '';
 
                 const cardsHtml = membersInGen.map(m => {
                     const isOshi = Object.prototype.hasOwnProperty.call(oshiState.map, m.id);
                     const isWatch = !!oshiState.watch[m.id];
-                    const ringClass = isOshi ? "ring-4 ring-amber-300" : isWatch ? "ring-4 ring-rose-300" : "ring-2 ring-transparent";
-                    const badge = isOshi ? `<span class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-amber-400 text-white text-[9px] flex items-center justify-center">☀</span>`
+                    const ringClass = isOshi ? "ring-4 ring-sky-300" : isWatch ? "ring-4 ring-rose-300" : "ring-2 ring-transparent";
+                    const badge = isOshi ? `<span class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-sky-400 text-white text-[9px] flex items-center justify-center">☀</span>`
                         : isWatch ? `<span class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-rose-400 text-white text-[9px] flex items-center justify-center">♥</span>` : '';
                     const memberAvatarHtml = m.avatar
                         ? `<img src="${m.avatar}" onerror="this.replaceWith(Object.assign(document.createElement('div'), {className:'w-14 h-14 rounded-full transition ${ringClass} bg-slate-200 text-slate-500 font-black text-base flex items-center justify-center', innerText:'${m.name.slice(0,1)}'}))" class="w-14 h-14 rounded-full object-cover transition ${ringClass} group-hover:-translate-y-0.5">`
@@ -1622,14 +1622,14 @@
                     if(!m) return '';
                     const since = oshiState.map[id];
                     const avatarHtml = m.avatar
-                        ? `<img src="${m.avatar}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 4px #ffffff, 0 0 0 8px #fbbf24;">`
-                        : `<div style="width:80px;height:80px;border-radius:50%;box-shadow:0 0 0 4px #ffffff, 0 0 0 8px #fbbf24;background:#fde68a;color:#b45309;font-weight:900;font-size:24px;display:flex;align-items:center;justify-content:center;">${m.name.slice(0,1)}</div>`;
+                        ? `<img src="${m.avatar}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 4px #ffffff, 0 0 0 8px #38bdf8;">`
+                        : `<div style="width:80px;height:80px;border-radius:50%;box-shadow:0 0 0 4px #ffffff, 0 0 0 8px #38bdf8;background:#bae6fd;color:#0369a1;font-weight:900;font-size:24px;display:flex;align-items:center;justify-content:center;">${m.name.slice(0,1)}</div>`;
                     return `
                         <div style="display:flex;flex-direction:column;align-items:center;text-align:center;">
                             ${avatarHtml}
                             <div style="font-size:9px;font-weight:900;color:#1d6d96;letter-spacing:1px;margin-top:10px;">推しメン・本命</div>
                             <div style="font-size:14px;font-weight:900;color:#1f2a33;margin-top:2px;">${m.name}</div>
-                            <div style="font-size:11px;color:#1d6d96;margin-top:4px;">已經陪伴了<b style="font-size:18px;color:#f4b400;margin:0 3px;">${daysSinceOshi(since)}</b>天！</div>
+                            <div style="font-size:11px;color:#1d6d96;margin-top:4px;">已經陪伴了<b style="font-size:18px;color:#0ea5e9;margin:0 3px;">${daysSinceOshi(since)}</b>天！</div>
                         </div>`;
                 }).join('');
             }
