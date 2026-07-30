@@ -207,21 +207,26 @@
                 <div id="playlists-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
             </div>
 
-            <!-- 單一懶人包內容 -->
+            <!-- 單一懶人包／資料夾內容 -->
             <div id="playlist-view" class="hidden">
-                <div class="flex flex-wrap justify-between items-center gap-3 mb-5">
+                <div class="flex flex-wrap justify-between items-center gap-3 mb-3">
                     <button onclick="closePlaylistView()" class="flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-slate-900 transition bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">
-                        <span>⬅</span> 返回列表
+                        <span>⬅</span> 返回上一層
                     </button>
                     <div class="flex items-center gap-2">
-                        <button onclick="toggleViewMode()" class="view-toggle-btn text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">☰ 清單檢視</button>
+                        <button id="playlist-view-toggle-btn" onclick="toggleViewMode()" class="view-toggle-btn hidden text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">☰ 清單檢視</button>
                         <!-- [新增] 分享懶人包按鈕 -->
-                        <button onclick="sharePlaylistCurrent()" class="text-xs font-bold text-sky-600 hover:bg-sky-50 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">🔗 分享</button>
+                        <button id="playlist-view-share-btn" onclick="sharePlaylistCurrent()" class="text-xs font-bold text-sky-600 hover:bg-sky-50 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">🔗 分享</button>
                     </div>
                 </div>
+                <!-- 麵包屑導覽 -->
+                <div id="playlist-breadcrumb" class="flex flex-wrap items-center gap-1.5 text-xs font-bold text-slate-400 mb-4"></div>
                 <img id="playlist-view-cover" src="" class="hidden w-full aspect-[21/9] object-cover rounded-2xl mb-4 border border-slate-100">
                 <h2 id="playlist-view-title" class="text-lg sm:text-xl font-black text-slate-800 tracking-wider mb-1.5"></h2>
                 <p id="playlist-view-desc" class="text-xs text-slate-400 mb-5"></p>
+                <!-- 資料夾層：顯示子資料夾／子播單卡片 -->
+                <div id="playlist-children-container" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+                <!-- 播單層：顯示影片 -->
                 <div id="playlist-videos-grid" class="masonry-grid"></div>
             </div>
         </section>
@@ -1129,8 +1134,14 @@
             allVideos = snapshot.val() ? Object.values(snapshot.val()) : [];
             videosFullyLoaded = true;
             renderExplore(); renderRandom(true); renderSubs(); renderPlaylistsPage();
-            if(!document.getElementById('playlist-view').classList.contains('hidden')) {
-                openPlaylistView(document.getElementById('playlist-view').dataset.playlistId);
+            if(!document.getElementById('playlist-view').classList.contains('hidden') && playlistNavStack.length) {
+                // 影片資料更新時，只重新渲染目前所在層級，不改變導覽堆疊
+                const currentId = playlistNavStack[playlistNavStack.length - 1].id;
+                const refreshed = allPlaylists.find(p => p.id === currentId);
+                if (refreshed) {
+                    playlistNavStack[playlistNavStack.length - 1] = refreshed;
+                    renderCurrentPlaylistView();
+                }
             }
             // [新增] 如果當前正開著資料夾檢視（含「全部收藏」），影片資料更新時也一併刷新
             if(!document.getElementById('folder-view').classList.contains('hidden')) {
@@ -1150,6 +1161,11 @@
                 .filter(p => !p.hidden);
             allPlaylists.sort((a, b) => (a.order || 0) - (b.order || 0));
             renderPlaylistsPage();
+            if (!document.getElementById('playlist-view').classList.contains('hidden') && playlistNavStack.length) {
+                // 精華區資料更新時，同步重新整理目前導覽路徑上的每一層節點，再重繪目前層級
+                playlistNavStack = playlistNavStack.map(n => allPlaylists.find(p => p.id === n.id) || n);
+                renderCurrentPlaylistView();
+            }
         });
 
         function getPlaylistVideoIds(playlist) {
@@ -1157,67 +1173,170 @@
             return Array.isArray(playlist.video_ids) ? playlist.video_ids.filter(Boolean) : Object.keys(playlist.video_ids);
         }
 
+        // 判斷是否為資料夾（相容 "Folder" / "folder" 等大小寫寫法）
+        function isPlaylistFolder(p) {
+            return String(p && p.type || '').trim().toLowerCase() === 'folder';
+        }
+
+        // 取得某個 parentId 底下的直屬子項（資料夾或播單），並依 order 排序
+        function getPlaylistChildren(parentId) {
+            return allPlaylists
+                .filter(p => (p.parent_id || '') === (parentId || ''))
+                .sort((a, b) => (a.order || 0) - (b.order || 0));
+        }
+
+        // 遞迴收集某個節點底下（含子資料夾）所有播單的影片 ID，並保留原始順序、去重
+        function collectVideoIdsRecursive(node) {
+            if (!isPlaylistFolder(node)) return getPlaylistVideoIds(node);
+            const ids = [];
+            const seen = new Set();
+            getPlaylistChildren(node.id).forEach(child => {
+                collectVideoIdsRecursive(child).forEach(id => {
+                    if (!seen.has(id)) { seen.add(id); ids.push(id); }
+                });
+            });
+            return ids;
+        }
+
+        // 目前導覽路徑（一路點進去的資料夾／播單堆疊）
+        let playlistNavStack = [];
+
         function renderPlaylistsPage() {
             const container = document.getElementById('playlists-container');
             if (!container) return;
-            if (allPlaylists.length === 0) {
+            const topLevel = getPlaylistChildren(''); // 只顯示最上層（沒有 parent_id 的項目）
+            if (topLevel.length === 0) {
                 container.innerHTML = '<p class="text-slate-500 text-sm py-10 text-center col-span-full">目前尚無精華懶人包，敬請期待！</p>';
                 return;
             }
-            container.innerHTML = allPlaylists.map(p => {
-                const count = getPlaylistVideoIds(p).length;
-                const coverHtml = p.cover_image
-                    ? `<img src="${p.cover_image}" referrerpolicy="no-referrer" loading="lazy" onerror="this.src='${fallbackImage}'" class="w-14 h-14 rounded-2xl object-cover border border-slate-100 flex-shrink-0">`
-                    : `<div class="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-2xl border border-slate-100 flex-shrink-0">🌈</div>`;
-                return `
-                <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 flex items-center justify-between cursor-pointer hover:shadow-md hover:border-slate-200 transition-all duration-200 active:scale-[0.98]" onclick="openPlaylistView('${p.id}')">
-                    <div class="flex items-center gap-4 min-w-0">
-                        ${coverHtml}
-                        <div class="min-w-0">
-                            <h2 class="text-base font-extrabold text-slate-900 truncate">${p.name}</h2>
-                            <p class="text-xs text-slate-400 mt-1">${p.description ? p.description + '・' : ''}共 ${count} 部影片</p>
-                        </div>
-                    </div>
-                    <div class="text-slate-300 pr-2 flex-shrink-0">➔</div>
-                </div>`;
-            }).join('');
+            container.innerHTML = topLevel.map(p => playlistCardHtml(p)).join('');
         }
 
-        window.openPlaylistView = function(playlistId) {
-            const playlist = allPlaylists.find(p => p.id === playlistId);
-            if (!playlist) return;
+        function playlistCardHtml(p) {
+            const folder = isPlaylistFolder(p);
+            const count = collectVideoIdsRecursive(p).length;
+            const coverHtml = p.cover_image
+                ? `<img src="${p.cover_image}" referrerpolicy="no-referrer" loading="lazy" onerror="this.src='${fallbackImage}'" class="w-14 h-14 rounded-2xl object-cover border border-slate-100 flex-shrink-0">`
+                : `<div class="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-2xl border border-slate-100 flex-shrink-0">${folder ? '📁' : '🌈'}</div>`;
+            return `
+            <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 flex items-center justify-between cursor-pointer hover:shadow-md hover:border-slate-200 transition-all duration-200 active:scale-[0.98]" onclick="openPlaylistView('${p.id}')">
+                <div class="flex items-center gap-4 min-w-0">
+                    ${coverHtml}
+                    <div class="min-w-0">
+                        <h2 class="text-base font-extrabold text-slate-900 truncate">${p.name}</h2>
+                        <p class="text-xs text-slate-400 mt-1">${p.description ? p.description + '・' : ''}共 ${count} 部影片</p>
+                    </div>
+                </div>
+                <div class="text-slate-300 pr-2 flex-shrink-0">➔</div>
+            </div>`;
+        }
 
-            document.getElementById('playlists-main-view').classList.add('hidden');
-            const playlistViewEl = document.getElementById('playlist-view');
-            playlistViewEl.classList.remove('hidden');
-            playlistViewEl.dataset.playlistId = playlistId;
-            document.getElementById('playlist-view-title').innerText = playlist.name;
-            document.getElementById('playlist-view-desc').innerText = playlist.description || '';
+        function renderPlaylistBreadcrumb() {
+            const el = document.getElementById('playlist-breadcrumb');
+            if (!el) return;
+            const crumbs = [`<span class="hover:text-sky-500 cursor-pointer" onclick="jumpToPlaylistRoot()">🌈 主題懶人包</span>`];
+            playlistNavStack.forEach((node, idx) => {
+                const isLast = idx === playlistNavStack.length - 1;
+                crumbs.push(`<span class="text-slate-300">/</span>`);
+                crumbs.push(isLast
+                    ? `<span class="text-slate-600">${node.name}</span>`
+                    : `<span class="hover:text-sky-500 cursor-pointer" onclick="jumpToPlaylistLevel(${idx})">${node.name}</span>`);
+            });
+            el.innerHTML = crumbs.join('');
+        }
+
+        // 依目前導覽節點（資料夾或播單）渲染畫面
+        function renderCurrentPlaylistView() {
+            const node = playlistNavStack[playlistNavStack.length - 1];
+            if (!node) return;
+
+            document.getElementById('playlist-view-title').innerText = node.name;
+            document.getElementById('playlist-view-desc').innerText = node.description || '';
             const coverEl = document.getElementById('playlist-view-cover');
-            if (playlist.cover_image) {
-                coverEl.src = playlist.cover_image;
+            if (node.cover_image) {
+                coverEl.src = node.cover_image;
                 coverEl.classList.remove('hidden');
             } else {
                 coverEl.classList.add('hidden');
                 coverEl.src = '';
             }
 
-            const ids = getPlaylistVideoIds(playlist);
-            let list = allVideos.filter(v => ids.includes(v.id));
-            list.sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
-            renderGrid('playlist-videos-grid', list, '這個懶人包目前還沒有收錄影片喔！');
+            renderPlaylistBreadcrumb();
+
+            const childrenContainer = document.getElementById('playlist-children-container');
+            const videosGrid = document.getElementById('playlist-videos-grid');
+            const toggleBtn = document.getElementById('playlist-view-toggle-btn');
+            const shareBtn = document.getElementById('playlist-view-share-btn');
+
+            if (isPlaylistFolder(node)) {
+                // 資料夾：顯示子資料夾／子播單卡片，隱藏影片格與分享鈕（資料夾本身仍可分享，維持顯示分享鈕亦可，這裡選擇保留分享鈕以便整包分享）
+                const children = getPlaylistChildren(node.id);
+                childrenContainer.classList.remove('hidden');
+                videosGrid.classList.add('hidden');
+                toggleBtn.classList.add('hidden');
+                shareBtn.classList.remove('hidden');
+                childrenContainer.innerHTML = children.length
+                    ? children.map(c => playlistCardHtml(c)).join('')
+                    : '<p class="text-slate-500 text-sm py-10 text-center col-span-full">這個資料夾目前還是空的喔！</p>';
+            } else {
+                // 播單：顯示影片格
+                childrenContainer.classList.add('hidden');
+                videosGrid.classList.remove('hidden');
+                toggleBtn.classList.remove('hidden');
+                shareBtn.classList.remove('hidden');
+                const ids = getPlaylistVideoIds(node);
+                let list = allVideos.filter(v => ids.includes(v.id));
+                list.sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
+                renderGrid('playlist-videos-grid', list, '這個懶人包目前還沒有收錄影片喔！');
+            }
+        }
+
+        window.openPlaylistView = function(playlistId) {
+            const node = allPlaylists.find(p => p.id === playlistId);
+            if (!node) return;
+
+            document.getElementById('playlists-main-view').classList.add('hidden');
+            const playlistViewEl = document.getElementById('playlist-view');
+            playlistViewEl.classList.remove('hidden');
+            playlistViewEl.dataset.playlistId = playlistId;
+
+            playlistNavStack.push(node);
+            renderCurrentPlaylistView();
         };
 
+        // 從資料夾／播單卡片點進下一層（與 openPlaylistView 相同，語意上獨立出來方便閱讀）
+        window.openPlaylistChild = window.openPlaylistView;
+
         window.closePlaylistView = function() {
+            playlistNavStack.pop();
+            if (playlistNavStack.length === 0) {
+                document.getElementById('playlists-main-view').classList.remove('hidden');
+                document.getElementById('playlist-view').classList.add('hidden');
+            } else {
+                document.getElementById('playlist-view').dataset.playlistId = playlistNavStack[playlistNavStack.length - 1].id;
+                renderCurrentPlaylistView();
+            }
+        };
+
+        // 麵包屑：直接跳回精華區根目錄
+        window.jumpToPlaylistRoot = function() {
+            playlistNavStack = [];
             document.getElementById('playlists-main-view').classList.remove('hidden');
             document.getElementById('playlist-view').classList.add('hidden');
+        };
+
+        // 麵包屑：跳回導覽路徑中的某一層
+        window.jumpToPlaylistLevel = function(idx) {
+            playlistNavStack = playlistNavStack.slice(0, idx + 1);
+            document.getElementById('playlist-view').dataset.playlistId = playlistNavStack[playlistNavStack.length - 1].id;
+            renderCurrentPlaylistView();
         };
 
         // [新增] 分享精華區懶人包邏輯：與資料夾分享共用同一個 shares/ 節點格式，
         // 這樣分享出去的連結，未登入或無痕瀏覽的使用者也能直接開啟同一個檢視頁
         function sharePlaylist(playlist) {
             const shareId = "sp_" + Date.now();
-            const ids = getPlaylistVideoIds(playlist);
+            const ids = collectVideoIdsRecursive(playlist);
             const videoIdsMap = {};
             ids.forEach(id => { videoIdsMap[id] = true; });
 
