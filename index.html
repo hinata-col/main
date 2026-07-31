@@ -254,17 +254,17 @@
             
             <!-- 單一資料夾內容 -->
             <div id="folder-view" class="hidden">
-                <div class="flex flex-wrap justify-between items-center gap-3 mb-3">
-                    <button onclick="closeFolderView()" class="flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-slate-900 transition bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">
+                <div class="mb-3">
+                    <button onclick="closeFolderView()" class="flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-slate-900 transition bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95 mb-2.5">
                         <span>⬅</span> 返回上一層
                     </button>
-                    <div class="flex items-center gap-2">
-                        <button onclick="toggleViewMode()" class="view-toggle-btn text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">☰ 清單檢視</button>
-                        <button id="btn-add-subfolder" class="text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">📁➕ 子資料夾</button>
+                    <div class="grid grid-cols-2 sm:flex sm:flex-wrap gap-2">
+                        <button onclick="toggleViewMode()" class="view-toggle-btn flex items-center justify-center gap-1 text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-3 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">☰ 清單檢視</button>
+                        <button id="btn-add-subfolder" class="flex items-center justify-center gap-1 text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-3 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">📁➕ 子資料夾</button>
                         <!-- [新增] 分享資料夾按鈕 -->
-                        <button id="btn-share-folder" class="text-xs font-bold text-sky-600 hover:bg-sky-50 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">🔗 分享</button>
-                        <button id="btn-edit-folder" class="text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">⚙️ 修改</button>
-                        <button id="btn-delete-folder" class="text-xs font-bold text-red-500 hover:text-red-700 hover:bg-red-50 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">🗑️ 刪除</button>
+                        <button id="btn-share-folder" class="flex items-center justify-center gap-1 text-xs font-bold text-sky-600 hover:bg-sky-50 bg-white px-3 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">🔗 分享</button>
+                        <button id="btn-edit-folder" class="flex items-center justify-center gap-1 text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-3 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">⚙️ 修改</button>
+                        <button id="btn-delete-folder" class="col-span-2 sm:col-span-1 flex items-center justify-center gap-1 text-xs font-bold text-red-500 hover:text-red-700 hover:bg-red-50 bg-white px-3 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">🗑️ 刪除</button>
                     </div>
                 </div>
                 <div id="folder-breadcrumb" class="flex flex-wrap items-center gap-1.5 text-xs font-bold text-slate-400 mb-4"></div>
