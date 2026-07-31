@@ -189,8 +189,8 @@
                 <div class="border-t border-slate-100 my-4"></div>
 
                 <div>
-                    <h3 class="text-xs font-bold text-slate-400 mb-2.5 flex items-center gap-1"><span>🏷️</span> 所有標籤</h3>
-                    <div id="subs-tags-all" class="flex gap-2 flex-wrap max-h-40 overflow-y-auto hide-scrollbar pr-1"></div>
+                    <h3 class="text-xs font-bold text-slate-400 mb-3 flex items-center gap-1"><span>☁️</span> 標籤雲・點一下馬上看影片</h3>
+                    <div id="subs-tags-all" class="flex gap-2.5 flex-wrap justify-center items-center max-h-52 overflow-y-auto hide-scrollbar px-2 py-3 bg-gradient-to-b from-slate-50/60 to-white rounded-2xl"></div>
                 </div>
             </div>
             
@@ -245,24 +245,32 @@
                 <div class="flex justify-between items-center mb-2">
                     <h2 class="text-sm sm:text-base font-black text-slate-800 tracking-wider">我的收藏夾</h2>
                 </div>
+                <div class="relative max-w-xs">
+                    <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">🔍</span>
+                    <input id="folder-search-input" type="text" placeholder="搜尋已收藏影片標題..." class="w-full bg-slate-50 border border-slate-100 rounded-xl py-2 pl-9 pr-4 text-xs focus:outline-none focus:ring-2 focus:ring-sky-200 transition-all" oninput="renderFoldersPage()">
+                </div>
                 <div id="folders-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
             </div>
             
             <!-- 單一資料夾內容 -->
             <div id="folder-view" class="hidden">
-                <div class="flex flex-wrap justify-between items-center gap-3 mb-5">
+                <div class="flex flex-wrap justify-between items-center gap-3 mb-3">
                     <button onclick="closeFolderView()" class="flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-slate-900 transition bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">
-                        <span>⬅</span> 返回列表
+                        <span>⬅</span> 返回上一層
                     </button>
                     <div class="flex items-center gap-2">
                         <button onclick="toggleViewMode()" class="view-toggle-btn text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">☰ 清單檢視</button>
+                        <button id="btn-add-subfolder" class="text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">📁➕ 子資料夾</button>
                         <!-- [新增] 分享資料夾按鈕 -->
                         <button id="btn-share-folder" class="text-xs font-bold text-sky-600 hover:bg-sky-50 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">🔗 分享</button>
                         <button id="btn-edit-folder" class="text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">⚙️ 修改</button>
                         <button id="btn-delete-folder" class="text-xs font-bold text-red-500 hover:text-red-700 hover:bg-red-50 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">🗑️ 刪除</button>
                     </div>
                 </div>
+                <div id="folder-breadcrumb" class="flex flex-wrap items-center gap-1.5 text-xs font-bold text-slate-400 mb-4"></div>
                 <h2 id="folder-view-title" class="text-lg sm:text-xl font-black text-slate-800 tracking-wider mb-5"></h2>
+                <!-- 子資料夾（若有） -->
+                <div id="folder-children-container" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6"></div>
                 <div id="folder-videos-grid" class="masonry-grid"></div>
             </div>
         </section>
@@ -718,12 +726,73 @@
             renderExplore();
         };
 
+        // 簡單的字串雜湊，用來讓每個標籤固定拿到同一組顏色/角度，不會每次刷新就亂跳
+        function hashTagString(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                hash = (hash * 31 + str.charCodeAt(i)) | 0;
+            }
+            return Math.abs(hash);
+        }
+
+        // [新增] 影片類別標籤清單：這幾個字如果出現在標籤裡，會被視為「類別」而不是「其他」
+        // 要增減類別，直接改這個陣列即可
+        const VIDEO_CATEGORY_TAGS = ['綜藝', '影視', '音樂', '唱歌', '舞蹈', '廣播', 'CM'];
+
+        // [新增] 成員名稱比對用的 Set：直接沿用 OSHI_MEMBERS 裡已經維護好的成員姓名清單，
+        // 這樣以後成員名單更新，標籤雲的顏色判斷會自動跟著更新，不用兩邊都改
+        const MEMBER_NAME_SET = new Set(OSHI_MEMBERS.map(m => m.name));
+
+        // [新增] 期生標籤判斷：「一期生」「二期生」...「十期生」這種明顯的世代分類，
+        // 用正則直接比對「中文數字 + 期生」，不用每次出新一期都手動加清單
+        const GEN_TAG_REGEX = /^[一二三四五六七八九十]+期生$/;
+
+        // 標籤雲配色盤：
+        // - 成員名 → 固定用「粉色」（一眼就認出這是人名標籤）
+        // - 影片類別 → 固定用「天藍色」（一眼就認出這是類型標籤）
+        // - 期生／世代 → 固定用「紫色」（一眼就認出這是世代分類）
+        // - 其他標籤 → 從剩下的顏色裡用雜湊隨機挑一個，讓畫面還是有點層次，但不會跟上面三種混在一起
+        const TAG_COLOR_MEMBER   = { bg: 'bg-pink-100',   text: 'text-pink-600',   border: 'border-pink-200' };
+        const TAG_COLOR_CATEGORY = { bg: 'bg-sky-100',    text: 'text-sky-600',    border: 'border-sky-200' };
+        const TAG_COLOR_GEN      = { bg: 'bg-violet-100', text: 'text-violet-600', border: 'border-violet-200' };
+        const TAG_CLOUD_PALETTE_OTHER = [
+            { bg: 'bg-amber-100',  text: 'text-amber-600',  border: 'border-amber-200' },
+            { bg: 'bg-emerald-100',text: 'text-emerald-600',border: 'border-emerald-200' },
+            { bg: 'bg-rose-100',   text: 'text-rose-600',   border: 'border-rose-200' },
+        ];
+
+        function tagCloudStyle(tag, count, maxCount) {
+            const h = hashTagString(tag);
+            let palette;
+            if (MEMBER_NAME_SET.has(tag)) {
+                palette = TAG_COLOR_MEMBER;
+            } else if (VIDEO_CATEGORY_TAGS.includes(tag)) {
+                palette = TAG_COLOR_CATEGORY;
+            } else if (GEN_TAG_REGEX.test(tag)) {
+                palette = TAG_COLOR_GEN;
+            } else {
+                palette = TAG_CLOUD_PALETTE_OTHER[h % TAG_CLOUD_PALETTE_OTHER.length];
+            }
+            const ratio = maxCount > 0 ? count / maxCount : 0;
+            // 依出現次數決定文字大小，越常出現的標籤字越大、越顯眼，形成雲朵大小差異
+            const sizeClass = ratio > 0.75 ? 'text-base' : ratio > 0.45 ? 'text-sm' : ratio > 0.2 ? 'text-xs' : 'text-[11px]';
+            const rotate = (h % 7) - 3; // -3 ~ 3 度，讓標籤有一點自然歪斜的手感，不會死板排列
+            return { palette, sizeClass, rotate };
+        }
+
         function renderSubs() {
             const tagSearchQuery = document.getElementById('tag-search-input').value.trim().toLowerCase();
             
             const tagsSet = new Set();
-            allVideos.forEach(v => { if(!v.hidden && v.tags) v.tags.forEach(t => tagsSet.add(t)); });
+            const tagCountMap = {};
+            allVideos.forEach(v => {
+                if(!v.hidden && v.tags) v.tags.forEach(t => {
+                    tagsSet.add(t);
+                    tagCountMap[t] = (tagCountMap[t] || 0) + 1;
+                });
+            });
             const allTagsArray = Array.from(tagsSet);
+            const maxTagCount = Math.max(1, ...Object.values(tagCountMap));
 
             const filteredTags = tagSearchQuery 
                 ? allTagsArray.filter(t => t.toLowerCase().includes(tagSearchQuery))
@@ -753,12 +822,14 @@
                 allTagsContainer.innerHTML = `<span class="text-xs text-slate-400 py-2 block">沒有找到其他標籤</span>`;
             } else {
                 allTagsContainer.innerHTML = remainingTags.map(tag => {
+                    const { palette, sizeClass, rotate } = tagCloudStyle(tag, tagCountMap[tag] || 0, maxTagCount);
+                    const isActive = activeTags.includes(tag);
                     return `
-                    <div class="inline-flex items-center border border-slate-200/60 bg-white rounded-xl shadow-sm overflow-hidden transition hover:border-slate-300">
-                        <button onclick="filterSubs('${tag}')" class="px-3 py-1.5 text-xs font-bold ${activeTags.includes(tag) ? 'bg-slate-900 text-white' : 'text-slate-700 hover:bg-slate-50'} transition">
+                    <div class="inline-flex items-center rounded-full shadow-sm overflow-hidden transition-transform duration-200 hover:scale-105 hover:!rotate-0 border ${isActive ? 'border-slate-900' : palette.border}" style="transform: rotate(${rotate}deg);">
+                        <button onclick="filterSubs('${tag}')" class="px-3.5 py-1.5 ${sizeClass} font-black transition ${isActive ? 'bg-slate-900 text-white' : palette.bg + ' ' + palette.text + ' hover:brightness-95'}">
                             #${tag}
                         </button>
-                        <button onclick="toggleTagSub('${tag}')" class="px-2.5 py-1.5 text-xs bg-transparent border-l border-slate-100 hover:bg-sky-50 transition" title="訂閱此標籤">
+                        <button onclick="toggleTagSub('${tag}')" class="px-2 py-1.5 text-xs bg-white/60 border-l ${palette.border} hover:bg-sky-50 transition" title="訂閱此標籤">
                             ☆
                         </button>
                     </div>`;
@@ -801,9 +872,56 @@
         };
 
         // [新增] 依 order 欄位排序資料夾；沒有 order 的（新建立的）用 created_at 當備援，會自然排到最後
-        function sortedFolders() {
-            return [...allFolders].sort((a, b) => (a.order ?? a.created_at ?? 0) - (b.order ?? b.created_at ?? 0));
+        // parentId 不傳時＝回傳「全部資料夾」攤平清單（給首頁快速捷徑列表用）
+        // parentId 傳入時＝只回傳該層底下的直屬子資料夾，依 order/created_at 排序
+        function sortedFolders(parentId) {
+            const list = parentId === undefined
+                ? [...allFolders]
+                : allFolders.filter(f => (f.parent_id || '') === (parentId || ''));
+            return list.sort((a, b) => (a.order ?? a.created_at ?? 0) - (b.order ?? b.created_at ?? 0));
         }
+
+        function getFolderChildren(parentId) {
+            return sortedFolders(parentId || '');
+        }
+
+        // 遞迴收集某資料夾（含所有子資料夾）底下的所有影片 ID，去重
+        function collectFolderVideoIdsRecursive(folderId) {
+            const seen = new Set();
+            const folder = allFolders.find(f => f.id === folderId);
+            if (folder && folder.video_ids) Object.keys(folder.video_ids).forEach(id => seen.add(id));
+            getFolderChildren(folderId).forEach(child => {
+                collectFolderVideoIdsRecursive(child.id).forEach(id => seen.add(id));
+            });
+            return Array.from(seen);
+        }
+
+        // 遞迴收集某資料夾自己＋所有子孫資料夾的 ID（刪除時要整包一起刪）
+        function collectFolderDescendantIds(folderId) {
+            let ids = [folderId];
+            getFolderChildren(folderId).forEach(child => {
+                ids = ids.concat(collectFolderDescendantIds(child.id));
+            });
+            return ids;
+        }
+
+        // 組出資料夾的完整路徑名稱，例如「日常 / 演唱會」，方便在收藏彈窗分辨巢狀資料夾
+        function folderPathLabel(folder) {
+            const parts = [folder.name];
+            let cur = folder;
+            let guard = 0; // 防止資料異常造成死迴圈
+            while (cur.parent_id && guard < 20) {
+                const parent = allFolders.find(f => f.id === cur.parent_id);
+                if (!parent) break;
+                parts.unshift(parent.name);
+                cur = parent;
+                guard++;
+            }
+            return parts.join(' / ');
+        }
+
+        // 目前的資料夾導覽路徑堆疊（支援無限層巢狀）
+        let folderNavStack = [];
 
         // [新增] 計算「全部收藏」去重後的影片總數
         function allSavedVideoIdSet() {
@@ -815,7 +933,29 @@
         function renderFoldersPage() {
             const container = document.getElementById('folders-container');
             if(!currentUser) return;
-            const sorted = sortedFolders();
+
+            // 🔍 搜尋模式：只要搜尋框有字，就直接在「所有已收藏影片」裡找標題符合的影片，
+            // 暫時取代資料夾卡片列表；清空搜尋框就自動變回資料夾列表
+            const searchInput = document.getElementById('folder-search-input');
+            const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+            if (query) {
+                const idSet = allSavedVideoIdSet();
+                let list = allVideos.filter(v => idSet.has(v.id) && !v.hidden);
+                list = list.filter(v => {
+                    const title = (v.custom_title || v.original_title || v.original_excerpt || '').toLowerCase();
+                    return title.includes(query);
+                });
+                list.sort((a, b) => b.created_at - a.created_at);
+                container.classList.remove('grid', 'grid-cols-1', 'sm:grid-cols-2', 'gap-4');
+                container.classList.add('masonry-grid');
+                renderGrid('folders-container', list, `找不到符合「${query}」的收藏影片`);
+                return;
+            }
+            container.classList.remove('masonry-grid');
+            container.classList.add('grid', 'grid-cols-1', 'sm:grid-cols-2', 'gap-4');
+            delete lastGridData['folders-container']; // 離開搜尋模式，避免切換大圖/清單時誤把資料夾卡片列表當成影片牆重繪
+
+            const sorted = getFolderChildren(''); // 只顯示最上層資料夾
             const allSavedCount = allSavedVideoIdSet().size;
 
             const allSavedCard = `
@@ -834,43 +974,63 @@
                 container.innerHTML = allSavedCard + '<p class="text-slate-500 text-sm py-10 text-center col-span-full">尚未建立任何資料夾，快點擊頂部 📁 新增吧！</p>';
                 return;
             }
-            container.innerHTML = allSavedCard + sorted.map((f, idx) => {
-                const count = f.video_ids ? Object.keys(f.video_ids).length : 0;
-                return `
-                <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 flex items-center justify-between hover:shadow-md hover:border-slate-200 transition-all duration-200">
-                    <div class="flex items-center gap-4 cursor-pointer flex-1 min-w-0 active:scale-[0.98] transition" onclick="openFolderView('${f.id}')">
-                        <div class="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-2xl border border-slate-100 flex-shrink-0">${f.emoji || '📁'}</div>
-                        <div class="min-w-0">
-                            <h2 class="text-base font-extrabold text-slate-900 truncate">${f.name}</h2>
-                            <p class="text-xs text-slate-400 mt-1">已收錄 ${count} 部影片</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-1 flex-shrink-0 pl-2">
-                        <button onclick="moveFolder('${f.id}','up')" ${idx === 0 ? 'disabled' : ''} title="上移" class="w-7 h-7 rounded-full bg-slate-50 hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center text-xs text-slate-500 active:scale-90 transition">▲</button>
-                        <button onclick="moveFolder('${f.id}','down')" ${idx === sorted.length - 1 ? 'disabled' : ''} title="下移" class="w-7 h-7 rounded-full bg-slate-50 hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center text-xs text-slate-500 active:scale-90 transition">▼</button>
-                    </div>
-                </div>`;
-            }).join('');
+            container.innerHTML = allSavedCard + sorted.map((f, idx) => folderCardHtml(f, idx, sorted.length)).join('');
         }
 
-        // [新增] 上移／下移資料夾：每次都把目前排序結果重新寫入連續的 order 數值，
-        // 這樣就算舊資料夾原本沒有 order 欄位，第一次操作後也會自動補上
+        // 資料夾卡片（首頁跟資料夾內的子資料夾共用）
+        function folderCardHtml(f, idx, total) {
+            const count = collectFolderVideoIdsRecursive(f.id).length;
+            const childFolderCount = getFolderChildren(f.id).length;
+            return `
+            <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 flex items-center justify-between hover:shadow-md hover:border-slate-200 transition-all duration-200">
+                <div class="flex items-center gap-4 cursor-pointer flex-1 min-w-0 active:scale-[0.98] transition" onclick="openFolderView('${f.id}')">
+                    <div class="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-2xl border border-slate-100 flex-shrink-0">${f.emoji || '📁'}</div>
+                    <div class="min-w-0">
+                        <h2 class="text-base font-extrabold text-slate-900 truncate">${f.name}</h2>
+                        <p class="text-xs text-slate-400 mt-1">${childFolderCount > 0 ? childFolderCount + ' 個子資料夾・' : ''}共 ${count} 部影片</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-1 flex-shrink-0 pl-2">
+                    <button onclick="moveFolder('${f.id}','up')" ${idx === 0 ? 'disabled' : ''} title="上移" class="w-7 h-7 rounded-full bg-slate-50 hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center text-xs text-slate-500 active:scale-90 transition">▲</button>
+                    <button onclick="moveFolder('${f.id}','down')" ${idx === total - 1 ? 'disabled' : ''} title="下移" class="w-7 h-7 rounded-full bg-slate-50 hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center text-xs text-slate-500 active:scale-90 transition">▼</button>
+                </div>
+            </div>`;
+        }
+
+        // [新增] 上移／下移資料夾：只在「同一層」內排序（同一個 parent_id 底下的兄弟資料夾），
+        // 每次都把目前排序結果重新寫入連續的 order 數值
         window.moveFolder = function(folderId, direction) {
             if (!currentUser) return;
-            const sorted = sortedFolders();
-            const idx = sorted.findIndex(f => f.id === folderId);
+            const folder = allFolders.find(f => f.id === folderId);
+            if (!folder) return;
+            const siblings = getFolderChildren(folder.parent_id || '');
+            const idx = siblings.findIndex(f => f.id === folderId);
             if (idx === -1) return;
             const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
-            if (swapIdx < 0 || swapIdx >= sorted.length) return;
+            if (swapIdx < 0 || swapIdx >= siblings.length) return;
 
-            [sorted[idx], sorted[swapIdx]] = [sorted[swapIdx], sorted[idx]];
+            [siblings[idx], siblings[swapIdx]] = [siblings[swapIdx], siblings[idx]];
 
             const updates = {};
-            sorted.forEach((f, i) => {
+            siblings.forEach((f, i) => {
                 updates[`users/${currentUser.uid}/folders/${f.id}/order`] = i;
             });
             update(ref(db), updates);
         };
+
+        function renderFolderBreadcrumb() {
+            const el = document.getElementById('folder-breadcrumb');
+            if (!el) return;
+            const crumbs = [`<span class="hover:text-sky-500 cursor-pointer" onclick="jumpToFolderRoot()">📁 我的收藏夾</span>`];
+            folderNavStack.forEach((node, idx) => {
+                const isLast = idx === folderNavStack.length - 1;
+                crumbs.push(`<span class="text-slate-300">/</span>`);
+                crumbs.push(isLast
+                    ? `<span class="text-slate-600">${node.emoji || '📁'} ${node.name}</span>`
+                    : `<span class="hover:text-sky-500 cursor-pointer" onclick="jumpToFolderLevel(${idx})">${node.emoji || '📁'} ${node.name}</span>`);
+            });
+            el.innerHTML = crumbs.join('');
+        }
 
         window.openFolderView = function(folderId) {
             document.getElementById('folders-main-view').classList.add('hidden');
@@ -879,14 +1039,21 @@
             const shareBtn = document.getElementById('btn-share-folder');
             const editBtn = document.getElementById('btn-edit-folder');
             const deleteBtn = document.getElementById('btn-delete-folder');
+            const subfolderBtn = document.getElementById('btn-add-subfolder');
+            const breadcrumbEl = document.getElementById('folder-breadcrumb');
 
             // [新增] 「全部收藏」是彙整所有資料夾的虛擬檢視，不是真實資料夾，
-            // 不能分享／修改／刪除，也不支援自訂排序（因為影片可能同時來自好幾個資料夾）
+            // 不能分享／修改／刪除／建立子資料夾，也不支援自訂排序（因為影片可能同時來自好幾個資料夾）
             if (folderId === '__all__') {
+                folderNavStack = []; // 全部收藏視為獨立入口，不進入巢狀導覽堆疊
+                breadcrumbEl.innerHTML = '';
                 document.getElementById('folder-view-title').innerText = `⭐ 全部收藏`;
+                document.getElementById('folder-children-container').classList.add('hidden');
+                document.getElementById('folder-videos-grid').classList.remove('hidden');
                 shareBtn.classList.add('hidden');
                 editBtn.classList.add('hidden');
                 deleteBtn.classList.add('hidden');
+                subfolderBtn.classList.add('hidden');
 
                 const videoIdSet = allSavedVideoIdSet();
                 let list = allVideos.filter(v => videoIdSet.has(v.id));
@@ -900,21 +1067,76 @@
             const folder = allFolders.find(f => f.id === folderId);
             if(!folder) return;
 
+            // 如果目前堆疊裡已經有這個節點（例如資料更新後重整），修剪回該節點為止；
+            // 否則視為往下點一層，推進堆疊
+            const existingIdx = folderNavStack.findIndex(n => n.id === folderId);
+            if (existingIdx !== -1) {
+                folderNavStack = folderNavStack.slice(0, existingIdx + 1);
+                folderNavStack[existingIdx] = folder;
+            } else {
+                folderNavStack.push(folder);
+            }
+
             document.getElementById('folder-view-title').innerText = `${folder.emoji || '📁'} ${folder.name}`;
+            renderFolderBreadcrumb();
             shareBtn.classList.remove('hidden');
             editBtn.classList.remove('hidden');
             deleteBtn.classList.remove('hidden');
+            subfolderBtn.classList.remove('hidden');
 
             shareBtn.onclick = () => shareFolder(folder);
             editBtn.onclick = () => editFolder(folderId, folder.name, folder.emoji);
             deleteBtn.onclick = () => deleteFolder(folderId, folder.name);
+            subfolderBtn.onclick = () => createSubfolder(folderId);
+
+            // 子資料夾（若有）顯示在上方；影片格永遠顯示在下方（資料夾本身也可以直接收藏影片進去）
+            const children = getFolderChildren(folderId);
+            const childrenContainer = document.getElementById('folder-children-container');
+            if (children.length > 0) {
+                childrenContainer.classList.remove('hidden');
+                childrenContainer.innerHTML = children.map((c, idx) => folderCardHtml(c, idx, children.length)).join('');
+            } else {
+                childrenContainer.classList.add('hidden');
+                childrenContainer.innerHTML = '';
+            }
+            document.getElementById('folder-videos-grid').classList.remove('hidden');
 
             renderFolderVideos(folderId);
         };
 
         window.closeFolderView = function() {
+            folderNavStack.pop();
+            if (folderNavStack.length === 0) {
+                document.getElementById('folders-main-view').classList.remove('hidden');
+                document.getElementById('folder-view').classList.add('hidden');
+            } else {
+                openFolderView(folderNavStack[folderNavStack.length - 1].id);
+            }
+        };
+
+        // 麵包屑：跳回收藏夾根目錄
+        window.jumpToFolderRoot = function() {
+            folderNavStack = [];
             document.getElementById('folders-main-view').classList.remove('hidden');
             document.getElementById('folder-view').classList.add('hidden');
+        };
+
+        // 麵包屑：跳回導覽路徑中的某一層
+        window.jumpToFolderLevel = function(idx) {
+            const targetId = folderNavStack[idx].id;
+            folderNavStack = folderNavStack.slice(0, idx);
+            openFolderView(targetId);
+        };
+
+        // 在目前資料夾底下建立子資料夾（無限層）
+        window.createSubfolder = function(parentId) {
+            if(!currentUser) { alert('請先登入帳號才能建立資料夾！'); openAccountSettings(); return; }
+            const name = prompt('子資料夾名稱：');
+            if(!name) return;
+            const emoji = prompt('代表 emoji (留空預設📁)：') || '📁';
+            push(ref(db, `users/${currentUser.uid}/folders`), {
+                name: name.trim(), emoji: emoji, parent_id: parentId, created_at: Date.now(), order: Date.now()
+            });
         };
 
         // [新增] 依資料夾自訂的 video_order 排序渲染影片；沒排過序的影片會依收藏時間自動補到最後
@@ -1070,11 +1292,14 @@
         // [新增] 分享資料夾邏輯 (發佈到 shares/ 節點，實現未登入與無痕瀏覽)
         function shareFolder(folder) {
             const shareId = "s_" + Date.now();
+            const recursiveIds = collectFolderVideoIdsRecursive(folder.id);
+            const videoIdsMap = {};
+            recursiveIds.forEach(id => { videoIdsMap[id] = true; });
             const shareData = {
                 name: folder.name,
                 emoji: folder.emoji || '📁',
                 owner: currentUser.displayName || "日向坂推し",
-                video_ids: folder.video_ids || {},
+                video_ids: videoIdsMap,
                 created_at: Date.now()
             };
 
@@ -1109,10 +1334,24 @@
         }
 
         function deleteFolder(folderId, folderName) {
-            if (confirm(`確定要刪除整個資料夾「${folderName}」嗎？刪除後無法復原！`)) {
-                set(ref(db, `users/${currentUser.uid}/folders/${folderId}`), null).then(() => {
+            const descendantIds = collectFolderDescendantIds(folderId); // 包含自己＋所有子孫資料夾
+            const hasChildren = descendantIds.length > 1;
+            const confirmMsg = hasChildren
+                ? `「${folderName}」底下還有 ${descendantIds.length - 1} 個子資料夾，確定要一起刪除嗎？刪除後無法復原！`
+                : `確定要刪除整個資料夾「${folderName}」嗎？刪除後無法復原！`;
+            if (confirm(confirmMsg)) {
+                const updates = {};
+                descendantIds.forEach(id => { updates[`users/${currentUser.uid}/folders/${id}`] = null; });
+                update(ref(db), updates).then(() => {
                     showToast("資料夾已刪除");
-                    closeFolderView();
+                    // 從導覽堆疊中移除被刪的這一層（含子孫），直接顯示上一層，避免重複 pop
+                    folderNavStack = folderNavStack.filter(n => !descendantIds.includes(n.id));
+                    if (folderNavStack.length === 0) {
+                        document.getElementById('folders-main-view').classList.remove('hidden');
+                        document.getElementById('folder-view').classList.add('hidden');
+                    } else {
+                        openFolderView(folderNavStack[folderNavStack.length - 1].id);
+                    }
                 });
             }
         }
@@ -1375,7 +1614,7 @@
             const name = prompt('新分類名稱：');
             if(!name) return;
             const emoji = prompt('代表 emoji (留空預設📁)：') || '📁';
-            push(ref(db, `users/${currentUser.uid}/folders`), { name: name.trim(), emoji: emoji, created_at: Date.now(), order: Date.now() });
+            push(ref(db, `users/${currentUser.uid}/folders`), { name: name.trim(), emoji: emoji, parent_id: '', created_at: Date.now(), order: Date.now() });
         };
 
         window.openSaveModal = function(videoId) {
@@ -1404,9 +1643,10 @@
             } else {
                 const folderRows = allFolders.map(f => {
                     const isSaved = f.video_ids && f.video_ids[videoId];
+                    const label = folderPathLabel(f);
                     return `
                     <button onclick="toggleVideoInFolder('${f.id}', ${!!isSaved})" class="w-full text-left px-4 py-4 rounded-2xl border ${isSaved ? 'bg-sky-50 border-sky-200' : 'bg-white border-slate-100 hover:bg-slate-50'} flex justify-between items-center transition duration-200">
-                        <span class="font-bold text-sm text-slate-800">${f.emoji || '📁'} ${f.name}</span>
+                        <span class="font-bold text-sm text-slate-800">${f.emoji || '📁'} ${label}</span>
                         <span class="text-lg">${isSaved ? '✅' : '<span class="text-gray-300">＋</span>'}</span>
                     </button>`;
                 }).join('');
