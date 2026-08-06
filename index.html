@@ -15,6 +15,7 @@
     <title>留友看 Hinata Ver.</title>
     <link rel="icon" type="image/jpeg" href="https://cdn.hinatazaka46.com/images/14/1e6/c3049a93d54c3f9a8ded4694e158b/400_320_102400.jpg">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.46.0/dist/tabler-icons.min.css">
     <style>
         html { overflow-x: hidden; width: 100%; }
         body { overflow-x: hidden; max-width: 100vw; }
@@ -441,6 +442,13 @@
         // type: 'active' 現役 | 'og' 畢業生
         // avatar 請填官方認證圖片網址；official/x/instagram 請填官方認證連結，沒有的欄位留空字串即可
         // 正式使用前，請把下方範例換成核對過的真實名單（之後可以請 Claude 協助整理草稿再一起確認）
+        // FC icon 底色：依成員應援色設定，找不到對應 id 就用預設灰色
+        const FC_COLOR_MAP = {
+            kato_shiho: '#2E90FA', // 史帆・應援色藍（明亮飽和藍）
+            nibu_akari: '#FF7A1A'  // 丹生・應援色橘（明亮飽和橘）
+        };
+        const FC_COLOR_DEFAULT = '#94918A';
+
         const HINATAZAKA_MEMBERS = [
             {
                 id: 'group_official',
@@ -1724,15 +1732,15 @@
                     ${avatarHtml}
                 </div>
                 <span class="text-[11px] font-bold text-slate-700 text-center leading-tight w-full truncate" title="${m.name}">${m.name}</span>
-                <div class="flex items-center gap-1 flex-wrap justify-center">
-                    ${m.official ? `<a href="${m.official}" target="_blank" rel="noopener" title="官方網站" class="w-5 h-5 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-[9px] transition">🌐</a>` : ''}
-                    ${m.fc ? `<a href="${m.fc}" target="_blank" rel="noopener" title="Fanclub" class="w-5 h-5 rounded-full bg-sky-100 hover:bg-sky-200 flex items-center justify-center text-[9px] transition">🎫</a>` : ''}
-                    ${m.x ? `<a href="${m.x}" target="_blank" rel="noopener" title="X（Twitter）" class="w-5 h-5 rounded-full bg-black text-white flex items-center justify-center text-[8px] font-black transition hover:opacity-80">X</a>` : ''}
-                    ${m.instagram ? `<a href="${m.instagram}" target="_blank" rel="noopener" title="Instagram" class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] transition hover:opacity-80" style="background:linear-gradient(45deg,#7024C4,#C21975,#F58529);">📷</a>` : ''}
-                    ${m.youtube ? `<a href="${m.youtube}" target="_blank" rel="noopener" title="YouTube" class="w-5 h-5 rounded-full text-white flex items-center justify-center text-[8px] transition hover:opacity-80" style="background-color:#FF0000;">▶</a>` : ''}
-                    ${m.youtubeMusic ? `<a href="${m.youtubeMusic}" target="_blank" rel="noopener" title="YouTube（音樂）" class="w-5 h-5 rounded-full text-white flex items-center justify-center text-[8px] transition hover:opacity-80" style="background-color:#FF0000;">🎵</a>` : ''}
-                    ${m.youtubeVariety ? `<a href="${m.youtubeVariety}" target="_blank" rel="noopener" title="YouTube（節目）" class="w-5 h-5 rounded-full text-white flex items-center justify-center text-[8px] transition hover:opacity-80" style="background-color:#FF0000;">📺</a>` : ''}
-                    ${m.tiktok ? `<a href="${m.tiktok}" target="_blank" rel="noopener" title="TikTok" class="w-5 h-5 rounded-full bg-black text-white flex items-center justify-center text-[9px] transition hover:opacity-80">🎶</a>` : ''}
+                <div class="flex items-center gap-1.5 flex-wrap justify-center">
+                    ${m.official ? `<a href="${m.official}" target="_blank" rel="noopener" title="官方網站" class="w-7 h-7 rounded-full flex items-center justify-center transition hover:opacity-80" style="background-color:#475569;"><i class="ti ti-world text-[17px] text-white" aria-hidden="true"></i></a>` : ''}
+                    ${m.fc ? `<a href="${m.fc}" target="_blank" rel="noopener" title="Fanclub" class="w-7 h-7 rounded-full flex items-center justify-center transition hover:opacity-80" style="background-color:${FC_COLOR_MAP[m.id] || FC_COLOR_DEFAULT};"><i class="ti ti-message-chatbot text-[17px] text-white" aria-hidden="true"></i></a>` : ''}
+                    ${m.x ? `<a href="${m.x}" target="_blank" rel="noopener" title="X（Twitter）" class="w-7 h-7 rounded-full bg-black flex items-center justify-center transition hover:opacity-80"><i class="ti ti-brand-x text-[17px] text-white" aria-hidden="true"></i></a>` : ''}
+                    ${m.instagram ? `<a href="${m.instagram}" target="_blank" rel="noopener" title="Instagram" class="w-7 h-7 rounded-full flex items-center justify-center transition hover:opacity-80" style="background:linear-gradient(45deg,#7024C4,#C21975,#F58529);"><i class="ti ti-brand-instagram text-[17px] text-white" aria-hidden="true"></i></a>` : ''}
+                    ${m.youtube ? `<a href="${m.youtube}" target="_blank" rel="noopener" title="YouTube" class="w-7 h-7 rounded-full flex items-center justify-center transition hover:opacity-80" style="background-color:#FF0000;"><i class="ti ti-brand-youtube text-[17px] text-white" aria-hidden="true"></i></a>` : ''}
+                    ${m.youtubeMusic ? `<a href="${m.youtubeMusic}" target="_blank" rel="noopener" title="YouTube（音樂頻道）" class="relative w-7 h-7 rounded-full flex items-center justify-center transition hover:opacity-80" style="background-color:#FF0000;"><i class="ti ti-brand-youtube text-[17px] text-white" aria-hidden="true"></i><span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white" style="background-color:#7F77DD;"></span></a>` : ''}
+                    ${m.youtubeVariety ? `<a href="${m.youtubeVariety}" target="_blank" rel="noopener" title="YouTube（直播／VLOG頻道）" class="relative w-7 h-7 rounded-full flex items-center justify-center transition hover:opacity-80" style="background-color:#FF0000;"><i class="ti ti-brand-youtube text-[17px] text-white" aria-hidden="true"></i><span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white" style="background-color:#1D9E75;"></span></a>` : ''}
+                    ${m.tiktok ? `<a href="${m.tiktok}" target="_blank" rel="noopener" title="TikTok" class="w-7 h-7 rounded-full bg-black flex items-center justify-center transition hover:opacity-80"><i class="ti ti-brand-tiktok text-[17px] text-white" aria-hidden="true"></i></a>` : ''}
                 </div>
             </div>`;
         }
