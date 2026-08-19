@@ -699,12 +699,54 @@
             });
         };
 
-        window.renderExplore = function() {
-            const keyword = document.getElementById('search-input').value.trim().toLowerCase();
-            const sortMode = document.getElementById('sort-select').value;
-            let list = allVideos.filter(v => !v.hidden);
-            if (keyword) list = list.filter(v => (v.custom_title + v.original_title + v.tags?.join('')).toLowerCase().includes(keyword));
-            list.sort((a, b) => sortMode === 'popular' ? (b.view_count || 0) - (a.view_count || 0) : b.created_at - a.created_at);
+// 取得影片的時間戳（增加容錯：支援字串日期、秒級時間戳、其他欄位名稱）
+function parseVideoTime(v) {
+    // 支援 created_at, timestamp, date, created_time 等不同欄位名
+    let raw = v.created_at ?? v.timestamp ?? v.date ?? v.created_time ?? 0;
+    
+    // 如果是數字
+    if (typeof raw === 'number') {
+        // 若為 10 位數的「秒級」時間戳，乘以 1000 轉為「毫秒級」
+        return raw < 10000000000 ? raw * 1000 : raw;
+    }
+    
+    // 如果是 ISO / 日期字串 (例如 "2026-08-19" 或 "2026/08/19 12:00:00")
+    if (typeof raw === 'string') {
+        const parsed = Date.parse(raw);
+        return isNaN(parsed) ? 0 : parsed;
+    }
+    
+    return 0;
+}
+
+window.renderExplore = function() {
+    const keyword = document.getElementById('search-input').value.trim().toLowerCase();
+    const sortMode = document.getElementById('sort-select').value;
+    let list = allVideos.filter(v => !v.hidden);
+    if (keyword) list = list.filter(v => (v.custom_title + v.original_title + v.tags?.join('')).toLowerCase().includes(keyword));
+    
+    // 套用強化後的排序邏輯
+    list.sort((a, b) => {
+        if (sortMode === 'popular') {
+            return (b.view_count || 0) - (a.view_count || 0);
+        }
+        return parseVideoTime(b) - parseVideoTime(a);
+    });
+
+    const total = list.length;
+    const visibleList = list.slice(0, exploreDisplayCount);
+    renderGrid('explore-grid', visibleList, '找不到影片。');
+
+    const loadMoreWrap = document.getElementById('explore-load-more-wrap');
+    if (loadMoreWrap) {
+        if (total > visibleList.length) {
+            loadMoreWrap.classList.remove('hidden');
+            document.getElementById('explore-load-more-count').innerText = `已顯示 ${visibleList.length} / ${total} 部`;
+        } else {
+            loadMoreWrap.classList.add('hidden');
+        }
+    }
+};
 
             // [新增] 首頁影片牆分批顯示：搜尋／排序永遠是對「全部資料」做的（結果不受分頁影響），
             // 只是畫面上一次只渲染 exploreDisplayCount 筆，捲到底再載入更多，減少初次渲染與圖片載入量
