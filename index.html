@@ -722,7 +722,8 @@
             panel.innerText = text;
         }
         window.renderDebugPanelIfNeeded = renderDebugPanelIfNeeded;
-            const keyword = document.getElementById('search-input').value.trim().toLowerCase();
+        window.renderExplore = function() {
+        const keyword = document.getElementById('search-input').value.trim().toLowerCase();
             const sortMode = document.getElementById('sort-select').value;
             let list = allVideos.filter(v => !v.hidden);
             if (keyword) list = list.filter(v => (v.custom_title + v.original_title + v.tags?.join('')).toLowerCase().includes(keyword));
