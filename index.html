@@ -699,35 +699,12 @@
             });
         };
 
-        // [暫時除錯用] 手機上沒有開發者工具，所以直接把診斷資訊印在畫面上一個小黑框裡，
-        // 只有網址加上 ?debug=1 才會出現，確認完問題後可以直接刪掉這個函式跟呼叫它的那一行
-        function renderDebugPanelIfNeeded() {
-            if (!location.search.includes('debug=1')) return;
-            let panel = document.getElementById('__debug_panel');
-            if (!panel) {
-                panel = document.createElement('div');
-                panel.id = '__debug_panel';
-                panel.style.cssText = 'position:fixed;bottom:0;left:0;right:0;max-height:60vh;overflow-y:auto;background:#111;color:#0f0;font-size:11px;font-family:monospace;padding:10px;z-index:99999;white-space:pre-wrap;line-height:1.5;';
-                document.body.appendChild(panel);
-            }
-            const newest = [...allVideos].sort((a, b) => b.created_at - a.created_at).slice(0, 5);
-            let text = `=== allVideos 總筆數: ${allVideos.length} ===\n`;
-            text += `=== 首頁實際渲染筆數: ${document.getElementById('explore-grid') ? document.getElementById('explore-grid').children.length : 'N/A'} ===\n\n`;
-            text += `=== 排序後最新 5 筆 ===\n`;
-            newest.forEach((v, i) => {
-                text += `${i + 1}. ${v.custom_title || v.original_title || '(無標題)'}\n`;
-                text += `   created_at: ${JSON.stringify(v.created_at)} (型別: ${typeof v.created_at})\n`;
-                text += `   hidden: ${v.hidden} | id: ${v.id}\n\n`;
-            });
-            panel.innerText = text;
-        }
-        window.renderDebugPanelIfNeeded = renderDebugPanelIfNeeded;
         window.renderExplore = function() {
-        const keyword = document.getElementById('search-input').value.trim().toLowerCase();
+            const keyword = document.getElementById('search-input').value.trim().toLowerCase();
             const sortMode = document.getElementById('sort-select').value;
             let list = allVideos.filter(v => !v.hidden);
             if (keyword) list = list.filter(v => (v.custom_title + v.original_title + v.tags?.join('')).toLowerCase().includes(keyword));
-            list.sort((a, b) => sortMode === 'popular' ? (b.view_count || 0) - (a.view_count || 0) : b.created_at - a.created_at);
+            list.sort((a, b) => sortMode === 'popular' ? (b.view_count || 0) - (a.view_count || 0) : (b.created_at || 0) - (a.created_at || 0));
 
             // [新增] 首頁影片牆分批顯示：搜尋／排序永遠是對「全部資料」做的（結果不受分頁影響），
             // 只是畫面上一次只渲染 exploreDisplayCount 筆，捲到底再載入更多，減少初次渲染與圖片載入量
@@ -880,7 +857,7 @@
                 emptyMessage = `目前沒有同時符合 ${activeTags.map(t => '#' + t).join(' + ')} 的影片`;
             }
 
-            filteredVideos.sort((a, b) => b.created_at - a.created_at);
+            filteredVideos.sort((a, b) => (b.created_at || 0) - (a.created_at || 0));
             renderGrid('subs-grid', filteredVideos, emptyMessage);
         }
 
@@ -976,7 +953,7 @@
                     const title = (v.custom_title || v.original_title || v.original_excerpt || '').toLowerCase();
                     return title.includes(query);
                 });
-                list.sort((a, b) => b.created_at - a.created_at);
+                list.sort((a, b) => (b.created_at || 0) - (a.created_at || 0));
                 container.classList.remove('grid', 'grid-cols-1', 'sm:grid-cols-2', 'gap-4');
                 container.classList.add('masonry-grid');
                 renderGrid('folders-container', list, `找不到符合「${query}」的收藏影片`);
@@ -1088,7 +1065,7 @@
 
                 const videoIdSet = allSavedVideoIdSet();
                 let list = allVideos.filter(v => videoIdSet.has(v.id));
-                list.sort((a, b) => b.created_at - a.created_at);
+                list.sort((a, b) => (b.created_at || 0) - (a.created_at || 0));
 
                 lastGridData['folder-videos-grid'] = { type: 'grid_only', folderId: '__all__', list, emptyMessage: '目前還沒有收藏任何影片喔！' };
                 renderGrid('folder-videos-grid', list, '目前還沒有收藏任何影片喔！');
@@ -1179,7 +1156,7 @@
             const missing = videoIds.filter(id => !orderArr.includes(id))
                 .map(id => allVideos.find(v => v.id === id))
                 .filter(Boolean)
-                .sort((a, b) => b.created_at - a.created_at)
+                .sort((a, b) => (b.created_at || 0) - (a.created_at || 0))
                 .map(v => v.id);
             orderArr = [...orderArr, ...missing];
 
@@ -1198,7 +1175,7 @@
             const missing = videoIds.filter(id => !orderArr.includes(id))
                 .map(id => allVideos.find(v => v.id === id))
                 .filter(Boolean)
-                .sort((a, b) => b.created_at - a.created_at)
+                .sort((a, b) => (b.created_at || 0) - (a.created_at || 0))
                 .map(v => v.id);
             orderArr = [...orderArr, ...missing];
 
@@ -1387,23 +1364,14 @@
             }
         }
 
-        // [新增] 分頁載入策略：
-        // 1) 先用較小的查詢（只抓最新 EXPLORE_PAGE_SIZE 筆）快速讓首頁有畫面可看
-        // 2) 全量資料在背景同時抓取，抓到之後接手成為唯一資料來源，
-        //    確保搜尋／標籤／資料夾等需要完整資料的功能不受影響
+        // [簡化] 拿掉原本「先抓最新 30 筆」的快速查詢機制——
+        // 這個查詢依賴 orderByChild + limitToLast，資料量變多後容易不穩定，
+        // 現在只用下面這個「抓全部資料」的監聽器，穩定、且已經即時更新
         let videosFullyLoaded = false;
-
-        const recentVideosQuery = query(ref(db, 'videos'), orderByChild('created_at'), limitToLast(EXPLORE_PAGE_SIZE));
-        onValue(recentVideosQuery, (snapshot) => {
-            if (videosFullyLoaded) return; // 全量資料已經抵達並接手，這裡不再需要動作
-            allVideos = snapshot.val() ? Object.values(snapshot.val()) : [];
-            renderExplore(); renderRandom(true); renderSubs(); renderPlaylistsPage();
-        }, { onlyOnce: true });
 
         onValue(ref(db, 'videos'), (snapshot) => {
             allVideos = snapshot.val() ? Object.values(snapshot.val()) : [];
             videosFullyLoaded = true;
-            renderDebugPanelIfNeeded(); // [暫時除錯用] 只有網址加上 ?debug=1 才會顯示，平常不影響任何人
             renderExplore(); renderRandom(true); renderSubs(); renderPlaylistsPage();
             if(!document.getElementById('playlist-view').classList.contains('hidden') && playlistNavStack.length) {
                 // 影片資料更新時，只重新渲染目前所在層級，不改變導覽堆疊
@@ -1763,7 +1731,7 @@
                     ${m.instagram ? `<a href="${m.instagram}" target="_blank" rel="noopener" title="Instagram" class="w-7 h-7 rounded-full flex items-center justify-center transition hover:opacity-80" style="background:linear-gradient(45deg,#7024C4,#C21975,#F58529);"><i class="ti ti-brand-instagram text-[17px] text-white" aria-hidden="true"></i></a>` : ''}
                     ${m.youtube ? `<a href="${m.youtube}" target="_blank" rel="noopener" title="YouTube" class="w-7 h-7 rounded-full flex items-center justify-center transition hover:opacity-80" style="background-color:#FF0000;"><i class="ti ti-brand-youtube text-[17px] text-white" aria-hidden="true"></i></a>` : ''}
                     ${m.youtubeMusic ? `<a href="${m.youtubeMusic}" target="_blank" rel="noopener" title="YouTube（音樂頻道）" class="relative w-7 h-7 rounded-full flex items-center justify-center transition hover:opacity-80" style="background-color:#FF0000;"><i class="ti ti-brand-youtube text-[17px] text-white" aria-hidden="true"></i><span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white" style="background-color:#7F77DD;"></span></a>` : ''}
-                    ${m.youtubeVariety ? `<a href="${m.youtubeVariety}" target="_blank" rel="noopener" title="YouTube（直播／VLOG頻道）" class="relative w-7 h-7 rounded-full flex items-center justify-center transition hover:opacity-80" style="background-color:#FF0000;"><i class="ti ti-brand-youtube text-[17px] text-white" aria-hidden="true"></i><span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white" style="background-color:#1D9E75;"></span></a>` : ''}
+                    ${m.youtubeVariety ? `<a href="${m.youtubeVariety}" target="_blank" rel="noopener" title="YouTube（雜綜／VLOG頻道）" class="relative w-7 h-7 rounded-full flex items-center justify-center transition hover:opacity-80" style="background-color:#FF0000;"><i class="ti ti-brand-youtube text-[17px] text-white" aria-hidden="true"></i><span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white" style="background-color:#1D9E75;"></span></a>` : ''}
                     ${m.tiktok ? `<a href="${m.tiktok}" target="_blank" rel="noopener" title="TikTok" class="w-7 h-7 rounded-full bg-black flex items-center justify-center transition hover:opacity-80"><i class="ti ti-brand-tiktok text-[17px] text-white" aria-hidden="true"></i></a>` : ''}
                 </div>
             </div>`;
@@ -2092,7 +2060,7 @@
 
                 const videoIds = data.video_ids ? Object.keys(data.video_ids) : [];
                 const list = allVideos.filter(v => videoIds.includes(v.id));
-                list.sort((a, b) => b.created_at - a.created_at);
+                list.sort((a, b) => (b.created_at || 0) - (a.created_at || 0));
 
                 renderGrid('shared-videos-grid', list, '這個分享資料夾目前沒有影片喔！');
             }, { onlyOnce: true });
