@@ -1364,18 +1364,10 @@
             }
         }
 
-        // [新增] 分頁載入策略：
-        // 1) 先用較小的查詢（只抓最新 EXPLORE_PAGE_SIZE 筆）快速讓首頁有畫面可看
-        // 2) 全量資料在背景同時抓取，抓到之後接手成為唯一資料來源，
-        //    確保搜尋／標籤／資料夾等需要完整資料的功能不受影響
+        // [簡化] 拿掉原本「先抓最新 30 筆」的快速查詢機制——
+        // 這個查詢依賴 orderByChild + limitToLast，資料量變多後容易不穩定，
+        // 現在只用下面這個「抓全部資料」的監聽器，穩定、且已經即時更新
         let videosFullyLoaded = false;
-
-        const recentVideosQuery = query(ref(db, 'videos'), orderByChild('created_at'), limitToLast(EXPLORE_PAGE_SIZE));
-        onValue(recentVideosQuery, (snapshot) => {
-            if (videosFullyLoaded) return; // 全量資料已經抵達並接手，這裡不再需要動作
-            allVideos = snapshot.val() ? Object.values(snapshot.val()) : [];
-            renderExplore(); renderRandom(true); renderSubs(); renderPlaylistsPage();
-        }, { onlyOnce: true });
 
         onValue(ref(db, 'videos'), (snapshot) => {
             allVideos = snapshot.val() ? Object.values(snapshot.val()) : [];
@@ -1739,7 +1731,7 @@
                     ${m.instagram ? `<a href="${m.instagram}" target="_blank" rel="noopener" title="Instagram" class="w-7 h-7 rounded-full flex items-center justify-center transition hover:opacity-80" style="background:linear-gradient(45deg,#7024C4,#C21975,#F58529);"><i class="ti ti-brand-instagram text-[17px] text-white" aria-hidden="true"></i></a>` : ''}
                     ${m.youtube ? `<a href="${m.youtube}" target="_blank" rel="noopener" title="YouTube" class="w-7 h-7 rounded-full flex items-center justify-center transition hover:opacity-80" style="background-color:#FF0000;"><i class="ti ti-brand-youtube text-[17px] text-white" aria-hidden="true"></i></a>` : ''}
                     ${m.youtubeMusic ? `<a href="${m.youtubeMusic}" target="_blank" rel="noopener" title="YouTube（音樂頻道）" class="relative w-7 h-7 rounded-full flex items-center justify-center transition hover:opacity-80" style="background-color:#FF0000;"><i class="ti ti-brand-youtube text-[17px] text-white" aria-hidden="true"></i><span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white" style="background-color:#7F77DD;"></span></a>` : ''}
-                    ${m.youtubeVariety ? `<a href="${m.youtubeVariety}" target="_blank" rel="noopener" title="YouTube（直播／VLOG頻道）" class="relative w-7 h-7 rounded-full flex items-center justify-center transition hover:opacity-80" style="background-color:#FF0000;"><i class="ti ti-brand-youtube text-[17px] text-white" aria-hidden="true"></i><span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white" style="background-color:#1D9E75;"></span></a>` : ''}
+                    ${m.youtubeVariety ? `<a href="${m.youtubeVariety}" target="_blank" rel="noopener" title="YouTube（雜綜／VLOG頻道）" class="relative w-7 h-7 rounded-full flex items-center justify-center transition hover:opacity-80" style="background-color:#FF0000;"><i class="ti ti-brand-youtube text-[17px] text-white" aria-hidden="true"></i><span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white" style="background-color:#1D9E75;"></span></a>` : ''}
                     ${m.tiktok ? `<a href="${m.tiktok}" target="_blank" rel="noopener" title="TikTok" class="w-7 h-7 rounded-full bg-black flex items-center justify-center transition hover:opacity-80"><i class="ti ti-brand-tiktok text-[17px] text-white" aria-hidden="true"></i></a>` : ''}
                 </div>
             </div>`;
