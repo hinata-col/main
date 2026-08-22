@@ -1364,6 +1364,18 @@
             }
         }
 
+        // 成員頭像：優先使用 Firebase members/{id}/avatar 的自動同步結果，
+        // 沒有的話（例如尚未跑過同步工具）就沿用陣列裡寫死的網址當備援
+        onValue(ref(db, 'members'), (snapshot) => {
+            const overrides = snapshot.val() || {};
+            OSHI_MEMBERS.forEach(m => {
+                if (overrides[m.id] && overrides[m.id].avatar) {
+                    m.avatar = overrides[m.id].avatar;
+                }
+            });
+            if (typeof renderOshiSection === 'function') renderOshiSection();
+        });
+
         // [簡化] 拿掉原本「先抓最新 30 筆」的快速查詢機制——
         // 這個查詢依賴 orderByChild + limitToLast，資料量變多後容易不穩定，
         // 現在只用下面這個「抓全部資料」的監聽器，穩定、且已經即時更新
