@@ -265,7 +265,7 @@
                         <button id="btn-add-subfolder" class="flex items-center justify-center gap-1 text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-3 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">📁➕ 子資料夾</button>
                         <!-- [新增] 分享資料夾按鈕 -->
                         <button id="btn-share-folder" class="flex items-center justify-center gap-1 text-xs font-bold text-sky-600 hover:bg-sky-50 bg-white px-3 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">🔗 分享</button>
-                        <button id="btn-edit-folder" class="flex items-center justify-center gap-1 text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-3 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">✏️ 修改</button>
+                        <button id="btn-edit-folder" class="flex items-center justify-center gap-1 text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-3 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">✏️ 改名稱</button>
                         <button id="btn-delete-folder" class="flex items-center justify-center gap-1 text-xs font-bold text-red-500 hover:text-red-700 hover:bg-red-50 bg-white px-3 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">🗑️ 刪除</button>
                     </div>
                 </div>
@@ -878,7 +878,7 @@
         };
 
         window.toggleTagSub = function(tag) {
-            if(!currentUser) { alert('請先登入帳號才能收藏標籤'); openAccountSettings(); return; }
+            if(!currentUser) { alert('請先登入帳號才能收藏 Tag！'); openAccountSettings(); return; }
             const nodeRef = ref(db, `users/${currentUser.uid}/subscribed_tags/${tag}`);
             if(subscribedTags.includes(tag)) set(nodeRef, null); 
             else set(nodeRef, true); 
@@ -2004,13 +2004,14 @@
         }
 
         // [新增] 將外部圖片網址轉為可跨網域讀取的代理連結，避免 html2canvas 輸出圖片時因 CORS 被瀏覽器判定為受污染畫布
-        function proxyImg(url) {
+        window.proxyImg = function(url) {
             if(!url) return url;
             return 'https://images.weserv.nl/?url=' + encodeURIComponent(url) + '&default=' + encodeURIComponent(url);
         }
+        const proxyImg = window.proxyImg;
 
         // [新增] 將本命分享卡輸出成圖片並下載
-        function downloadOshiCard() {
+        window.downloadOshiCard = function() {
             const btn = document.getElementById('oshi-download-btn');
             const card = document.getElementById('oshi-share-card');
             if(!btn || !card) return;
