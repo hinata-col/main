@@ -15,6 +15,7 @@
     <title>留友看 Hinata Ver.</title>
     <link rel="icon" type="image/jpeg" href="https://cdn.hinatazaka46.com/images/14/1e6/c3049a93d54c3f9a8ded4694e158b/400_320_102400.jpg">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.46.0/dist/tabler-icons.min.css">
     <style>
         html { overflow-x: hidden; width: 100%; }
@@ -118,10 +119,12 @@
                     <p id="shared-folder-desc" class="text-xs text-slate-400 mt-1"></p>
                 </div>
                 <div class="flex items-center gap-2 flex-shrink-0 self-start sm:self-auto">
-                    <button onclick="toggleViewMode()" class="view-toggle-btn text-xs font-bold bg-white border border-sky-100 rounded-xl px-3 py-2.5 text-slate-500 shadow-sm hover:bg-sky-50 transition active:scale-95">☰ 清單檢視</button>
+                    <button id="shared-view-toggle-btn" onclick="toggleViewMode()" class="view-toggle-btn text-xs font-bold bg-white border border-sky-100 rounded-xl px-3 py-2.5 text-slate-500 shadow-sm hover:bg-sky-50 transition active:scale-95">☰ 清單檢視</button>
                     <button onclick="exitSharedView()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-black px-5 py-3 rounded-xl transition shadow-sm active:scale-95 whitespace-nowrap">📺 前往首頁探索更多</button>
                 </div>
             </div>
+            <div id="shared-breadcrumb" class="flex flex-wrap items-center gap-1.5 text-xs font-bold text-slate-400 mb-4"></div>
+            <div id="shared-children-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4 hidden mb-4"></div>
             <div id="shared-videos-grid" class="masonry-grid"></div>
         </section>
 
@@ -133,6 +136,7 @@
                     <div class="flex items-center gap-2">
                         <span class="text-base sm:text-lg">🎲</span>
                         <h2 class="text-sm sm:text-base font-black text-slate-800 tracking-wider">隨機回味</h2>
+                        <span id="total-video-count" class="text-[10px] sm:text-[11px] font-bold text-slate-400"></span>
                     </div>
                     <button onclick="shuffleRandom()" class="bg-sky-500 hover:bg-sky-600 text-white text-[10px] sm:text-[11px] font-black px-4 py-2 rounded-full shadow-md shadow-sky-500/10 transition active:scale-95">換一批</button>
                 </div>
@@ -264,7 +268,7 @@
                         <button id="btn-add-subfolder" class="flex items-center justify-center gap-1 text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-3 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">📁➕ 子資料夾</button>
                         <!-- [新增] 分享資料夾按鈕 -->
                         <button id="btn-share-folder" class="flex items-center justify-center gap-1 text-xs font-bold text-sky-600 hover:bg-sky-50 bg-white px-3 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">🔗 分享</button>
-                        <button id="btn-edit-folder" class="flex items-center justify-center gap-1 text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-3 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">✏️ 修改</button>
+                        <button id="btn-edit-folder" class="flex items-center justify-center gap-1 text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-3 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">✏️ 改名稱</button>
                         <button id="btn-delete-folder" class="flex items-center justify-center gap-1 text-xs font-bold text-red-500 hover:text-red-700 hover:bg-red-50 bg-white px-3 py-2.5 rounded-xl shadow-sm border border-slate-100 active:scale-95">🗑️ 刪除</button>
                     </div>
                 </div>
@@ -351,14 +355,15 @@
 
                     <div id="oshi-share-view" class="hidden">
                         <div id="oshi-share-card" style="background:linear-gradient(160deg,#eaf6ff 0%,#ffffff 65%);border:1px solid #d3ecfb;border-radius:24px;padding:22px 18px;position:relative;overflow:hidden;" class="mb-3">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Hinatazaka46_logomark_2021.svg" style="position:absolute;top:16px;right:16px;width:29px;height:36px;object-fit:contain;opacity:0.25;pointer-events:none;">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Hinatazaka46_logomark_2021.svg" crossorigin="anonymous" style="position:absolute;top:16px;right:16px;width:29px;height:36px;object-fit:contain;opacity:0.25;pointer-events:none;">
                             <div style="text-align:center;font-size:11px;font-weight:900;color:#1d6d96;letter-spacing:2px;margin-bottom:20px;">我的日向坂</div>
                             <div id="oshi-share-oshi-block" style="display:flex;flex-wrap:wrap;justify-content:center;gap:20px;margin-bottom:24px;"></div>
                             <div style="text-align:center;font-size:10px;font-weight:900;color:#1d6d96;letter-spacing:2px;margin-bottom:12px;">気になる・在意的成員</div>
                             <div id="oshi-share-watch-block" style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-bottom:8px;"></div>
                             <div style="text-align:center;font-size:10px;color:#94a3b8;margin-top:16px;">☀️ 一生一緒日向坂 ☀️</div>
                         </div>
-                        <p class="text-center text-[10.5px] text-slate-400 leading-relaxed"></p>
+                        <button id="oshi-download-btn" onclick="downloadOshiCard()" class="w-full bg-sky-500 hover:bg-sky-600 text-white text-xs font-black py-3 rounded-2xl transition shadow-md active:scale-95 flex items-center justify-center gap-1.5 mb-2">⬇️ 下載圖片</button>
+                        <p class="text-center text-[10.5px] text-slate-400 leading-relaxed">💡 若下載失敗，也可以直接使用手機的螢幕截圖功能保存</p>
                     </div>
                 </div>
 
@@ -474,7 +479,6 @@
             { id: 'kamimura_hinano', name: '上村ひなの', type: 'active', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/hinano.jpg', official: '', x: '', instagram: 'https://www.instagram.com/hinanokamimura.official/' },
             { id: 'takahashi_mikuni', name: '髙橋未来虹', type: 'active', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/mikuni.jpg', official: '', x: '', instagram: 'https://www.instagram.com/mikuni.takahashi__/' },
             { id: 'morimoto_marie', name: '森本茉莉', type: 'active', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/marie.jpg', official: '', x: '', instagram: 'https://www.instagram.com/mariemorimoto_official/' },
-            { id: 'yamaguchi_haruyo', name: '山口陽世', type: 'active', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/paru.jpg', official: '', x: '', instagram: 'https://www.instagram.com/haruyoyamaguchi.official/' },
 
             // 四期生
             { id: 'ishizuka_tamaki', name: '石塚瑶季', type: 'active', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/tamaki.jpg', official: '', x: '', instagram: 'https://www.instagram.com/ishizukatamaki_official/' },
@@ -521,7 +525,10 @@
             { id: 'tomita_suzuka', name: '富田鈴花', type: 'og', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/suzy.jpg', official: '', x: '', instagram: 'https://www.instagram.com/suzy.tomita/' },
             { id: 'kawata_hina', name: '河田陽菜', type: 'og', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/hina2.jpg', official: '', x: '', instagram: 'https://www.instagram.com/hina17_kawata/' },
             { id: 'hamagishi_hiyori', name: '濱岸ひより', type: 'og', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/hiyotan.jpg', official: '', x: '', instagram: 'https://www.instagram.com/hiyotan928_official/' },
-            { id: 'miyata_manamo', name: '宮田愛萌', type: 'og', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/manamo.jpg', official: '', x: '', instagram: 'https://www.instagram.com/manamomiyata_official/' }
+            { id: 'miyata_manamo', name: '宮田愛萌', type: 'og', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/manamo.jpg', official: '', x: '', instagram: 'https://www.instagram.com/manamomiyata_official/' },
+
+            // 三期生
+            { id: 'yamaguchi_haruyo', name: '山口陽世', type: 'og', avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/paru.jpg', official: '', x: '', instagram: 'https://www.instagram.com/haruyoyamaguchi.official/' }
         ];
 
         // ===== 本命設定專用：完整成員名單（與上方「成員名鑑」HINATAZAKA_MEMBERS 各自獨立，互不影響） =====
@@ -876,7 +883,7 @@
         };
 
         window.toggleTagSub = function(tag) {
-            if(!currentUser) { alert('請先登入帳號才能收藏標籤！'); openAccountSettings(); return; }
+            if(!currentUser) { alert('請先登入帳號才能收藏標籤'); openAccountSettings(); return; }
             const nodeRef = ref(db, `users/${currentUser.uid}/subscribed_tags/${tag}`);
             if(subscribedTags.includes(tag)) set(nodeRef, null); 
             else set(nodeRef, true); 
@@ -1118,7 +1125,7 @@
         window.closeFolderView = function() {
             folderNavStack.pop();
             if (folderNavStack.length === 0) {
-                document.getElementById('folders-main-view').classList.remove('hidden');
+                if (currentUser) document.getElementById('folders-main-view').classList.remove('hidden');
                 document.getElementById('folder-view').classList.add('hidden');
             } else {
                 openFolderView(folderNavStack[folderNavStack.length - 1].id);
@@ -1128,7 +1135,7 @@
         // 麵包屑：跳回收藏夾根目錄
         window.jumpToFolderRoot = function() {
             folderNavStack = [];
-            document.getElementById('folders-main-view').classList.remove('hidden');
+            if (currentUser) document.getElementById('folders-main-view').classList.remove('hidden');
             document.getElementById('folder-view').classList.add('hidden');
         };
 
@@ -1358,7 +1365,7 @@
                     // 從導覽堆疊中移除被刪的這一層（含子孫），直接顯示上一層，避免重複 pop
                     folderNavStack = folderNavStack.filter(n => !descendantIds.includes(n.id));
                     if (folderNavStack.length === 0) {
-                        document.getElementById('folders-main-view').classList.remove('hidden');
+                        if (currentUser) document.getElementById('folders-main-view').classList.remove('hidden');
                         document.getElementById('folder-view').classList.add('hidden');
                     } else {
                         openFolderView(folderNavStack[folderNavStack.length - 1].id);
@@ -1387,6 +1394,8 @@
         onValue(ref(db, 'videos'), (snapshot) => {
             allVideos = snapshot.val() ? Object.values(snapshot.val()) : [];
             videosFullyLoaded = true;
+            const countEl = document.getElementById('total-video-count');
+            if (countEl) countEl.innerText = `(全站共 ${allVideos.length} 部影片)`;
             renderExplore(); renderRandom(true); renderSubs(); renderPlaylistsPage();
             if(!document.getElementById('playlist-view').classList.contains('hidden') && playlistNavStack.length) {
                 // 影片資料更新時，只重新渲染目前所在層級，不改變導覽堆疊
@@ -1402,8 +1411,12 @@
                 const activeFolderId = lastGridData['folder-videos-grid'] ? lastGridData['folder-videos-grid'].folderId : null;
                 if (activeFolderId) openFolderView(activeFolderId);
             }
-            // 如果當前在分享檢視頁，也需要觸發一次更新
-            checkSharedUrl();
+            // 如果當前在分享檢視頁，只重新渲染目前所在層級的影片內容，不重置導覽位置
+            if (sharedNavStack.length) {
+                renderSharedView();
+            } else {
+                checkSharedUrl();
+            }
         });
 
         // [新增] 精華區：讀取 Google 試算表 Playlists 分頁經由 GAS 寫入的 /playlists 節點
@@ -1588,17 +1601,27 @@
 
         // [新增] 分享精華區懶人包邏輯：與資料夾分享共用同一個 shares/ 節點格式，
         // 這樣分享出去的連結，未登入或無痕瀏覽的使用者也能直接開啟同一個檢視頁
+        // [新增] 遞迴打包某個節點（含所有子資料夾／子播單）成可獨立分享的樹狀結構快照
+        // 之後開啟分享連結時，不需要再連回即時資料庫的 playlists 節點，靠這份快照即可還原完整分層瀏覽
+        function buildShareTree(node) {
+            const folder = isPlaylistFolder(node);
+            return {
+                name: node.name,
+                emoji: node.emoji || (folder ? '📁' : '🌈'),
+                description: node.description || '',
+                cover_image: node.cover_image || '',
+                is_folder: folder,
+                video_ids: folder ? [] : getPlaylistVideoIds(node),
+                children: folder ? getPlaylistChildren(node.id).map(buildShareTree) : []
+            };
+        }
+
         function sharePlaylist(playlist) {
             const shareId = "sp_" + Date.now();
-            const ids = collectVideoIdsRecursive(playlist);
-            const videoIdsMap = {};
-            ids.forEach(id => { videoIdsMap[id] = true; });
 
             const shareData = {
-                name: playlist.name,
-                emoji: playlist.emoji || '🌈',
                 owner: currentUser ? (currentUser.displayName || "日向坂推し") : "精華整理",
-                video_ids: videoIdsMap,
+                tree: buildShareTree(playlist),
                 created_at: Date.now()
             };
 
@@ -2001,6 +2024,49 @@
             renderOshiShareCard();
         }
 
+        // [新增] 將外部圖片網址轉為可跨網域讀取的代理連結，避免 html2canvas 輸出圖片時因 CORS 被瀏覽器判定為受污染畫布
+        window.proxyImg = function(url) {
+            if(!url) return url;
+            return 'https://images.weserv.nl/?url=' + encodeURIComponent(url) + '&default=' + encodeURIComponent(url);
+        }
+        const proxyImg = window.proxyImg;
+
+        // [新增] 將本命分享卡輸出成圖片並下載
+        window.downloadOshiCard = function() {
+            const btn = document.getElementById('oshi-download-btn');
+            const card = document.getElementById('oshi-share-card');
+            if(!btn || !card) return;
+            const originalLabel = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '⏳ 圖片產生中...';
+
+            html2canvas(card, {
+                useCORS: true,
+                allowTaint: false,
+                backgroundColor: '#ffffff',
+                scale: 2
+            }).then(canvas => {
+                canvas.toBlob(blob => {
+                    if(!blob) throw new Error('toBlob failed');
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = '我的日向坂本命卡.png';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    btn.disabled = false;
+                    btn.innerHTML = originalLabel;
+                }, 'image/png');
+            }).catch(err => {
+                console.error('下載分享卡失敗：', err);
+                alert('圖片產生失敗，請改用手機的螢幕截圖功能保存這張卡片。');
+                btn.disabled = false;
+                btn.innerHTML = originalLabel;
+            });
+        }
+
         function renderOshiShareCard() {
             const oshiBlockEl = document.getElementById('oshi-share-oshi-block');
             if(!oshiBlockEl) return; // 分享卡尚未渲染過就先跳過
@@ -2014,7 +2080,7 @@
                     if(!m) return '';
                     const since = oshiState.map[id];
                     const avatarHtml = m.avatar
-                        ? `<img src="${m.avatar}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;object-position:center 20%;box-shadow:0 0 0 4px #ffffff, 0 0 0 8px #38bdf8;">`
+                        ? `<img src="${proxyImg(m.avatar)}" crossorigin="anonymous" style="width:80px;height:80px;border-radius:50%;object-fit:cover;object-position:center 20%;box-shadow:0 0 0 4px #ffffff, 0 0 0 8px #38bdf8;">`
                         : `<div style="width:80px;height:80px;border-radius:50%;box-shadow:0 0 0 4px #ffffff, 0 0 0 8px #38bdf8;background:#bae6fd;color:#0369a1;font-weight:900;font-size:24px;display:flex;align-items:center;justify-content:center;">${m.name.slice(0,1)}</div>`;
                     return `
                         <div style="display:flex;flex-direction:column;align-items:center;text-align:center;">
@@ -2035,7 +2101,7 @@
                     const m = oshiMembersPool().find(mm => mm.id === id);
                     if(!m) return '';
                     const avatarHtml = m.avatar
-                        ? `<img src="${m.avatar}" style="width:44px;height:44px;border-radius:50%;object-fit:cover;object-position:center 20%;border:2px solid #ff8fa3;">`
+                        ? `<img src="${proxyImg(m.avatar)}" crossorigin="anonymous" style="width:44px;height:44px;border-radius:50%;object-fit:cover;object-position:center 20%;border:2px solid #ff8fa3;">`
                         : `<div style="width:44px;height:44px;border-radius:50%;border:2px solid #ff8fa3;background:#f1f5f9;color:#64748b;font-weight:900;font-size:12px;display:flex;align-items:center;justify-content:center;">${m.name.slice(0,1)}</div>`;
                     return `
                         <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:56px;">
@@ -2047,6 +2113,9 @@
         }
 
         // [新增] 檢查並處理網址中是否有分享資料夾的 ID 路由
+        // 目前分享畫面的導覽堆疊（本地端的樹狀節點，不連回即時資料庫）
+        let sharedNavStack = [];
+
         function checkSharedUrl() {
             const urlParams = new URLSearchParams(window.location.search);
             const shareId = urlParams.get('share');
@@ -2063,29 +2132,110 @@
 
             onValue(ref(db, `shares/${shareId}`), (snapshot) => {
                 const data = snapshot.val();
-                if (!data) {
+                if (!data || !data.tree) {
+                    document.getElementById('shared-breadcrumb').innerHTML = '';
+                    document.getElementById('shared-children-container').classList.add('hidden');
                     document.getElementById('shared-folder-title').innerText = "⚠️ 找不到分享資料夾";
                     document.getElementById('shared-folder-desc').innerText = "該資料夾可能已被原作者刪除，或網址有誤。";
                     renderGrid('shared-videos-grid', [], '查無影片內容');
                     return;
                 }
-
-                document.getElementById('shared-folder-title').innerText = `${data.emoji || '📁'} ${data.name}`;
-                document.getElementById('shared-folder-desc').innerText = ``;
-
-                const videoIds = data.video_ids ? Object.keys(data.video_ids) : [];
-                const list = allVideos.filter(v => videoIds.includes(v.id));
-                list.sort((a, b) => (b.created_at || 0) - (a.created_at || 0));
-
-                renderGrid('shared-videos-grid', list, '這個分享資料夾目前沒有影片喔！');
+                sharedNavStack = [data.tree];
+                renderSharedView();
             }, { onlyOnce: true });
         }
+
+        function sharedChildCardHtml(node, idx) {
+            const coverHtml = node.cover_image
+                ? `<img src="${node.cover_image}" referrerpolicy="no-referrer" loading="lazy" onerror="this.src='${fallbackImage}'" class="w-14 h-14 rounded-2xl object-cover border border-slate-100 flex-shrink-0">`
+                : `<div class="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-2xl border border-slate-100 flex-shrink-0">${node.emoji || (node.is_folder ? '📁' : '🌈')}</div>`;
+            const count = node.is_folder
+                ? countSharedTreeVideos(node)
+                : (node.video_ids || []).length;
+            return `
+            <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 flex items-center justify-between cursor-pointer hover:shadow-md hover:border-slate-200 transition-all duration-200 active:scale-[0.98]" onclick="openSharedChild(${idx})">
+                <div class="flex items-center gap-4 min-w-0">
+                    ${coverHtml}
+                    <div class="min-w-0">
+                        <h2 class="text-base font-extrabold text-slate-900 truncate">${node.name}</h2>
+                        <p class="text-xs text-slate-400 mt-1">${node.description ? node.description + '・' : ''}共 ${count} 部影片</p>
+                    </div>
+                </div>
+                <div class="text-slate-300 pr-2 flex-shrink-0">➔</div>
+            </div>`;
+        }
+
+        // 遞迴計算某個分享節點（含子資料夾）底下共有幾部影片，僅用於顯示數量
+        function countSharedTreeVideos(node) {
+            if (!node.is_folder) return (node.video_ids || []).length;
+            return (node.children || []).reduce((sum, c) => sum + countSharedTreeVideos(c), 0);
+        }
+
+        function renderSharedBreadcrumb() {
+            const el = document.getElementById('shared-breadcrumb');
+            if (!el) return;
+            const crumbs = [];
+            sharedNavStack.forEach((node, idx) => {
+                const isLast = idx === sharedNavStack.length - 1;
+                if (idx > 0) crumbs.push(`<span class="text-slate-300">/</span>`);
+                crumbs.push(isLast
+                    ? `<span class="text-slate-600">${node.emoji || ''} ${node.name}</span>`
+                    : `<span class="hover:text-sky-500 cursor-pointer" onclick="jumpToSharedLevel(${idx})">${node.emoji || ''} ${node.name}</span>`);
+            });
+            el.innerHTML = crumbs.join('');
+        }
+
+        function renderSharedView() {
+            const node = sharedNavStack[sharedNavStack.length - 1];
+            if (!node) return;
+
+            document.getElementById('shared-folder-title').innerText = `${node.emoji || '📁'} ${node.name}`;
+            document.getElementById('shared-folder-desc').innerText = node.description || '';
+            renderSharedBreadcrumb();
+
+            const childrenContainer = document.getElementById('shared-children-container');
+            const videosGrid = document.getElementById('shared-videos-grid');
+            const toggleBtn = document.getElementById('shared-view-toggle-btn');
+
+            if (node.is_folder) {
+                childrenContainer.classList.remove('hidden');
+                videosGrid.classList.add('hidden');
+                if (toggleBtn) toggleBtn.classList.add('hidden');
+                childrenContainer.innerHTML = (node.children || []).length
+                    ? node.children.map((c, idx) => sharedChildCardHtml(c, idx)).join('')
+                    : '<p class="text-slate-500 text-sm py-10 text-center col-span-full">這個資料夾目前還是空的喔！</p>';
+            } else {
+                childrenContainer.classList.add('hidden');
+                videosGrid.classList.remove('hidden');
+                if (toggleBtn) toggleBtn.classList.remove('hidden');
+                const ids = node.video_ids || [];
+                let list = allVideos.filter(v => ids.includes(v.id));
+                list.sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
+                renderGrid('shared-videos-grid', list, '這個懶人包目前還沒有收錄影片喔！');
+            }
+        }
+
+        // 點進分享樹裡的子資料夾／子播單
+        window.openSharedChild = function(idx) {
+            const node = sharedNavStack[sharedNavStack.length - 1];
+            const child = node && node.children && node.children[idx];
+            if (!child) return;
+            sharedNavStack.push(child);
+            renderSharedView();
+        };
+
+        // 麵包屑：跳回分享樹的某一層
+        window.jumpToSharedLevel = function(idx) {
+            sharedNavStack = sharedNavStack.slice(0, idx + 1);
+            renderSharedView();
+        };
 
         // [新增] 離開分享檢視，乾淨返回首頁並重設 URL 參數
         window.exitSharedView = function() {
             // 清理網址參數不重整頁面
             window.history.pushState({}, document.title, window.location.pathname);
-            
+            sharedNavStack = [];
+
             document.getElementById('category-section').classList.remove('hidden');
             document.getElementById('layer-shared').classList.add('hidden');
             switchLayer('explore');
