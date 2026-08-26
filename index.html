@@ -1308,15 +1308,24 @@
         // [新增] 分享資料夾邏輯 (發佈到 shares/ 節點，實現未登入與無痕瀏覽)
         // [新增] 遞迴打包個人收藏資料夾（含子資料夾）成可獨立分享的樹狀結構快照，格式與精華區分享（buildShareTree）一致
         // 注意：個人收藏資料夾跟精華區播單不同，「子資料夾」與「自己收藏的影片」可以同時並存，不是互斥的
+        // 注意：影片的自訂排序另外存在 video_order，不是 video_ids 本身的順序，這裡要套用同一套排序邏輯（比照 renderFolderVideos）
         function buildFolderShareTree(folder) {
             const children = getFolderChildren(folder.id);
+            const videoIds = folder.video_ids ? Object.keys(folder.video_ids) : [];
+            let orderArr = Array.isArray(folder.video_order) ? folder.video_order.filter(id => videoIds.includes(id)) : [];
+            const missing = videoIds.filter(id => !orderArr.includes(id))
+                .map(id => allVideos.find(v => v.id === id))
+                .filter(Boolean)
+                .sort((a, b) => (b.created_at || 0) - (a.created_at || 0))
+                .map(v => v.id);
+            orderArr = [...orderArr, ...missing];
             return {
                 name: folder.name,
                 emoji: folder.emoji || '📁',
                 description: '',
                 cover_image: '',
                 is_folder: children.length > 0,
-                video_ids: folder.video_ids ? Object.keys(folder.video_ids) : [],
+                video_ids: orderArr,
                 children: children.map(buildFolderShareTree)
             };
         }
