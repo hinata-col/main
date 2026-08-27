@@ -1331,7 +1331,9 @@
         }
 
         function shareFolder(folder) {
-            const shareId = "s_" + Date.now();
+            // 固定用資料夾 ID 當 shareId，同一個資料夾重複分享時會覆蓋同一筆紀錄，
+            // 不會每按一次就在資料庫多留一筆孤兒資料，網址也會保持固定
+            const shareId = "s_" + folder.id;
             const shareData = {
                 owner: currentUser.displayName || "日向坂推し",
                 tree: buildFolderShareTree(folder),
@@ -1634,7 +1636,9 @@
         }
 
         function sharePlaylist(playlist) {
-            const shareId = "sp_" + Date.now();
+            // 固定用播單 ID 當 shareId，同一個懶人包重複分享時會覆蓋同一筆紀錄，
+            // 不會每按一次就在資料庫多留一筆孤兒資料，網址也會保持固定
+            const shareId = "sp_" + playlist.id;
 
             const shareData = {
                 owner: currentUser ? (currentUser.displayName || "日向坂推し") : "精華整理",
