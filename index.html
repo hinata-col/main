@@ -233,6 +233,11 @@
                 <p id="playlist-view-desc" class="text-xs text-slate-400 mb-5"></p>
                 <!-- 資料夾層：顯示子資料夾／子播單卡片 -->
                 <div id="playlist-children-container" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+                <!-- 搜尋欄：搜尋範圍是「目前所在位置以下所有影片」，含子資料夾遞迴，只要不是精華區最外層就會顯示 -->
+                <div id="playlist-video-search-wrap" class="hidden relative max-w-xs mb-4">
+                    <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">🔍</span>
+                    <input id="playlist-video-search-input" type="text" placeholder="搜尋此資料夾內所有影片標題..." class="w-full bg-slate-50 border border-slate-100 rounded-xl py-2 pl-9 pr-4 text-xs focus:outline-none focus:ring-2 focus:ring-sky-200 transition-all" oninput="renderCurrentPlaylistVideos()">
+                </div>
                 <!-- 播單層：顯示影片 -->
                 <div id="playlist-videos-grid" class="masonry-grid"></div>
             </div>
@@ -1554,16 +1559,22 @@
 
             const childrenContainer = document.getElementById('playlist-children-container');
             const videosGrid = document.getElementById('playlist-videos-grid');
+            const searchWrap = document.getElementById('playlist-video-search-wrap');
             const toggleBtn = document.getElementById('playlist-view-toggle-btn');
             const shareBtn = document.getElementById('playlist-view-share-btn');
 
+            // 搜尋欄一律顯示（只要有進到某一層，不管是資料夾還是播單，都能搜尋這一層以下所有影片）
+            searchWrap.classList.remove('hidden');
+            const searchInput = document.getElementById('playlist-video-search-input');
+            if (searchInput) searchInput.value = '';
+            shareBtn.classList.remove('hidden');
+
             if (isPlaylistFolder(node)) {
-                // 資料夾：顯示子資料夾／子播單卡片，隱藏影片格與分享鈕（資料夾本身仍可分享，維持顯示分享鈕亦可，這裡選擇保留分享鈕以便整包分享）
+                // 資料夾：預設顯示子資料夾／子播單卡片，隱藏影片格
                 const children = getPlaylistChildren(node.id);
                 childrenContainer.classList.remove('hidden');
                 videosGrid.classList.add('hidden');
                 toggleBtn.classList.add('hidden');
-                shareBtn.classList.remove('hidden');
                 childrenContainer.innerHTML = children.length
                     ? children.map(c => playlistCardHtml(c)).join('')
                     : '<p class="text-slate-500 text-sm py-10 text-center col-span-full">這個資料夾目前還是空的喔！</p>';
@@ -1572,7 +1583,46 @@
                 childrenContainer.classList.add('hidden');
                 videosGrid.classList.remove('hidden');
                 toggleBtn.classList.remove('hidden');
-                shareBtn.classList.remove('hidden');
+                renderCurrentPlaylistVideos();
+            }
+        }
+
+        // [新增] 依搜尋框內容決定顯示模式：
+        // 有輸入關鍵字 → 不分資料夾或播單，一律搜尋「目前所在位置以下所有影片」（含子資料夾遞迴），攤平成影片格顯示
+        // 沒有輸入 → 恢復原本畫面（資料夾顯示子資料夾卡片、播單顯示自己收錄的影片）
+        function renderCurrentPlaylistVideos() {
+            const node = playlistNavStack[playlistNavStack.length - 1];
+            if (!node) return;
+
+            const childrenContainer = document.getElementById('playlist-children-container');
+            const videosGrid = document.getElementById('playlist-videos-grid');
+            const toggleBtn = document.getElementById('playlist-view-toggle-btn');
+            const searchInput = document.getElementById('playlist-video-search-input');
+            const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+
+            if (query) {
+                childrenContainer.classList.add('hidden');
+                videosGrid.classList.remove('hidden');
+                toggleBtn.classList.remove('hidden');
+                const ids = collectVideoIdsRecursive(node);
+                let list = allVideos.filter(v => ids.includes(v.id));
+                list = list.filter(v => {
+                    const title = (v.custom_title || v.original_title || v.original_excerpt || '').toLowerCase();
+                    return title.includes(query);
+                });
+                list.sort((a, b) => (b.created_at || 0) - (a.created_at || 0));
+                renderGrid('playlist-videos-grid', list, `在這裡找不到符合「${query}」的影片`);
+                return;
+            }
+
+            if (isPlaylistFolder(node)) {
+                childrenContainer.classList.remove('hidden');
+                videosGrid.classList.add('hidden');
+                toggleBtn.classList.add('hidden');
+            } else {
+                childrenContainer.classList.add('hidden');
+                videosGrid.classList.remove('hidden');
+                toggleBtn.classList.remove('hidden');
                 const ids = getPlaylistVideoIds(node);
                 let list = allVideos.filter(v => ids.includes(v.id));
                 list.sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
