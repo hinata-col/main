@@ -231,13 +231,13 @@
                 <img id="playlist-view-cover" src="" class="hidden w-full aspect-[21/9] object-cover rounded-2xl mb-4 border border-slate-100">
                 <h2 id="playlist-view-title" class="text-lg sm:text-xl font-black text-slate-800 tracking-wider mb-1.5"></h2>
                 <p id="playlist-view-desc" class="text-xs text-slate-400 mb-5"></p>
-                <!-- 資料夾層：顯示子資料夾／子播單卡片 -->
-                <div id="playlist-children-container" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
                 <!-- 搜尋欄：搜尋範圍是「目前所在位置以下所有影片」，含子資料夾遞迴，只要不是精華區最外層就會顯示 -->
                 <div id="playlist-video-search-wrap" class="hidden relative max-w-xs mb-4">
                     <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">🔍</span>
                     <input id="playlist-video-search-input" type="text" placeholder="搜尋此資料夾內所有影片標題..." class="w-full bg-slate-50 border border-slate-100 rounded-xl py-2 pl-9 pr-4 text-xs focus:outline-none focus:ring-2 focus:ring-sky-200 transition-all" oninput="renderCurrentPlaylistVideos()">
                 </div>
+                <!-- 資料夾層：顯示子資料夾／子播單卡片 -->
+                <div id="playlist-children-container" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
                 <!-- 播單層：顯示影片 -->
                 <div id="playlist-videos-grid" class="masonry-grid"></div>
             </div>
