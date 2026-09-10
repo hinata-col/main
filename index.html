@@ -1163,10 +1163,12 @@
             });
         };
 
-        // [新增] 依資料夾自訂的 video_order 排序渲染影片；沒排過序的影片會依收藏時間自動補到最後
-        function renderFolderVideos(folderId) {
-            const folder = allFolders.find(f => f.id === folderId);
-            if (!folder) return;
+        // [新增] 共用：計算資料夾目前完整、去重後的影片排序 ID 陣列。
+        // 已經在 video_order 裡記錄過的影片維持原順序；
+        // 沒被記錄到的（通常是啟用排序功能前就已存在的舊資料）依影片上傳時間補到最後，
+        // 一般情況下新收藏的影片會在 toggleVideoInFolder／confirmInlineFolderCreate 時就直接寫進 video_order 最前面，
+        // 所以這裡的「補到最後」只會處理到真正的舊資料、例外情況。
+        function folderVideoOrderIds(folder) {
             const videoIds = folder.video_ids ? Object.keys(folder.video_ids) : [];
             let orderArr = Array.isArray(folder.video_order) ? folder.video_order.filter(id => videoIds.includes(id)) : [];
             const missing = videoIds.filter(id => !orderArr.includes(id))
@@ -1174,26 +1176,24 @@
                 .filter(Boolean)
                 .sort((a, b) => (b.created_at || 0) - (a.created_at || 0))
                 .map(v => v.id);
-            orderArr = [...orderArr, ...missing];
+            return [...orderArr, ...missing];
+        }
 
+        // [新增] 依資料夾自訂的 video_order 排序渲染影片
+        function renderFolderVideos(folderId) {
+            const folder = allFolders.find(f => f.id === folderId);
+            if (!folder) return;
+            const orderArr = folderVideoOrderIds(folder);
             const list = orderArr.map(id => allVideos.find(v => v.id === id)).filter(Boolean);
             renderFolderGrid(folderId, list);
         }
 
-        // [新增] 上移／下移資料夾內的影片：每次都把完整排序寫回 video_order，
-        // 順便處理舊資料夾第一次使用排序功能時的自動補值
+        // [新增] 上移／下移資料夾內的影片：每次都把完整排序寫回 video_order
         window.moveVideoInFolder = function(folderId, videoId, direction) {
             if (!currentUser) return;
             const folder = allFolders.find(f => f.id === folderId);
             if (!folder) return;
-            const videoIds = folder.video_ids ? Object.keys(folder.video_ids) : [];
-            let orderArr = Array.isArray(folder.video_order) ? folder.video_order.filter(id => videoIds.includes(id)) : [];
-            const missing = videoIds.filter(id => !orderArr.includes(id))
-                .map(id => allVideos.find(v => v.id === id))
-                .filter(Boolean)
-                .sort((a, b) => (b.created_at || 0) - (a.created_at || 0))
-                .map(v => v.id);
-            orderArr = [...orderArr, ...missing];
+            const orderArr = folderVideoOrderIds(folder);
 
             const idx = orderArr.indexOf(videoId);
             if (idx === -1) return;
@@ -1215,6 +1215,11 @@
             if (!confirm(`確定要將「${title}」從「${folder ? folder.name : '此資料夾'}」中取消收藏嗎？`)) return;
 
             set(ref(db, `users/${currentUser.uid}/folders/${folderId}/video_ids/${videoId}`), null).then(() => {
+                // 同步把這部影片從排序清單移除，避免留下殘留的無效 ID
+                if (folder) {
+                    const cleanedOrder = folderVideoOrderIds(folder).filter(id => id !== videoId);
+                    set(ref(db, `users/${currentUser.uid}/folders/${folderId}/video_order`), cleanedOrder);
+                }
                 showToast("已取消收藏");
                 renderFolderVideos(folderId);
             }).catch(err => {
@@ -1319,21 +1324,13 @@
         // 注意：影片的自訂排序另外存在 video_order，不是 video_ids 本身的順序，這裡要套用同一套排序邏輯（比照 renderFolderVideos）
         function buildFolderShareTree(folder) {
             const children = getFolderChildren(folder.id);
-            const videoIds = folder.video_ids ? Object.keys(folder.video_ids) : [];
-            let orderArr = Array.isArray(folder.video_order) ? folder.video_order.filter(id => videoIds.includes(id)) : [];
-            const missing = videoIds.filter(id => !orderArr.includes(id))
-                .map(id => allVideos.find(v => v.id === id))
-                .filter(Boolean)
-                .sort((a, b) => (b.created_at || 0) - (a.created_at || 0))
-                .map(v => v.id);
-            orderArr = [...orderArr, ...missing];
             return {
                 name: folder.name,
                 emoji: folder.emoji || '📁',
                 description: '',
                 cover_image: '',
                 is_folder: children.length > 0,
-                video_ids: orderArr,
+                video_ids: folderVideoOrderIds(folder),
                 children: children.map(buildFolderShareTree)
             };
         }
@@ -1792,8 +1789,9 @@
 
             const newFolderRef = push(ref(db, `users/${currentUser.uid}/folders`));
             await set(newFolderRef, { name: name, emoji: emoji, created_at: Date.now(), order: Date.now() });
-            // 新資料夾建立後，直接把當前影片加進去
+            // 新資料夾建立後，直接把當前影片加進去，並寫入排序（新資料夾只有這一部，自然就在最上面）
             await set(ref(db, `users/${currentUser.uid}/folders/${newFolderRef.key}/video_ids/${currentSaveVideoId}`), true);
+            await set(ref(db, `users/${currentUser.uid}/folders/${newFolderRef.key}/video_order`), [currentSaveVideoId]);
             closeSaveModal();
             showToast(`已建立「${emoji} ${name}」並加入影片`);
         };
@@ -1801,9 +1799,26 @@
         window.closeSaveModal = function() { document.getElementById('save-modal').classList.add('hidden'); };
 
         window.toggleVideoInFolder = function(folderId, isCurrentlySaved) {
-            const nodeRef = ref(db, `users/${currentUser.uid}/folders/${folderId}/video_ids/${currentSaveVideoId}`);
-            if(isCurrentlySaved) set(nodeRef, null); 
-            else set(nodeRef, true); 
+            const videoId = currentSaveVideoId;
+            const folder = allFolders.find(f => f.id === folderId);
+            const nodeRef = ref(db, `users/${currentUser.uid}/folders/${folderId}/video_ids/${videoId}`);
+            const orderRef = ref(db, `users/${currentUser.uid}/folders/${folderId}/video_order`);
+
+            if (isCurrentlySaved) {
+                // 取消收藏：連同排序清單裡的紀錄一起清掉，保持資料乾淨
+                set(nodeRef, null);
+                if (folder) {
+                    const cleanedOrder = folderVideoOrderIds(folder).filter(id => id !== videoId);
+                    set(orderRef, cleanedOrder);
+                }
+            } else {
+                // [新增] 剛收藏的影片一律排到這個資料夾清單的最上面，不管資料夾本身有沒有自訂過排序、
+                // 也不管影片本身的上傳時間是新是舊
+                set(nodeRef, true);
+                const currentOrder = folder ? folderVideoOrderIds(folder) : [];
+                const newOrder = [videoId, ...currentOrder.filter(id => id !== videoId)];
+                set(orderRef, newOrder);
+            }
             closeSaveModal();
             showToast(isCurrentlySaved ? "已從資料夾移除" : "已加入資料夾");
         };
