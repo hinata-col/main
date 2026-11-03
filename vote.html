@@ -13,7 +13,255 @@ body{font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;ba
 .btn{min-height:44px;border-radius:12px;padding:0 16px;font-weight:800;font-size:13px}
 .safe{padding-bottom:max(12px,env(safe-area-inset-bottom))}
 </style>
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>日向坂46 歌曲總選舉</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body{font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;background:radial-gradient(800px 360px at 15% -10%,rgba(125,211,252,.35),transparent 60%),#f8fafc}
+@keyframes eq{0%,100%{height:3px}50%{height:12px}}.eq{display:inline-block;width:3px;margin-left:2px;background:#0ea5e9;border-radius:2px;animation:eq .9s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 8px rgba(14,165,233,.12)}}.playing{animation:pulse 1.6s infinite}
+@media(prefers-reduced-motion:reduce){.eq,.playing{animation:none}}
+.btn{min-height:44px;border-radius:12px;padding:0 16px;font-weight:800;font-size:13px}
+.safe{padding-bottom:max(12px,env(safe-area-inset-bottom))}
+</style>
 <!-- GA4：把首頁那段 gtag 程式碼原封不動貼在這裡（同一個 G-XXXX） -->
+</head>
+<body class="text-slate-900">
+<header class="sticky top-0 z-30 bg-white/90 backdrop-blur border-b border-slate-200">
+ <div class="max-w-5xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-2">
+  <h1 id="ttl" class="min-w-0 font-black text-sky-500 text-[15px] sm:text-lg tracking-wide"></h1>
+  <div class="flex items-center gap-2 text-xs font-bold">
+   <a id="back" href="./" class="text-slate-500 whitespace-nowrap"></a>
+   <button id="lang" class="btn bg-slate-100 text-slate-700 !px-3 flex items-center gap-1 whitespace-nowrap"></button>
+   <button id="auth" class="btn bg-sky-100 text-sky-700 !px-3"></button>
+  </div>
+ </div>
+</header>
+<main id="app" class="max-w-5xl mx-auto px-4 pt-5 pb-40"></main>
+<footer id="ft" class="text-center text-xs text-slate-500 pb-32 px-4"></footer>
+<div id="modal" class="fixed inset-0 z-50 bg-slate-900/60 hidden items-center justify-center p-3"></div>
+<div id="toast" class="fixed left-1/2 -translate-x-1/2 bottom-28 z-[60] bg-slate-900 text-white text-sm px-4 py-2 rounded-full opacity-0 transition pointer-events-none"></div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getAuth, onAuthStateChanged, signInAnonymously, signInWithPopup, GoogleAuthProvider, signOut, linkWithPopup, signInWithCredential, deleteUser, reauthenticateWithPopup } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { getDatabase, ref, get, update, increment, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
+
+// ⚠️ 填入「投票專用」新專案的設定
+const FB = { apiKey:"AIzaSyDhhCVZY7kby_i3Ktf2G2FsJce1uXbrU0o", authDomain:"hinata-vote.firebaseapp.com",
+  databaseURL:"https://hinata-vote-default-rtdb.asia-southeast1.firebasedatabase.app/", projectId:"hinata-vote", appId:"1:185062301697:web:e29a6973fdb6b28c56e000" };
+const MAX = 3, SITE_BACK = './', DATA = 'data/vote/';
+const I = { zh:{ttl:'日向坂46 歌曲總選舉',back:'← 回留友看 Hinata Ver.',login:'Google 登入',logout:'登出',search:'搜尋歌名、作曲者、作詞者',allS:'全部單曲／專輯',allC:'全部',eraA:'全部',eraH:'平假名櫸坂',eraN:'日向坂',
+  hint:'每個獎項最多選 3 首（等值，無排名），可跳過。',vote:'確認投票',upd:'更新投票',pick:'選擇',picked:'✓ 已選',limit:'本獎項已達 3 票上限',closed:'投票已截止',
+  done:(a,b)=>`已完成 ${a} 個獎項・共 ${b} 首`,none:'請至少選一首歌',ok:'投票完成',okSub:'截止前可以回來修改。',copyT:'複製文字',copyL:'複製連結',shareI:'分享圖卡',dl:'下載圖片',close:'關閉',
+  copied:'已複製',fail:'失敗，請稍後再試',shared:'網友的投票結果',nickLbl:'暱稱（選填，會顯示在分享連結與圖卡上）',nickPh:'例如：おひさま小花',nickSuf:'的投票結果',shNick:(y,n)=>`${y}日向坂46 歌曲總選舉，${n||'網友'}的投票結果`,me:'我也要投票',mine:'我的',cnt:n=>`共 ${n} 首`,play:'試聽',pause:'暫停',err:'此片段無法播放',composer:'作曲',lyricist:'作詞',allCr:'全部',more:n=>`另有 ${n} 個獎項，點連結看完整結果`,etc:n=>`…等 ${n} 首`,voted:'你已投過票，截止前可修改。',conn:'連線失敗，請重新整理',
+  cTitle:'投票前請確認',cList:['本次投票會記錄你選擇的歌曲、投票時間，以及一組識別碼（匿名或 Google 帳號）。','若使用 Google 登入，管理員在後台可以看到你的 Google 帳號名稱與 Email；匿名投票則看不到。','個別投票內容只有管理員能看，公開的只有彙整後的結果。資料僅用於統計票數與公布結果，不會用於其他用途或提供給第三方。','資料儲存在 Google Firebase，傳輸皆採 HTTPS 加密。原始投票資料於結果公布後 3 個月刪除。','你可以隨時在頁面下方刪除自己的投票或帳號。','本站使用 Google Analytics 進行匿名流量統計。'],
+  cAgree:'我已閱讀並同意',cGoogle:'Google 登入並投票',cLogin:'Google 登入',cAnon:'匿名投票',cAnonNote:'匿名投票：換裝置或清除瀏覽器資料後，將無法找回或修改。',cPriv:'隱私說明',cCancel:'取消',cNeed:'請先勾選同意',
+  count:n=>`已有約 ${n} 人參加`,myData:'我的資料',delVote:'刪除我的投票',delAcct:'刪除我的帳號與投票',delVoteQ:'確定刪除這一屆你的投票？',delAcctQ:'確定刪除帳號與投票？此操作無法復原。',deleted:'已刪除',existing:'這個 Google 帳號已有投票紀錄，已為你載入，請確認後再提交。',
+  footer:'おひさま自製的非官方調查・結果僅供參考',resT:'歷年結果',resNone:'結果尚未公布',resAll:'全部票',resG:'僅 Google 登入',ppl:n=>`${n} 人參與`},
+ ja:{ttl:'日向坂46 楽曲総選挙',back:'← 留友看 Hinata Ver.に戻る',login:'Googleでログイン',logout:'ログアウト',search:'曲名・作曲者・作詞者で検索',allS:'すべてのシングル／アルバム',allC:'すべて',eraA:'すべて',eraH:'ひらがなけやき',eraN:'日向坂',
+  hint:'各賞とも最大3曲まで（順位なし）。スキップも可能です。',vote:'投票を確定',upd:'投票を更新',pick:'選ぶ',picked:'✓ 選択中',limit:'この賞は3票までです',closed:'投票は締め切られました',
+  done:(a,b)=>`${a}部門完了・計${b}曲`,none:'1曲以上選んでください',ok:'投票完了',okSub:'締切前なら修正できます。',copyT:'テキストをコピー',copyL:'リンクをコピー',shareI:'画像を共有',dl:'画像を保存',close:'閉じる',
+  copied:'コピーしました',fail:'失敗しました',shared:'ファンの投票結果',nickLbl:'ニックネーム（任意・共有リンクと画像に表示されます）',nickPh:'例：おひさま花子',nickSuf:'さんの投票結果',shNick:(y,n)=>`${y}日向坂46 楽曲総選挙、${n?n+'さん':'ファン'}の投票結果`,me:'私も投票する',mine:'私の',cnt:n=>`全${n}曲`,play:'試聴',pause:'停止',err:'再生できません',composer:'作曲',lyricist:'作詞',allCr:'すべて',more:n=>`他${n}部門はリンクから`,etc:n=>`…ほか${n}曲`,voted:'投票済みです。締切前なら修正できます。',conn:'接続に失敗しました',
+  cTitle:'投票前にご確認ください',cList:['投票内容（選んだ曲）、投票日時、識別コード（匿名またはGoogleアカウント）を記録します。','Googleログインの場合、管理者は管理画面でGoogleアカウント名とメールアドレスを確認できます。匿名投票では確認できません。','個別の投票内容は管理者のみが閲覧でき、公開されるのは集計結果のみです。集計と結果発表以外の目的には使用せず、第三者に提供しません。','データはGoogle Firebaseに保存され、通信はHTTPSで暗号化されます。個別の投票データは結果発表の3か月後に削除します。','ページ下部からいつでも自分の投票やアカウントを削除できます。','本サイトはGoogleアナリティクスで匿名のアクセス解析を行っています。'],
+  cAgree:'内容を確認し、同意します',cGoogle:'Googleでログインして投票',cLogin:'Googleでログイン',cAnon:'匿名で投票',cAnonNote:'匿名投票は、端末の変更やブラウザデータの削除後に投票の確認・修正ができなくなります。',cPriv:'プライバシーについて',cCancel:'キャンセル',cNeed:'同意にチェックしてください',
+  count:n=>`約${n}人が参加中`,myData:'マイデータ',delVote:'自分の投票を削除',delAcct:'アカウントと投票を削除',delVoteQ:'今回の投票を削除しますか？',delAcctQ:'アカウントと投票を削除しますか？元に戻せません。',deleted:'削除しました',existing:'このGoogleアカウントには投票履歴があります。読み込みました。内容を確認して再度送信してください。',
+  footer:'おひさまによる非公式調査・結果は参考値です',resT:'過去の結果',resNone:'結果は未公開です',resAll:'すべての票',resG:'Googleログインのみ',ppl:n=>`${n}人が参加`}};
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let lang = localStorage.getItem('hv_lang') || (navigator.language.startsWith('ja') ? 'ja' : 'zh');
+const t = k => I[lang][k];
+let E, S, ed, songs = {}, cats = [], year, sel = {}, cur = 0, q = '', fS = '', fE = '', fC = '', user = null, deadline = 0, hasVoted = false, count = null, pend = null, nick = localStorage.getItem('hv_nick') || '', db, auth;
+const closed = () => deadline && Date.now() > deadline;
+const cn = c => c.name[lang] || c.name.zh;
+const picked = () => cats.filter(c => sel[c.id]?.length);
+const total = () => picked().reduce((a, c) => a + sel[c.id].length, 0);
+const toast = m => { const e = $('#toast'); e.textContent = m; e.style.opacity = 1; setTimeout(() => e.style.opacity = 0, 2200); };
+
+// ---- 播放器（全頁單例） ----
+const au = new Audio(); let pb = null;
+const stopUI = () => { if (pb) { pb.dataset.on = ''; pb.innerHTML = playIc(); pb = null; } };
+const playIc = () => `<span aria-hidden="true">▶</span> ${t('play')}`;
+au.onended = stopUI; au.onerror = () => { stopUI(); toast(t('err')); };
+function play(b, u) { if (pb === b) { au.pause(); return stopUI(); } au.pause(); stopUI(); au.src = u;
+  au.play().then(() => { pb = b; b.innerHTML = `<span aria-hidden="true">❚❚</span> ${t('pause')}<i class="eq"></i><i class="eq" style="animation-delay:.2s"></i>`; }).catch(() => toast(t('err'))); }
+
+// ---- 候選與卡片 ----
+const match = (c, s) => { const f = c.filter; return f.all || (f.tag && s.tags.includes(f.tag)) || (f.tagPrefix && s.tags.some(x => x.startsWith(f.tagPrefix))) || (f.era && s.era === f.era); };
+const cand = c => Object.values(songs).filter(s => match(c, s));
+const filt = c => cand(c).filter(s => (!fS || s.single === fS) && (!fE || s.era === fE) && (!fC || s[c.creator] === fC) &&
+  (!q || [s.title, s.single, s.composer, s.lyricist].some(x => (x || '').toLowerCase().includes(q.toLowerCase()))));
+const imgOf = (s, c) => c.img === 'artwork' ? s.artworkUrl : s.image_url;
+function item(s, c, ro) {
+  const on = (sel[c.id] || []).includes(s.id), full = (sel[c.id] || []).length >= MAX && !on, im = imgOf(s, c);
+  const meta = [c.creator ? `${t(c.creator)}：${s[c.creator] || '—'}` : ''].filter(Boolean).join('');
+  const th = im ? `<img src="${esc(im)}" alt="" loading="lazy" class="${c.view === 'card' ? 'w-full aspect-square' : 'w-14 h-14'} object-cover rounded-xl bg-sky-100" onerror="this.remove()">` : `<div class="${c.view === 'card' ? 'w-full aspect-square' : 'w-14 h-14'} rounded-xl bg-gradient-to-br from-sky-200 to-sky-100"></div>`;
+  const pl = s.previewUrl ? `<button class="btn bg-slate-100 text-slate-700 flex items-center gap-1 shrink-0" data-play="${s.previewUrl}" aria-label="${t('play')} ${esc(s.title)}">${playIc()}</button>` : '';
+  const pk = ro ? '' : `<button class="btn shrink-0 ${on ? 'bg-sky-500 text-white' : full ? 'bg-slate-100 text-slate-400' : 'bg-sky-100 text-sky-700'}" data-pick="${s.id}">${on ? t('picked') : t('pick')}</button>`;
+  const info = `<div class="min-w-0 flex-1"><div class="text-base font-black leading-snug ${c.view === 'list' ? 'truncate' : ''}">${esc(s.title)}</div><div class="text-xs font-bold text-sky-700 bg-sky-50 inline-block rounded-full px-2 py-0.5 mt-1">${esc(s.single)}</div>${meta ? `<div class="text-xs text-slate-500 mt-1 truncate">${esc(meta)}</div>` : ''}</div>`;
+  return c.view === 'card'
+    ? `<div class="relative bg-white rounded-3xl p-3 border-2 ${on ? 'border-sky-500 bg-sky-50 shadow-lg shadow-sky-200' : 'border-transparent shadow'}">${on ? '<div class="absolute top-5 right-5 w-8 h-8 rounded-full bg-sky-500 text-white flex items-center justify-center font-black">✓</div>' : ''}${th}<div class="pt-3 pb-2">${info}</div><div class="flex gap-2">${pk}${pl}</div></div>`
+    : `<div class="flex items-center gap-3 px-3 py-3 border-b border-slate-100 ${on ? 'bg-sky-50' : ''}">${th}${info}${pl}${pk}</div>`;
+}
+
+// ---- 畫面 ----
+function head() { $('#lang').innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>' + (lang === 'ja' ? '中文' : '日本語'); $('#lang').setAttribute('aria-label', lang === 'ja' ? '切換為中文' : '日本語に切り替え'); $('#ttl').textContent = t('ttl'); $('#back').textContent = t('back'); $('#back').href = SITE_BACK; $('#back').style.display = lang === 'ja' ? 'none' : ''; $('#ft').innerHTML = `${esc(t('footer'))}　<a class="underline" href="privacy.html">${t('cPriv')}</a>`; document.documentElement.lang = lang === 'ja' ? 'ja' : 'zh-Hant';
+  $('#auth').textContent = user && !user.isAnonymous ? t('logout') : t('login'); }
+function render() {
+  head(); const c = cats[cur], cs = cand(c);
+  const singles = [...new Set(cs.map(s => s.single))], creators = c.creator ? [...new Set(cs.map(s => s[c.creator]).filter(Boolean))] : [];
+  const tabs = cats.map((x, i) => `<button data-tab="${i}" class="btn shrink-0 ${i === cur ? 'bg-sky-500 text-white' : 'bg-white border border-slate-200 text-slate-700'}">${esc(cn(x))}${(sel[x.id]||[]).length ? ` · ${sel[x.id].length}` : ''}</button>`).join('');
+  const chips = (sel[c.id] || []).map(id => `<span class="inline-flex items-center gap-1 pl-3 pr-1 min-h-[36px] rounded-full bg-sky-500 text-white text-sm font-bold">${esc(songs[id]?.title)}<button data-pick="${id}" aria-label="×" class="w-7 h-7 rounded-full bg-white/25">×</button></span>`).join('');
+  const seg = [['', 'eraA'], ['hiragana', 'eraH'], ['hinata', 'eraN']].map(([v, k]) => `<button data-era="${v}" class="px-3 min-h-[38px] rounded-[10px] text-xs font-bold ${fE === v ? 'bg-white text-sky-700 shadow' : 'text-slate-600'}">${t(k)}</button>`).join('');
+  const sc = 'min-h-[44px] rounded-xl border border-slate-300 bg-white px-3 text-sm';
+  $('#app').innerHTML = `
+  <nav class="flex gap-2 overflow-x-auto pb-2" aria-label="awards">${tabs}</nav>
+  <div class="flex items-baseline justify-between border-b-[3px] border-[#7EC2E8] pb-2 mt-3"><h2 class="text-xl sm:text-2xl font-black"><span class="text-sky-500 mr-2">${String(cur + 1).padStart(2, '0')}</span>${esc(cn(c))}</h2><span class="text-xs text-slate-500">${t('cnt')(cs.length)}</span></div>
+  <p class="text-xs text-slate-500 mt-2">${hasVoted ? t('voted') : t('hint')}${count != null ? '　' + t('count')(count) : ''}</p>
+  <div class="bg-white border border-sky-200 rounded-3xl px-4 py-3 mt-3 flex flex-wrap items-center gap-2"><span class="text-xs font-black text-sky-700">${esc(cn(c))} ${(sel[c.id]||[]).length}/${MAX}</span>${chips}</div>
+  <div class="mt-3 flex flex-col gap-2"><input id="q" type="search" value="${esc(q)}" placeholder="${t('search')}" aria-label="${t('search')}" class="${sc} w-full">
+   <div class="flex flex-wrap gap-2 items-center"><select id="fS" class="${sc} max-w-full"><option value="">${t('allS')}</option>${singles.map(x => `<option ${x === fS ? 'selected' : ''}>${esc(x)}</option>`).join('')}</select>
+   ${creators.length ? `<select id="fC" class="${sc}"><option value="">${t('allCr')}（${t(c.creator)}）</option>${creators.map(x => `<option ${x === fC ? 'selected' : ''}>${esc(x)}</option>`).join('')}</select>` : ''}
+   <div class="flex bg-slate-200 rounded-xl p-[3px] overflow-x-auto">${seg}</div></div></div>
+  <div id="list" class="mt-4"></div>${myData()}
+  <div class="fixed bottom-0 inset-x-0 p-3 safe z-30"><div class="max-w-xl mx-auto bg-slate-900/95 text-white rounded-3xl pl-5 pr-3 py-3 flex items-center justify-between gap-3 shadow-2xl">
+   <div class="min-w-0"><div class="text-sm font-black">${esc(cn(c))}　${(sel[c.id]||[]).length} / ${MAX}</div><div class="text-xs opacity-80 mt-0.5">${t('done')(picked().length, total())}</div>
+   <div class="h-1 w-40 bg-white/20 rounded mt-2"><div class="h-1 bg-[#7EC2E8] rounded" style="width:${picked().length / cats.length * 100}%"></div></div></div>
+   <button id="sub" class="btn !min-h-[48px] bg-sky-500 text-white shrink-0" ${closed() ? 'disabled' : ''}>${closed() ? t('closed') : hasVoted ? t('upd') : t('vote')}</button></div></div>`;
+  list();
+}
+function list() { const c = cats[cur], a = filt(c);
+  $('#list').innerHTML = c.view === 'card' ? `<div class="grid grid-cols-2 lg:grid-cols-4 gap-3">${a.map(s => item(s, c)).join('')}</div>` : `<div class="bg-white rounded-3xl overflow-hidden border border-slate-200">${a.map(s => item(s, c)).join('')}</div>`; }
+
+// ---- 事件 ----
+document.addEventListener('click', e => { const b = e.target.closest('[data-tab],[data-pick],[data-play],[data-era]'); if (!b) return;
+  if (b.dataset.tab != null) { cur = +b.dataset.tab; q = fS = fE = fC = ''; stopAudio(); render(); }
+  else if (b.dataset.era != null) { fE = b.dataset.era; render(); }
+  else if (b.dataset.play) play(b, b.dataset.play);
+  else if (b.dataset.pick) toggle(b.dataset.pick); });
+function stopAudio() { au.pause(); stopUI(); }
+document.addEventListener('input', e => { if (e.target.id === 'q') { q = e.target.value; list(); } if (e.target.id === 'nick') { nick = e.target.value.trim().slice(0, 20); try { localStorage.setItem('hv_nick', nick); } catch {} } });
+document.addEventListener('change', e => { if (e.target.id === 'fS') { fS = e.target.value; list(); } if (e.target.id === 'fC') { fC = e.target.value; list(); } });
+function toggle(id) { if (closed()) return toast(t('closed')); const c = cats[cur], a = sel[c.id] = sel[c.id] || [], i = a.indexOf(id);
+  if (i >= 0) a.splice(i, 1); else if (a.length >= MAX) return toast(t('limit')); else a.push(id);
+  try { localStorage.setItem('hv_draft_' + year, JSON.stringify(sel)); } catch {} const sc = scrollY; render(); scrollTo(0, sc); }
+$('#lang').onclick = () => { lang = lang === 'ja' ? 'zh' : 'ja'; localStorage.setItem('hv_lang', lang); route(); };
+$('#auth').onclick = async () => { try { if (user && !user.isAnonymous) await signOut(auth); else if (await consent(true)) await upgrade(); } catch (e) { toast(t('fail')); } };
+document.addEventListener('click', e => { if (e.target.id === 'sub') submit(); });
+
+// ---- 提交與分享 ----
+async function submit() { if (!picked().length) return toast(t('none')); if (closed()) return toast(t('closed')); if (!user) return toast(t('conn'));
+  if (localStorage.getItem('hv_consent') !== '1' || (user.isAnonymous && !hasVoted)) { const r = await consent(); if (!r) return; if (r === 'google' && !(await upgrade())) return; }
+  const choices = Object.fromEntries(picked().map(c => [c.id, sel[c.id]]));
+  const base = { [`votes/${year}/${user.uid}`]: { choices, via: user.isAnonymous ? 'anonymous' : 'google', updatedAt: serverTimestamp() } };
+  try { const first = !hasVoted;
+    try { await update(ref(db), first ? { ...base, [`stats/${year}/count`]: increment(1) } : base); if (first && count != null) count++; }
+    catch (e) { if (!first) throw e; await update(ref(db), base); } // 計數器寫入失敗時，不影響投票本身
+    hasVoted = true; localStorage.removeItem('hv_draft_' + year); render(); modal(); } catch (e) { console.error(e); toast(t('fail')); } }
+const link = () => location.origin + location.pathname + '#r=' + year + '~' + picked().map(c => c.id + ':' + sel[c.id].join(',')).join(';') + (nick ? '&n=' + encodeURIComponent(nick) : '');
+const names = c => sel[c.id].map(i => songs[i].title).join('、');
+const text = () => { const ps = picked(); return `${t('ttl')} ${year}${nick ? ' ' + nick + t('nickSuf') : ''} #日向坂46歌曲總選舉\n` + ps.slice(0, 3).map(c => `【${cn(c)}】${names(c)}`).join('\n') + (ps.length > 3 ? '\n' + t('more')(ps.length - 3) : '') + '\n' + link(); };
+const copy = async (s) => { try { await navigator.clipboard.writeText(s); toast(t('copied')); } catch { prompt('', s); } };
+function modal() { const m = $('#modal');
+  m.innerHTML = `<div class="bg-slate-50 rounded-3xl p-5 w-full max-w-md max-h-[88vh] overflow-auto"><h3 class="text-xl font-black">✅ ${t('ok')}</h3><p class="text-sm text-slate-500 mt-1">${t('okSub')}</p>
+   <ul class="mt-3 text-sm space-y-1">${picked().map(c => `<li><b>【${esc(cn(c))}】</b>${esc(names(c))}</li>`).join('')}</ul>
+   <label class="block mt-4 text-xs font-bold text-slate-600">${t('nickLbl')}<input id="nick" maxlength="20" value="${esc(nick)}" placeholder="${esc(t('nickPh'))}" class="mt-1 w-full min-h-[44px] rounded-xl border border-slate-300 px-3 text-sm font-normal"></label><div class="flex flex-wrap gap-2 mt-4"><button class="btn bg-sky-500 text-white" data-m="share">${t('shareI')}</button><button class="btn bg-sky-100 text-sky-700" data-m="dl">${t('dl')}</button><button class="btn bg-sky-100 text-sky-700" data-m="ct">${t('copyT')}</button><button class="btn bg-sky-100 text-sky-700" data-m="cl">${t('copyL')}</button><button class="btn bg-slate-200 text-slate-700" data-m="x">${t('close')}</button></div></div>`;
+  m.classList.remove('hidden'); m.classList.add('flex'); }
+$('#modal').onclick = async e => { const k = e.target.dataset?.m;
+  if (pend) { if (k === 'cg' || k === 'ca') { if (!$('#cchk').checked) return toast(t('cNeed')); localStorage.setItem('hv_consent', '1'); return endModal(k === 'cg' ? 'google' : 'anon'); }
+    if (k === 'cx' || e.target.id === 'modal') return endModal(null); return; }
+  if (e.target.id === 'modal' || k === 'x') endModal(); else if (k === 'ct') copy(text()); else if (k === 'cl') copy(link()); else if (k === 'share' || k === 'dl') shareImg(k === 'dl'); };
+function endModal(v) { $('#modal').classList.add('hidden'); $('#modal').classList.remove('flex'); if (pend) { const p = pend; pend = null; p(v); } }
+const consent = onlyG => new Promise(res => { pend = res; const m = $('#modal');
+  m.innerHTML = `<div class="bg-white rounded-3xl p-5 w-full max-w-md max-h-[90vh] overflow-auto"><h3 class="text-lg font-black">${t('cTitle')}</h3><ul class="list-disc pl-5 mt-3 space-y-2 text-sm text-slate-700">${t('cList').map(x => `<li>${esc(x)}</li>`).join('')}</ul>
+   <p class="text-sm mt-3"><a class="text-sky-600 underline" href="privacy.html" target="_blank" rel="noopener">${t('cPriv')}</a></p>
+   <label class="flex items-center gap-2 mt-4 font-bold text-sm min-h-[44px]"><input id="cchk" type="checkbox" class="w-5 h-5"> ${t('cAgree')}</label>
+   <div class="flex flex-col gap-2 mt-2"><button class="btn bg-sky-500 text-white" data-m="cg">${onlyG ? t('cLogin') : t('cGoogle')}</button>${onlyG ? '' : `<button class="btn bg-sky-100 text-sky-700" data-m="ca">${t('cAnon')}</button><p class="text-xs text-slate-500">${t('cAnonNote')}</p>`}<button class="btn bg-slate-200 text-slate-700" data-m="cx">${t('cCancel')}</button></div></div>`;
+  m.classList.remove('hidden'); m.classList.add('flex'); });
+async function upgrade() { const p = new GoogleAuthProvider();
+  try { if (auth.currentUser.isAnonymous) { await linkWithPopup(auth.currentUser, p); await auth.currentUser.getIdToken(true); user = auth.currentUser; } return true; }
+  catch (e) { if (e.code === 'auth/credential-already-in-use') { try { await signInWithCredential(auth, GoogleAuthProvider.credentialFromError(e)); } catch {} toast(t('existing')); }
+    else if (e.code !== 'auth/popup-closed-by-user') toast(t('fail')); return false; } }
+function myData() { if (!user || (!hasVoted && user.isAnonymous)) return '';
+  return `<section class="mt-8 bg-white rounded-3xl border border-slate-200 p-4"><h3 class="font-black text-sm">${t('myData')}</h3><div class="flex flex-wrap gap-2 mt-2">${hasVoted ? `<button class="btn bg-slate-100 text-slate-700" data-del="v">${t('delVote')}</button>` : ''}<button class="btn bg-rose-50 text-rose-700" data-del="a">${t('delAcct')}</button></div></section>`; }
+document.addEventListener('click', e => { const d = e.target.dataset?.del; if (d) delData(d === 'a'); });
+async function delData(acct) { if (!confirm(t(acct ? 'delAcctQ' : 'delVoteQ'))) return;
+  try { const u = auth.currentUser;
+    if (hasVoted) { try { await update(ref(db), { [`votes/${year}/${u.uid}`]: null, [`stats/${year}/count`]: increment(-1) }); if (count) count--; } catch { await update(ref(db), { [`votes/${year}/${u.uid}`]: null }); } }
+    hasVoted = false; sel = {}; localStorage.removeItem('hv_draft_' + year);
+    if (acct) { try { await deleteUser(u); } catch (e) { if (e.code === 'auth/requires-recent-login') { await reauthenticateWithPopup(u, new GoogleAuthProvider()); await deleteUser(auth.currentUser); } else throw e; } }
+    toast(t('deleted')); render(); } catch (e) { console.error(e); toast(t('fail')); } }
+const loadImg = u => new Promise(r => { if (!u) return r(null); const i = new Image(); i.crossOrigin = 'anonymous'; i.onload = () => r(i); i.onerror = () => r(null); i.src = u; setTimeout(() => r(null), 6000); });
+async function card(withImg) { const F = '"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif', W = 1080, H = 1350, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
+  const ps = picked(), main = ps.find(c => c.id === 'title') || ps.find(c => c.img === 'artwork') || ps[0], ids = sel[main.id].slice(0, 3);
+  const ims = withImg ? await Promise.all(ids.map(i => loadImg(imgOf(songs[i], main)))) : ids.map(() => null);
+  g.fillStyle = '#fff'; g.fillRect(0, 0, W, H); g.fillStyle = '#7EC2E8'; g.fillRect(0, 0, W, 150);
+  g.fillStyle = '#fff'; g.font = `900 52px ${F}`; g.fillText(t('ttl'), 50, 80); g.font = `700 30px ${F}`; g.fillText(String(year) + (nick ? '　' + nick + t('nickSuf') : ''), 50, 125);
+  g.fillStyle = '#e0f2fe'; g.fillRect(0, 150, W, 460); g.fillStyle = '#0369a1'; g.font = `900 44px ${F}`; g.fillText(t('mine') + cn(main), 50, 215);
+  const sz = ids.length === 1 ? 340 : ids.length === 2 ? 320 : 290, gap = 40, x0 = (W - (sz * ids.length + gap * (ids.length - 1))) / 2;
+  ids.forEach((id, k) => { const x = x0 + k * (sz + gap), y = 245; g.save(); g.beginPath(); g.roundRect(x, y, sz, sz, 28); g.clip();
+    if (ims[k]) g.drawImage(ims[k], x, y, sz, sz); else { g.fillStyle = '#7dd3fc'; g.fillRect(x, y, sz, sz); } g.restore();
+    g.fillStyle = '#0f172a'; g.font = `800 26px ${F}`; let s = songs[id].title; while (g.measureText(s).width > sz && s.length > 3) s = s.slice(0, -2) + '…'; g.fillText(s, x, y + sz + 40); });
+  let y = 690; const rest = ps.filter(c => c !== main);
+  rest.slice(0, 6).forEach(c => { g.fillStyle = '#0284c7'; g.font = `900 30px ${F}`; g.fillText(cn(c), 50, y);
+    g.fillStyle = '#0f172a'; g.font = `700 32px ${F}`; let s = songs[sel[c.id][0]].title + (sel[c.id].length > 1 ? t('etc')(sel[c.id].length) : ''); while (g.measureText(s).width > 700 && s.length > 4) s = s.slice(0, -2) + '…'; g.fillText(s, 290, y); y += 78; });
+  if (rest.length > 6) { g.fillStyle = '#0ea5e9'; g.font = `800 30px ${F}`; g.fillText(t('more')(rest.length - 6), 50, y); }
+  g.fillStyle = '#64748b'; g.font = `700 28px ${F}`; g.fillText('#日向坂46歌曲總選舉　' + location.host + location.pathname, 50, H - 50); return cv; }
+async function shareImg(dl) { let blob; try { blob = await new Promise(async r => (await card(true)).toBlob(r)); } catch { blob = null; }
+  if (!blob) blob = await new Promise(async r => (await card(false)).toBlob(r)); // 圖片跨網域被擋時退回無封面版
+  const f = new File([blob], 'hinata-vote.png', { type: 'image/png' });
+  if (!dl && navigator.canShare?.({ files: [f] })) { try { await navigator.share({ files: [f], text: text() }); return; } catch (e) { if (e.name === 'AbortError') return; } }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = f.name; a.click(); }
+
+// ---- 分享連結（唯讀） ----
+function shared(h) { const [main, nk] = h.slice(3).split('&n='); const [y, body] = main.split('~'); const o = {}; let nm = ''; try { nm = decodeURIComponent(nk || '').slice(0, 20); } catch {}
+  (body || '').split(';').forEach(p => { const [c, v] = p.split(':'); if (v && cats.some(x => x.id === c)) o[c] = v.split(',').filter(i => songs[i]).slice(0, MAX); });
+  head(); document.title = t('shNick')(y, nm); $('#app').innerHTML = `<div class="bg-white border-l-4 border-sky-400 rounded-xl px-4 py-3 mb-4 text-sm">${esc(t('shNick')(y, nm))}</div>` +
+    cats.filter(c => o[c.id]?.length).map(c => `<h2 class="text-lg font-black border-b-[3px] border-[#7EC2E8] pb-1 mt-5 mb-3">${esc(cn(c))}</h2><div class="bg-white rounded-3xl overflow-hidden border border-slate-200">${o[c.id].map(i => item(songs[i], { ...c, view: 'list' }, true)).join('')}</div>`).join('') +
+    `<div class="mt-6"><a href="${location.pathname}" class="btn inline-flex items-center bg-sky-500 text-white">${t('me')}</a></div>`; }
+
+// ---- 歷年結果 ----
+async function results(y) { head(); y = y || year; let d = null;
+  try { const r = await fetch(`data/results/${y}.json`); if (r.ok) d = await r.json(); } catch {}
+  if (!d) { try { d = (await get(ref(db, `results/${y}`))).val(); } catch {} }
+  let g = false;
+  const draw = () => { const tl = (g ? d?.tallyGoogle : d?.tally) || {}, n = g ? d?.totalGoogle : d?.total;
+    $('#app').innerHTML = `<div class="flex flex-wrap items-center gap-2 mb-4"><h2 class="text-xl font-black mr-auto">${t('resT')}</h2>
+     <select id="ry" class="min-h-[44px] rounded-xl border border-slate-300 bg-white px-3 text-sm">${Object.keys(E.editions).map(k => `<option ${k == y ? 'selected' : ''}>${k}</option>`).join('')}</select>
+     <button data-g="0" class="btn ${g ? 'bg-slate-100' : 'bg-sky-500 text-white'}">${t('resAll')}</button><button data-g="1" class="btn ${g ? 'bg-sky-500 text-white' : 'bg-slate-100'}">${t('resG')}</button></div>` +
+     (!d ? `<div class="bg-white border-l-4 border-sky-400 rounded-xl px-4 py-3 text-sm">${t('resNone')}</div>` :
+      `<p class="text-sm text-slate-500 mb-3">${t('ppl')(n ?? 0)}</p>` + cats.map(c => { const e = Object.entries(tl[c.id] || {}).sort((a, b) => b[1] - a[1]).slice(0, 10), mx = e[0]?.[1] || 1;
+        return `<h3 class="text-lg font-black border-b-[3px] border-[#7EC2E8] pb-1 mt-6 mb-2">${esc(cn(c))}</h3>` + e.map(([id, v], i) => `<div class="relative bg-white rounded-xl mb-1 overflow-hidden"><div class="absolute inset-y-0 left-0 bg-sky-100" style="width:${v / mx * 100}%"></div><div class="relative flex gap-3 px-3 py-2 text-sm"><b class="w-6 text-sky-600">${i + 1}</b><span class="flex-1 font-bold">${esc(songs[id]?.title || id)}</span><b>${v}</b></div></div>`).join(''); }).join(''));
+    $('#ry')?.addEventListener('change', e => { location.hash = '#results/' + e.target.value; });
+    $('#app').querySelectorAll('[data-g]').forEach(b => b.onclick = () => { g = b.dataset.g === '1'; draw(); }); };
+  draw(); }
+
+// ---- 啟動 ----
+function route() { stopAudio(); const h = location.hash;
+  if (h.startsWith('#r=')) shared(h); else if (h.startsWith('#results')) results(h.split('/')[1]);
+  else if (h === '#admin') import('./js/vote-admin.js').then(m => m.mountAdmin($('#app'), { songs, cats, year })).catch(() => toast(t('fail')));
+  else render(); }
+(async () => {
+  [E, S] = await Promise.all([fetch(DATA + 'editions.json').then(r => r.json()), fetch(DATA + 'songs.json').then(r => r.json())]);
+  year = E.current; ed = E.editions[year]; cats = ed.categories; songs = Object.fromEntries(S.map(s => [s.id, s]));
+  try { sel = JSON.parse(localStorage.getItem('hv_draft_' + year) || '{}'); } catch {}
+  route(); addEventListener('hashchange', route);
+  try { const app = initializeApp(FB); auth = getAuth(app); db = getDatabase(app);
+    try { deadline = (await get(ref(db, `config/${year}/deadline`))).val() || 0; } catch (e) { console.warn('讀取 config/' + year + '/deadline 失敗：請檢查 Rules 是否已「發布」，以及 databaseURL 是否正確', e); }
+    try { const n = (await get(ref(db, `stats/${year}/count`))).val(); if (typeof n === 'number') count = n; } catch {}
+    onAuthStateChanged(auth, async u => { if (!u) { try { await signInAnonymously(auth); } catch { toast(t('conn')); } return; } user = u;
+      const v = (await get(ref(db, `votes/${year}/${u.uid}`))).val();
+      if (v) { hasVoted = true; sel = Object.fromEntries(Object.entries(v.choices || {}).map(([k, a]) => [k, Object.values(a)])); } else hasVoted = false;
+      if (!location.hash || location.hash === '#') render(); else head(); });
+  } catch (e) { console.error(e); toast(t('conn')); }
+})();
+</script>
+</body>
+</html>
 </head>
 <body class="text-slate-900">
 <header class="sticky top-0 z-30 bg-white/90 backdrop-blur border-b border-slate-200">
