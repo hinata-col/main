@@ -1,7 +1,2658 @@
 [
-  {"id":"s001","title":"キュン","single":"1st Single","era":"hinata","tags":["title","mv","costume"],"composer":null,"lyricist":null,"previewUrl":null,"artworkUrl":null,"appleMusicUrl":null,"image_url":null},
-  {"id":"s002","title":"ドレミソラシド","single":"2nd Single","era":"hinata","tags":["title","mv","costume"],"composer":null,"lyricist":null,"previewUrl":null,"artworkUrl":null,"appleMusicUrl":null,"image_url":null},
-  {"id":"s003","title":"ってか","single":"6th Single","era":"hinata","tags":["title","mv","costume"],"composer":null,"lyricist":null,"previewUrl":null,"artworkUrl":null,"appleMusicUrl":null,"image_url":null},
-  {"id":"s004","title":"君しか勝たん","single":"5th Single","era":"hinata","tags":["title","mv","costume"],"composer":null,"lyricist":null,"previewUrl":null,"artworkUrl":null,"appleMusicUrl":null,"image_url":null},
-  {"id":"s005","title":"僕たちは付き合っている","single":"（請核對）","era":"hiragana","tags":["cw"],"composer":null,"lyricist":null,"previewUrl":null,"artworkUrl":null,"appleMusicUrl":null,"image_url":null}
+  {
+    "id": "s001",
+    "title": "ひらがなけやき",
+    "single": "欅坂46 2nd Single",
+    "era": "hiragana",
+    "tags": [
+      "cw",
+      "costume",
+      "gen1"
+    ],
+    "composer": "川浦正大",
+    "lyricist": "秋元康",
+    "previewUrl": null,
+    "artworkUrl": null,
+    "image_url": null
+  },
+  {
+    "id": "s002",
+    "title": "誰よりも高く跳べ!",
+    "single": "欅坂46 3rd Single",
+    "era": "hiragana",
+    "tags": [
+      "cw",
+      "mv",
+      "costume",
+      "gen1"
+    ],
+    "composer": "カミカオル/カウスキー",
+    "lyricist": "秋元康",
+    "previewUrl": null,
+    "artworkUrl": null,
+    "image_url": null
+  },
+  {
+    "id": "s003",
+    "title": "僕たちは付き合っている",
+    "single": "欅坂46 4th Single",
+    "era": "hiragana",
+    "tags": [
+      "cw",
+      "mv",
+      "costume",
+      "gen1"
+    ],
+    "composer": "白戸佑輔",
+    "lyricist": "秋元康",
+    "previewUrl": null,
+    "artworkUrl": null,
+    "image_url": null
+  },
+  {
+    "id": "s004",
+    "title": "W-KEYAKIZAKAの詩",
+    "single": "欅坂46 4th Single",
+    "era": "hiragana",
+    "tags": [
+      "cw",
+      "mv",
+      "costume",
+      "unit"
+    ],
+    "composer": "前迫潤哉/Yasutaka.Ishio",
+    "lyricist": "秋元康",
+    "previewUrl": null,
+    "artworkUrl": null,
+    "image_url": null
+  },
+  {
+    "id": "s005",
+    "title": "沈黙した恋人よ",
+    "single": "欅坂46 1st Album",
+    "era": "hiragana",
+    "tags": [
+      "cw",
+      "unit"
+    ],
+    "composer": "杉山勝彦",
+    "lyricist": "秋元康",
+    "previewUrl": null,
+    "artworkUrl": null,
+    "image_url": null
+  },
+  {
+    "id": "s006",
+    "title": "猫の名前",
+    "single": "欅坂46 1st Album",
+    "era": "hiragana",
+    "tags": [
+      "cw",
+      "unit"
+    ],
+    "composer": "湊貴大",
+    "lyricist": "秋元康",
+    "previewUrl": null,
+    "artworkUrl": null,
+    "image_url": null
+  },
+  {
+    "id": "s007",
+    "title": "永遠の白線",
+    "single": "欅坂46 1st Album",
+    "era": "hiragana",
+    "tags": [
+      "cw",
+      "gen1"
+    ],
+    "composer": "石井健太郎",
+    "lyricist": "秋元康",
+    "previewUrl": null,
+    "artworkUrl": null,
+    "image_url": null
+  },
+  {
+    "id": "s008",
+    "title": "ここにない足跡",
+    "single": "欅坂46 1st Album",
+    "era": "hiragana",
+    "tags": [
+      "cw",
+      "unit"
+    ],
+    "composer": "前迫潤哉/畠舎聖悟",
+    "lyricist": "秋元康",
+    "previewUrl": null,
+    "artworkUrl": null,
+    "image_url": null
+  },
+  {
+    "id": "s009",
+    "title": "太陽は見上げる人を選ばない",
+    "single": "欅坂46 1st Album",
+    "era": "hiragana",
+    "tags": [
+      "cw"
+    ],
+    "composer": "池澤聡",
+    "lyricist": "秋元康",
+    "previewUrl": null,
+    "artworkUrl": null,
+    "image_url": null
+  },
+  {
+    "id": "s010",
+    "title": "それでも歩いている",
+    "single": "欅坂46 5th Single",
+    "era": "hiragana",
+    "tags": [
+      "cw",
+      "mv",
+      "costume",
+      "gen1"
+    ],
+    "composer": "さいとうくにあき",
+    "lyricist": "秋元康",
+    "previewUrl": null,
+    "artworkUrl": null,
+    "image_url": null
+  },
+  {
+    "id": "s011",
+    "title": "NO WAR in the future",
+    "single": "欅坂46 5th Single",
+    "era": "hiragana",
+    "tags": [
+      "cw",
+      "costume"
+    ],
+    "composer": "ツキダタダシ",
+    "lyricist": "秋元康",
+    "previewUrl": null,
+    "artworkUrl": null,
+    "image_url": null
+  },
+  {
+    "id": "s012",
+    "title": "イマニミテイロ",
+    "single": "欅坂46 6th Single",
+    "era": "hiragana",
+    "tags": [
+      "cw",
+      "mv",
+      "costume",
+      "gen1"
+    ],
+    "composer": "前迫潤哉/綿貫佳明",
+    "lyricist": "秋元康",
+    "previewUrl": null,
+    "artworkUrl": null,
+    "image_url": null
+  },
+  {
+    "id": "s013",
+    "title": "半分の記憶",
+    "single": "欅坂46 6th Single",
+    "era": "hiragana",
+    "tags": [
+      "cw",
+      "costume",
+      "gen2"
+    ],
+    "composer": "吉田司/村山シベリウス達彦",
+    "lyricist": "秋元康",
+    "previewUrl": null,
+    "artworkUrl": null,
+    "image_url": null
+  },
+  {
+    "id": "s014",
+    "title": "ハッピーオーラ",
+    "single": "欅坂46 7th Single",
+    "era": "hiragana",
+    "tags": [
+      "cw",
+      "mv",
+      "costume"
+    ],
+    "composer": "コモリタミノル",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/4f/a1/2c/4fa12cb5-d4bf-c512-77f1-1f0af0f32318/mzaf_8907559617820145060.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/3c/f3/02/3cf3025d-cda1-0ffc-ba44-4e88ce5c70f6/jacket_SRXX02841B00Z_550.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%83%8F%E3%83%83%E3%83%94%E3%83%BC%E3%82%AA%E3%83%BC%E3%83%A9/1537765287?i=1537765291&uo=4"
+  },
+  {
+    "id": "s015",
+    "title": "君に話しておきたいこと",
+    "single": "欅坂46 8th Single",
+    "era": "hiragana",
+    "tags": [
+      "cw",
+      "mv",
+      "costume"
+    ],
+    "composer": "立川智也",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/5d/60/f5/5d60f59f-752f-f450-0c2c-a30a90864f3b/mzaf_2727972361342014535.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/4f/3f/93/4f3f9336-86f2-44fb-8c66-d38d2da7ec7a/jacket_SRXX03028B00Z_550.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E5%90%9B%E3%81%AB%E8%A9%B1%E3%81%97%E3%81%A6%E3%81%8A%E3%81%8D%E3%81%9F%E3%81%84%E3%81%93%E3%81%A8/1537770028?i=1537770030&uo=4"
+  },
+  {
+    "id": "s016",
+    "title": "抱きしめてやる",
+    "single": "欅坂46 8th Single",
+    "era": "hiragana",
+    "tags": [
+      "cw",
+      "costume"
+    ],
+    "composer": "バグベア",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/25/c5/95/25c5951c-8ea2-72a4-1569-b1edfc13a018/mzaf_13225055562814292761.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/4f/3f/93/4f3f9336-86f2-44fb-8c66-d38d2da7ec7a/jacket_SRXX03028B00Z_550.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E6%8A%B1%E3%81%8D%E3%81%97%E3%82%81%E3%81%A6%E3%82%84%E3%82%8B/1537770028?i=1537770032&uo=4"
+  },
+  {
+    "id": "s017",
+    "title": "期待していない自分",
+    "single": "けやき坂46 1st Album",
+    "era": "hiragana",
+    "tags": [
+      "title",
+      "mv",
+      "costume"
+    ],
+    "composer": "太田貴之",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/d4/93/09/d4930902-8fcc-c9fa-6acb-b26fa39cfcf8/mzaf_12472688375680836565.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/f7/9f/5f/f79f5f11-987f-ab80-ec2c-4f3e8c3cb8eb/jacket_SRXX02749B00Z_550.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E6%9C%9F%E5%BE%85%E3%81%97%E3%81%A6%E3%81%84%E3%81%AA%E3%81%84%E8%87%AA%E5%88%86/1537761006?i=1537761018&uo=4"
+  },
+  {
+    "id": "s018",
+    "title": "ひらがなで恋したい",
+    "single": "けやき坂46 1st Album",
+    "era": "hiragana",
+    "tags": [
+      "cw",
+      "costume"
+    ],
+    "composer": "ふるっぺ",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/2f/49/7c/2f497c93-6fad-eed0-b3e7-99ee4c7f4fd0/mzaf_14841241044636966004.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/f7/9f/5f/f79f5f11-987f-ab80-ec2c-4f3e8c3cb8eb/jacket_SRXX02749B00Z_550.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%81%B2%E3%82%89%E3%81%8C%E3%81%AA%E3%81%A7%E6%81%8B%E3%81%97%E3%81%9F%E3%81%84/1537761006?i=1537761069&uo=4"
+  },
+  {
+    "id": "s019",
+    "title": "未熟な怒り",
+    "single": "けやき坂46 1st Album",
+    "era": "hiragana",
+    "tags": [
+      "cw",
+      "gen2"
+    ],
+    "composer": "BUG-A-SALT",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/2a/d8/c7/2ad8c79f-e1b0-211e-4c87-e0af5d763558/mzaf_16859075512897848054.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/f7/9f/5f/f79f5f11-987f-ab80-ec2c-4f3e8c3cb8eb/jacket_SRXX02749B00Z_550.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E6%9C%AA%E7%86%9F%E3%81%AA%E6%80%92%E3%82%8A/1537761006?i=1537761020&uo=4"
+  },
+  {
+    "id": "s020",
+    "title": "約束の卵",
+    "single": "けやき坂46 1st Album",
+    "era": "hiragana",
+    "tags": [
+      "cw",
+      "costume"
+    ],
+    "composer": "aokado",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/9c/f4/83/9cf48377-d3e0-2925-80ca-fc7be3a6f5d3/mzaf_17793962712369394403.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/f7/9f/5f/f79f5f11-987f-ab80-ec2c-4f3e8c3cb8eb/jacket_SRXX02749B00Z_550.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E7%B4%84%E6%9D%9F%E3%81%AE%E5%8D%B5/1537761006?i=1537761024&uo=4"
+  },
+  {
+    "id": "s021",
+    "title": "車輪が起きる",
+    "single": "けやき坂46 1st Album",
+    "era": "hiragana",
+    "tags": [
+      "cw",
+      "gen2"
+    ],
+    "composer": "渡邉俊彦",
+    "lyricist": "秋元康",
+    "previewUrl": null,
+    "artworkUrl": null,
+    "image_url": null
+  },
+  {
+    "id": "s022",
+    "title": "男友達だから",
+    "single": "けやき坂46 1st Album",
+    "era": "hiragana",
+    "tags": [
+      "cw",
+      "unit"
+    ],
+    "composer": "三日市吉陽",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/4d/e4/71/4de471d7-ad47-5730-3e0d-331408681f7d/mzaf_5993300578862708919.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/f7/9f/5f/f79f5f11-987f-ab80-ec2c-4f3e8c3cb8eb/jacket_SRXX02749B00Z_550.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E7%94%B7%E5%8F%8B%E9%81%94%E3%81%A0%E3%81%8B%E3%82%89/1537761006?i=1537761027&uo=4"
+  },
+  {
+    "id": "s023",
+    "title": "わずかな光",
+    "single": "けやき坂46 1st Album",
+    "era": "hiragana",
+    "tags": [
+      "cw",
+      "unit"
+    ],
+    "composer": "奥田もとい",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/95/e4/24/95e424f1-a71d-3fd2-dfe1-5787d3076fd0/mzaf_13182110080705185499.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/f7/9f/5f/f79f5f11-987f-ab80-ec2c-4f3e8c3cb8eb/jacket_SRXX02749B00Z_550.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%82%8F%E3%81%9A%E3%81%8B%E3%81%AA%E5%85%89/1537761006?i=1537761021&uo=4"
+  },
+  {
+    "id": "s024",
+    "title": "割れないシャボン玉",
+    "single": "けやき坂46 1st Album",
+    "era": "hiragana",
+    "tags": [
+      "cw",
+      "unit"
+    ],
+    "composer": "渡邉俊彦",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/3c/d1/8a/3cd18a0f-deca-7832-b6d5-6d3be373b20a/mzaf_3073589782215568648.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/f7/9f/5f/f79f5f11-987f-ab80-ec2c-4f3e8c3cb8eb/jacket_SRXX02749B00Z_550.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E5%89%B2%E3%82%8C%E3%81%AA%E3%81%84%E3%82%B7%E3%83%A3%E3%83%9C%E3%83%B3%E7%8E%89/1537761006?i=1537761068&uo=4"
+  },
+  {
+    "id": "s025",
+    "title": "線香花火が消えるまで",
+    "single": "けやき坂46 1st Album",
+    "era": "hiragana",
+    "tags": [
+      "cw",
+      "unit"
+    ],
+    "composer": "鈴木まなか",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/b3/09/e6/b309e6e9-1e89-cbf9-1eb2-d587f4637c70/mzaf_16138498854895219921.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/f7/9f/5f/f79f5f11-987f-ab80-ec2c-4f3e8c3cb8eb/jacket_SRXX02749B00Z_550.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E7%B7%9A%E9%A6%99%E8%8A%B1%E7%81%AB%E3%81%8C%E6%B6%88%E3%81%88%E3%82%8B%E3%81%BE%E3%81%A7/1537761006?i=1537761019&uo=4"
+  },
+  {
+    "id": "s026",
+    "title": "三輪車に乗りたい",
+    "single": "けやき坂46 1st Album",
+    "era": "hiragana",
+    "tags": [
+      "cw",
+      "unit"
+    ],
+    "composer": "ジンツチハシ",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/89/cc/22/89cc226b-53ab-e4c4-6e64-f8072c177797/mzaf_7720086873795313139.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/f7/9f/5f/f79f5f11-987f-ab80-ec2c-4f3e8c3cb8eb/jacket_SRXX02749B00Z_550.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E4%B8%89%E8%BC%AA%E8%BB%8A%E3%81%AB%E4%B9%97%E3%82%8A%E3%81%9F%E3%81%84/1537761006?i=1537761035&uo=4"
+  },
+  {
+    "id": "s027",
+    "title": "最前列へ",
+    "single": "けやき坂46 1st Album",
+    "era": "hiragana",
+    "tags": [
+      "cw",
+      "gen2"
+    ],
+    "composer": "白須賀亮",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/50/58/29/505829b3-abac-5c09-b44c-41f6f66fa055/mzaf_18274725116805945730.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/f7/9f/5f/f79f5f11-987f-ab80-ec2c-4f3e8c3cb8eb/jacket_SRXX02749B00Z_550.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E6%9C%80%E5%89%8D%E5%88%97%E3%81%B8/1537761006?i=1537761028&uo=4"
+  },
+  {
+    "id": "s028",
+    "title": "居心地悪く、大人になった",
+    "single": "けやき坂46 1st Album",
+    "era": "hiragana",
+    "tags": [
+      "cw",
+      "unit",
+      "1期"
+    ],
+    "composer": "嶋田啓介",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/d5/80/ae/d580ae23-0791-ace9-9837-fe282d384f39/mzaf_10668726488365272748.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/f7/9f/5f/f79f5f11-987f-ab80-ec2c-4f3e8c3cb8eb/jacket_SRXX02749B00Z_550.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E5%B1%85%E5%BF%83%E5%9C%B0%E6%82%AA%E3%81%8F-%E5%A4%A7%E4%BA%BA%E3%81%AB%E3%81%AA%E3%81%A3%E3%81%9F/1537761006?i=1537761067&uo=4"
+  },
+  {
+    "id": "s029",
+    "title": "ハロウィンのカボチャが割れた",
+    "single": "けやき坂46 1st Album",
+    "era": "hiragana",
+    "tags": [
+      "cw",
+      "unit",
+      "1期"
+    ],
+    "composer": "サトウシンゴ",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/74/88/40/74884072-4d72-f37c-f20e-a30ae823922e/mzaf_2769450404792411036.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/f7/9f/5f/f79f5f11-987f-ab80-ec2c-4f3e8c3cb8eb/jacket_SRXX02749B00Z_550.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%83%8F%E3%83%AD%E3%82%A6%E3%82%A3%E3%83%B3%E3%81%AE%E3%82%AB%E3%83%9C%E3%83%81%E3%83%A3%E3%81%8C%E5%89%B2%E3%82%8C%E3%81%9F/1537761006?i=1537761023&uo=4"
+  },
+  {
+    "id": "s030",
+    "title": "夏色のミュール",
+    "single": "けやき坂46 1st Album",
+    "era": "hiragana",
+    "tags": [
+      "cw",
+      "unit",
+      "1期"
+    ],
+    "composer": "井上トモノリ",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/89/21/57/892157e8-4748-d260-e188-e8df589fcbe9/mzaf_2769573352340733786.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/f7/9f/5f/f79f5f11-987f-ab80-ec2c-4f3e8c3cb8eb/jacket_SRXX02749B00Z_550.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E5%A4%8F%E8%89%B2%E3%81%AE%E3%83%9F%E3%83%A5%E3%83%BC%E3%83%AB/1537761006?i=1537761026&uo=4"
+  },
+  {
+    "id": "s031",
+    "title": "ノックをするな!",
+    "single": "けやき坂46 1st Album",
+    "era": "hiragana",
+    "tags": [
+      "cw",
+      "unit",
+      "1期"
+    ],
+    "composer": "前迫潤哉/APRAZ",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/f2/73/60/f273606b-681d-b482-073d-29df7b3a9907/mzaf_3104859068307876591.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/f7/9f/5f/f79f5f11-987f-ab80-ec2c-4f3e8c3cb8eb/jacket_SRXX02749B00Z_550.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%83%8E%E3%83%83%E3%82%AF%E3%82%92%E3%81%99%E3%82%8B%E3%81%AA/1537761006?i=1537761022&uo=4"
+  },
+  {
+    "id": "s032",
+    "title": "キュン",
+    "single": "1st Single",
+    "era": "hinata",
+    "tags": [
+      "title",
+      "mv",
+      "costume"
+    ],
+    "composer": "野村陽一郎",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/4c/83/1e/4c831ea4-84f4-fc6f-8ddf-85c684c1feae/mzaf_4731064544630632398.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/01/b9/1c/01b91c88-87f0-d7b3-4377-573e0938dbc2/4547366474060.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%82%AD%E3%83%A5%E3%83%B3/1530889878?i=1530889881&uo=4"
+  },
+  {
+    "id": "s033",
+    "title": "JOYFUL LOVE",
+    "single": "1st Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume"
+    ],
+    "composer": "前迫潤哉/Dr.Lilcom",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/d5/49/96/d5499629-c16f-fbe4-34e2-9dfa9b3d4d9e/mzaf_3251361238980242540.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/20/cd/4f/20cd4fbc-9a42-d0d6-80d9-5027eb42ab3b/jacket_SRXX03067B00Z_550.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/joyful-love/1537771801?i=1537771926&uo=4"
+  },
+  {
+    "id": "s034",
+    "title": "耳に落ちる悪魔",
+    "single": "1st Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "1期"
+    ],
+    "composer": "根本優樹",
+    "lyricist": "秋元康",
+    "previewUrl": null,
+    "artworkUrl": null,
+    "image_url": null
+  },
+  {
+    "id": "s035",
+    "title": "Footsteps",
+    "single": "1st Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume",
+      "unit"
+    ],
+    "composer": "野井洋児",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/44/24/4a/44244ad3-3aa4-2a4f-ae95-2b0d5ba5cb1f/mzaf_748407505284003576.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/20/cd/4f/20cd4fbc-9a42-d0d6-80d9-5027eb42ab3b/jacket_SRXX03067B00Z_550.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/footsteps/1537771801?i=1537771930&uo=4"
+  },
+  {
+    "id": "s036",
+    "title": "捕まえて抱きしめたい",
+    "single": "1st Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "gen2"
+    ],
+    "composer": "猟平/タナカ伸一",
+    "lyricist": "秋元康",
+    "previewUrl": null,
+    "artworkUrl": null,
+    "image_url": null
+  },
+  {
+    "id": "s037",
+    "title": "ときめき草",
+    "single": "1st Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume"
+    ],
+    "composer": "御船遥",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/ab/47/5c/ab475c48-930f-7358-3973-9bf283bf0696/mzaf_16193189196919769891.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/20/cd/4f/20cd4fbc-9a42-d0d6-80d9-5027eb42ab3b/jacket_SRXX03067B00Z_550.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%81%A8%E3%81%8D%E3%82%81%E3%81%8D%E8%8D%89/1537771801?i=1537771931&uo=4"
+  },
+  {
+    "id": "s038",
+    "title": "ドレミソラシド",
+    "single": "2nd Single",
+    "era": "hinata",
+    "tags": [
+      "title",
+      "mv",
+      "costume"
+    ],
+    "composer": "野村陽一郎",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/26/ae/a7/26aea7f6-7c66-bdcc-fb9b-30eba1f90ab2/mzaf_14068254562346528791.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/1d/c0/3a/1dc03a4c-6b76-a396-ad32-2bf4b6723644/jacket_SRXX03175B00Z_550.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%83%89%E3%83%AC%E3%83%9F%E3%82%BD%E3%83%A9%E3%82%B7%E3%83%89/1537777505?i=1537777807&uo=4"
+  },
+  {
+    "id": "s039",
+    "title": "キツネ",
+    "single": "2nd Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume"
+    ],
+    "composer": "原田雄一",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/64/47/41/64474122-760a-fc04-cbc8-a2c3b9413ab3/mzaf_12909231277085729559.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/1d/c0/3a/1dc03a4c-6b76-a396-ad32-2bf4b6723644/jacket_SRXX03175B00Z_550.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%82%AD%E3%83%84%E3%83%8D/1537777505?i=1537777808&uo=4"
+  },
+  {
+    "id": "s040",
+    "title": "Cage",
+    "single": "2nd Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume",
+      "unit"
+    ],
+    "composer": "水流雄一朗",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/3a/75/78/3a7578a1-c0d2-b2be-0d71-d7a3ca2c435d/mzaf_337022807401397794.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/1d/c0/3a/1dc03a4c-6b76-a396-ad32-2bf4b6723644/jacket_SRXX03175B00Z_550.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/cage/1537777505?i=1537777810&uo=4"
+  },
+  {
+    "id": "s041",
+    "title": "やさしさが邪魔をする",
+    "single": "2nd Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume",
+      "unit"
+    ],
+    "composer": "aokado",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/e0/6b/c4/e06bc447-3d43-b5df-4018-f0763701c1dd/mzaf_14469760933867253207.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/1d/c0/3a/1dc03a4c-6b76-a396-ad32-2bf4b6723644/jacket_SRXX03175B00Z_550.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%82%84%E3%81%95%E3%81%97%E3%81%95%E3%81%8C%E9%82%AA%E9%AD%94%E3%82%92%E3%81%99%E3%82%8B/1537777505?i=1537777811&uo=4"
+  },
+  {
+    "id": "s042",
+    "title": "Dash&Rush",
+    "single": "2nd Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume"
+    ],
+    "composer": "小田切大",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/43/dd/dd/43dddd03-3bcb-d99e-71b7-0a91e0c615aa/mzaf_4958079966063984217.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/1d/c0/3a/1dc03a4c-6b76-a396-ad32-2bf4b6723644/jacket_SRXX03175B00Z_550.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/dash-rush/1537777505?i=1537777812&uo=4"
+  },
+  {
+    "id": "s043",
+    "title": "My god",
+    "single": "2nd Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "1期"
+    ],
+    "composer": "doubleglass",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/1f/b1/d4/1fb1d45a-2f4b-f3f1-2876-13b39dbf5e22/mzaf_13519457573843626847.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/1d/c0/3a/1dc03a4c-6b76-a396-ad32-2bf4b6723644/jacket_SRXX03175B00Z_550.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/my-god/1537777505?i=1537777809&uo=4"
+  },
+  {
+    "id": "s044",
+    "title": "こんなに好きになっちゃっていいの?",
+    "single": "3rd Single",
+    "era": "hinata",
+    "tags": [
+      "title",
+      "mv",
+      "costume"
+    ],
+    "composer": "前迫潤哉/7th Avenue",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/96/89/55/9689558e-542b-4f90-d7ac-5ecc428d0d3f/mzaf_3872675461426814417.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/e1/7d/6a/e17d6a57-2768-e803-4e43-6668b9814eb0/jacket_SRXX03245B00Z_550.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%81%93%E3%82%93%E3%81%AA%E3%81%AB%E5%A5%BD%E3%81%8D%E3%81%AB%E3%81%AA%E3%81%A3%E3%81%A1%E3%82%83%E3%81%A3%E3%81%A6%E3%81%84%E3%81%84%E3%81%AE/1537778920?i=1537778921&uo=4"
+  },
+  {
+    "id": "s045",
+    "title": "ホントの時間",
+    "single": "3rd Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume"
+    ],
+    "composer": "野村陽一郎",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/c3/7c/02/c37c0252-b53c-5453-c897-d7c01bc4e40c/mzaf_16844360711426992842.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/e1/7d/6a/e17d6a57-2768-e803-4e43-6668b9814eb0/jacket_SRXX03245B00Z_550.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%83%9B%E3%83%B3%E3%83%88%E3%81%AE%E6%99%82%E9%96%93/1537778920?i=1537778922&uo=4"
+  },
+  {
+    "id": "s046",
+    "title": "まさか 偶然…",
+    "single": "3rd Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume",
+      "unit"
+    ],
+    "composer": "ジンツチハシ",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/05/49/d4/0549d41a-c008-8e32-bf5b-f16d48beb741/mzaf_8063246641881461153.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/e1/7d/6a/e17d6a57-2768-e803-4e43-6668b9814eb0/jacket_SRXX03245B00Z_550.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%81%BE%E3%81%95%E3%81%8B-%E5%81%B6%E7%84%B6/1537778920?i=1537778923&uo=4"
+  },
+  {
+    "id": "s047",
+    "title": "一番好きだとみんなに言っていた話",
+    "single": "3rd Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "カウスキー",
+    "lyricist": "秋元康",
+    "previewUrl": null,
+    "artworkUrl": null,
+    "image_url": null
+  },
+  {
+    "id": "s048",
+    "title": "川は流れる",
+    "single": "3rd Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "中野領太",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/78/a8/b8/78a8b816-f3f8-1adc-63f3-f6c78826e9e2/mzaf_862146453930820300.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/01/b9/1c/01b91c88-87f0-d7b3-4377-573e0938dbc2/4547366474060.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E5%B7%9D%E3%81%AF%E6%B5%81%E3%82%8C%E3%82%8B/1530889878?i=1530889942&uo=4"
+  },
+  {
+    "id": "s049",
+    "title": "酸っぱい自己嫌悪",
+    "single": "3rd Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "unit"
+    ],
+    "composer": "丸谷マナブ",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/13/15/f1/1315f1ba-ff69-7204-d49a-045f5cc5e798/mzaf_17054280062860280408.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/db/36/79/db3679d3-e832-9de2-f9df-a4701716811c/4547366535655.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E9%85%B8%E3%81%A3%E3%81%B1%E3%81%84%E8%87%AA%E5%B7%B1%E5%AB%8C%E6%82%AA/1590075501?i=1590075776&uo=4"
+  },
+  {
+    "id": "s050",
+    "title": "ソンナコトナイヨ",
+    "single": "4th Single",
+    "era": "hinata",
+    "tags": [
+      "title",
+      "mv",
+      "costume"
+    ],
+    "composer": "柳沢英樹",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/69/c4/df/69c4df3c-9c6e-8b1c-2162-db7fc53a7995/mzaf_8398595701951282611.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/97/4f/9e/974f9eee-75f9-300f-0b3a-69fd5cca7234/jacket_SRXX03396B00Z_550.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%82%BD%E3%83%B3%E3%83%8A%E3%82%B3%E3%83%88%E3%83%8A%E3%82%A4%E3%83%A8/1537781769?i=1537781770&uo=4"
+  },
+  {
+    "id": "s051",
+    "title": "青春の馬",
+    "single": "4th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume"
+    ],
+    "composer": "近藤圭一",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/a5/08/36/a5083622-c50a-1a7c-12a6-5577ae4d5152/mzaf_3336820346191100797.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/97/4f/9e/974f9eee-75f9-300f-0b3a-69fd5cca7234/jacket_SRXX03396B00Z_550.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E9%9D%92%E6%98%A5%E3%81%AE%E9%A6%AC/1537781769?i=1537781771&uo=4"
+  },
+  {
+    "id": "s052",
+    "title": "窓を開けなくても",
+    "single": "4th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume",
+      "unit"
+    ],
+    "composer": "渡辺淳",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/7c/b6/66/7cb666f1-db0b-70eb-91bd-a678effd2e6f/mzaf_3427386018449718471.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/97/4f/9e/974f9eee-75f9-300f-0b3a-69fd5cca7234/jacket_SRXX03396B00Z_550.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E7%AA%93%E3%82%92%E9%96%8B%E3%81%91%E3%81%AA%E3%81%8F%E3%81%A6%E3%82%82/1537781769?i=1537781773&uo=4"
+  },
+  {
+    "id": "s053",
+    "title": "ナゼー",
+    "single": "4th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume",
+      "unit"
+    ],
+    "composer": "矢野博康",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/4b/34/a1/4b34a126-46c1-0f99-519d-5e2174bd1dd8/mzaf_8309136632738935918.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/97/4f/9e/974f9eee-75f9-300f-0b3a-69fd5cca7234/jacket_SRXX03396B00Z_550.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%83%8A%E3%82%BC%E3%83%BC/1537781769?i=1537781774&uo=4"
+  },
+  {
+    "id": "s054",
+    "title": "好きひ体験",
+    "single": "4th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "unit"
+    ],
+    "composer": "鈴木智貴",
+    "lyricist": "秋元康",
+    "previewUrl": null,
+    "artworkUrl": null,
+    "image_url": null
+  },
+  {
+    "id": "s055",
+    "title": "君のため何ができるだろう",
+    "single": "4th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "森大輔",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/3e/00/6a/3e006ab6-a8e4-ade6-bd5e-b7337af02bcf/mzaf_18049649790527205392.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/97/4f/9e/974f9eee-75f9-300f-0b3a-69fd5cca7234/jacket_SRXX03396B00Z_550.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E5%90%9B%E3%81%AE%E3%81%9F%E3%82%81%E4%BD%95%E3%81%8C%E3%81%A7%E3%81%8D%E3%82%8B%E3%81%A0%E3%82%8D%E3%81%86/1537781769?i=1537781775&uo=4"
+  },
+  {
+    "id": "s056",
+    "title": "アザトカワイイ",
+    "single": "1st Album",
+    "era": "hinata",
+    "tags": [
+      "title",
+      "mv",
+      "costume"
+    ],
+    "composer": "浦島健太/NIYA/TETTA",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/cd/94/9e/cd949e22-b15f-03aa-f113-9a1b42108fbc/mzaf_1585068594863541273.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/01/b9/1c/01b91c88-87f0-d7b3-4377-573e0938dbc2/4547366474060.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%82%A2%E3%82%B6%E3%83%88%E3%82%AB%E3%83%AF%E3%82%A4%E3%82%A4/1530889878?i=1530889892&uo=4"
+  },
+  {
+    "id": "s057",
+    "title": "My fans",
+    "single": "1st Album",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "costume"
+    ],
+    "composer": "草野将史",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/69/e5/b0/69e5b003-2386-8913-d443-553807cedaed/mzaf_11272364697155256253.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/01/b9/1c/01b91c88-87f0-d7b3-4377-573e0938dbc2/4547366474060.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/my-fans/1530889878?i=1530889947&uo=4"
+  },
+  {
+    "id": "s058",
+    "title": "ただがむしゃらに",
+    "single": "1st Album",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "カキノキタカヒロ",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/d8/d3/44/d8d3444d-fdd1-536c-b5e3-3d9c2369635d/mzaf_18353690554580555919.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/01/b9/1c/01b91c88-87f0-d7b3-4377-573e0938dbc2/4547366474060.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%81%9F%E3%81%A0%E3%81%8C%E3%82%80%E3%81%97%E3%82%83%E3%82%89%E3%81%AB/1530889878?i=1530889936&uo=4"
+  },
+  {
+    "id": "s059",
+    "title": "どうして雨だと言ったんだろう?",
+    "single": "1st Album",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "unit"
+    ],
+    "composer": "杉山勝彦",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/5b/b2/90/5bb290e2-e55d-b24b-fd0b-8d708ccbbd34/mzaf_1469408453816020428.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/01/b9/1c/01b91c88-87f0-d7b3-4377-573e0938dbc2/4547366474060.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%81%A9%E3%81%86%E3%81%97%E3%81%A6%E9%9B%A8%E3%81%A0%E3%81%A8%E8%A8%80%E3%81%A3%E3%81%9F%E3%82%93%E3%81%A0%E3%82%8D%E3%81%86/1530889878?i=1530889939&uo=4"
+  },
+  {
+    "id": "s060",
+    "title": "See Through",
+    "single": "1st Album",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "unit"
+    ],
+    "composer": "成瀬貴充",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/bd/76/8f/bd768f9b-bb69-0aad-6cb6-487c2c3b0ecf/mzaf_7564292352160356827.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/01/b9/1c/01b91c88-87f0-d7b3-4377-573e0938dbc2/4547366474060.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/see-through/1530889878?i=1530889948&uo=4"
+  },
+  {
+    "id": "s061",
+    "title": "この夏をジャムにしよう",
+    "single": "1st Album",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "unit",
+      "gen3"
+    ],
+    "composer": "家原正樹",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/01/e7/a8/01e7a88f-0ff5-bf77-2dac-1733512279f1/mzaf_14299303566707314449.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/01/b9/1c/01b91c88-87f0-d7b3-4377-573e0938dbc2/4547366474060.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%81%93%E3%81%AE%E5%A4%8F%E3%82%92%E3%82%B8%E3%83%A3%E3%83%A0%E3%81%AB%E3%81%97%E3%82%88%E3%81%86/1530889878?i=1530889893&uo=4"
+  },
+  {
+    "id": "s062",
+    "title": "どうする?どうする?どうする?",
+    "single": "1st Album",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "gen1"
+    ],
+    "composer": "かわごえよしかず",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/7b/ad/c1/7badc168-b459-ba16-190d-1446ad897c35/mzaf_11694520680161056273.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/e6/e4/f9/e6e4f9ed-15b4-3535-af24-c818f6f85ce2/4547366513080.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%81%A9%E3%81%86%E3%81%99%E3%82%8B-%E3%81%A9%E3%81%86%E3%81%99%E3%82%8B-%E3%81%A9%E3%81%86%E3%81%99%E3%82%8B/1567332153?i=1567332187&uo=4"
+  },
+  {
+    "id": "s063",
+    "title": "君しか勝たん",
+    "single": "5th Single",
+    "era": "hinata",
+    "tags": [
+      "title",
+      "mv",
+      "costume"
+    ],
+    "composer": "デレク・ターナー",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/08/7e/60/087e60ed-5d9f-19ae-7309-89a3e55b535c/mzaf_18116105891037177649.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/e6/e4/f9/e6e4f9ed-15b4-3535-af24-c818f6f85ce2/4547366513080.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E5%90%9B%E3%81%97%E3%81%8B%E5%8B%9D%E3%81%9F%E3%82%93/1567332153?i=1567332154&uo=4"
+  },
+  {
+    "id": "s064",
+    "title": "声の足跡",
+    "single": "5th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume"
+    ],
+    "composer": "Aito",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/c9/1a/f3/c91af39b-efcb-4ff1-ef58-30516d05bfa3/mzaf_12000170777144356143.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/e6/e4/f9/e6e4f9ed-15b4-3535-af24-c818f6f85ce2/4547366513080.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E5%A3%B0%E3%81%AE%E8%B6%B3%E8%B7%A1/1567332153?i=1567332155&uo=4"
+  },
+  {
+    "id": "s065",
+    "title": "嘆きのDelete",
+    "single": "5th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "unit"
+    ],
+    "composer": "白須賀亮",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/cd/52/f3/cd52f3bc-8da9-c06a-a084-fbee204eda5e/mzaf_16584851564863437990.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/e6/e4/f9/e6e4f9ed-15b4-3535-af24-c818f6f85ce2/4547366513080.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E5%98%86%E3%81%8D%E3%81%AEdelete/1567332153?i=1567332192&uo=4"
+  },
+  {
+    "id": "s066",
+    "title": "Right?",
+    "single": "5th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume",
+      "gen3"
+    ],
+    "composer": "小網準",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/50/83/e0/5083e05e-60ee-5e0a-45ba-ee6d91cc917b/mzaf_11729529324859001669.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/e6/e4/f9/e6e4f9ed-15b4-3535-af24-c818f6f85ce2/4547366513080.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/right/1567332153?i=1567332190&uo=4"
+  },
+  {
+    "id": "s067",
+    "title": "世界にはThank you!が溢れている",
+    "single": "5th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume",
+      "gen2"
+    ],
+    "composer": "野村陽一郎",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/1f/be/2e/1fbe2eaa-6ef6-b617-e309-194a271d6c54/mzaf_11330010796228751689.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/e6/e4/f9/e6e4f9ed-15b4-3535-af24-c818f6f85ce2/4547366513080.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E4%B8%96%E7%95%8C%E3%81%AB%E3%81%AFthank-you-%E3%81%8C%E6%BA%A2%E3%82%8C%E3%81%A6%E3%81%84%E3%82%8B/1567332153?i=1567332188&uo=4"
+  },
+  {
+    "id": "s068",
+    "title": "膨大な夢に押しつぶされて",
+    "single": "5th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "杉山勝彦/野口大志",
+    "lyricist": "秋元康",
+    "previewUrl": null,
+    "artworkUrl": null,
+    "image_url": null
+  },
+  {
+    "id": "s069",
+    "title": "ってか",
+    "single": "6th Single",
+    "era": "hinata",
+    "tags": [
+      "title",
+      "mv",
+      "costume"
+    ],
+    "composer": "浦島健太/加藤優希",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/3d/2b/87/3d2b87a3-c463-0231-7df3-f009fde082bf/mzaf_5192326212617471961.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/db/36/79/db3679d3-e832-9de2-f9df-a4701716811c/4547366535655.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%81%A3%E3%81%A6%E3%81%8B/1590075501?i=1590075756&uo=4"
+  },
+  {
+    "id": "s070",
+    "title": "何度でも何度でも",
+    "single": "6th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume"
+    ],
+    "composer": "後藤康二",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/92/7b/a0/927ba0c0-2f97-1fa9-0b9c-8096be037eb3/mzaf_12603431548285182441.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/db/36/79/db3679d3-e832-9de2-f9df-a4701716811c/4547366535655.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E4%BD%95%E5%BA%A6%E3%81%A7%E3%82%82%E4%BD%95%E5%BA%A6%E3%81%A7%E3%82%82/1590075501?i=1590075759&uo=4"
+  },
+  {
+    "id": "s071",
+    "title": "思いがけないダブルレインボー",
+    "single": "6th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "藤田卓也",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/ef/de/db/efdedbc2-85bf-ca76-687d-64f217a9f763/mzaf_6798295436333328804.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/db/36/79/db3679d3-e832-9de2-f9df-a4701716811c/4547366535655.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E6%80%9D%E3%81%84%E3%81%8C%E3%81%91%E3%81%AA%E3%81%84%E3%83%80%E3%83%96%E3%83%AB%E3%83%AC%E3%82%A4%E3%83%B3%E3%83%9C%E3%83%BC/1590075501?i=1590075762&uo=4"
+  },
+  {
+    "id": "s072",
+    "title": "夢は何歳まで?",
+    "single": "6th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume",
+      "unit"
+    ],
+    "composer": "久下真音/金子麻友美",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/9f/9a/57/9f9a5757-f0da-a9e6-e6ea-d2e2c19f398b/mzaf_3697103060526630029.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/db/36/79/db3679d3-e832-9de2-f9df-a4701716811c/4547366535655.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E5%A4%A2%E3%81%AF%E4%BD%95%E6%AD%B3%E3%81%BE%E3%81%A7/1590075501?i=1590075767&uo=4"
+  },
+  {
+    "id": "s073",
+    "title": "あくびLetter",
+    "single": "6th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume",
+      "unit"
+    ],
+    "composer": "狗神竜之介",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/db/65/59/db6559d8-5806-9a7e-6668-8550ad3c7777/mzaf_3553247188584805522.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/db/36/79/db3679d3-e832-9de2-f9df-a4701716811c/4547366535655.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%81%82%E3%81%8F%E3%81%B3letter/1590075501?i=1590075770&uo=4"
+  },
+  {
+    "id": "s074",
+    "title": "アディショナルタイム",
+    "single": "6th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "Ryo Ito/SHOW",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/a5/24/36/a52436c5-eeea-0ba7-2431-e4565ab533c0/mzaf_4839452058801228734.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/db/36/79/db3679d3-e832-9de2-f9df-a4701716811c/4547366535655.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%82%A2%E3%83%87%E3%82%A3%E3%82%B7%E3%83%A7%E3%83%8A%E3%83%AB%E3%82%BF%E3%82%A4%E3%83%A0/1590075501?i=1590075778&uo=4"
+  },
+  {
+    "id": "s075",
+    "title": "僕なんか",
+    "single": "7th Single",
+    "era": "hinata",
+    "tags": [
+      "title",
+      "mv",
+      "costume"
+    ],
+    "composer": "温詞",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/fd/8b/cc/fd8bcccf-1677-fc21-6c57-aba28763d702/mzaf_245021487132846049.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/fb/37/9b/fb379b8e-2906-a28e-a4b5-ea4570d3cab9/4547366565645.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E5%83%95%E3%81%AA%E3%82%93%E3%81%8B/1623756614?i=1623756621&uo=4"
+  },
+  {
+    "id": "s076",
+    "title": "飛行機雲ができる理由",
+    "single": "7th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume"
+    ],
+    "composer": "小網準",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/71/d7/49/71d74978-c60c-1606-5287-a741208f6a25/mzaf_1705086906997345850.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/fb/37/9b/fb379b8e-2906-a28e-a4b5-ea4570d3cab9/4547366565645.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E9%A3%9B%E8%A1%8C%E6%A9%9F%E9%9B%B2%E3%81%8C%E3%81%A7%E3%81%8D%E3%82%8B%E7%90%86%E7%94%B1/1623756614?i=1623756622&uo=4"
+  },
+  {
+    "id": "s077",
+    "title": "もうこんなに好きになれない",
+    "single": "7th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "unit"
+    ],
+    "composer": "桑原佑介",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/9e/0a/73/9e0a7396-9f73-2d19-b90b-99d542ab6757/mzaf_3484090737560963940.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/fb/37/9b/fb379b8e-2906-a28e-a4b5-ea4570d3cab9/4547366565645.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%82%82%E3%81%86%E3%81%93%E3%82%93%E3%81%AA%E3%81%AB%E5%A5%BD%E3%81%8D%E3%81%AB%E3%81%AA%E3%82%8C%E3%81%AA%E3%81%84/1623756614?i=1623756625&uo=4"
+  },
+  {
+    "id": "s078",
+    "title": "ゴーフルと君",
+    "single": "7th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume",
+      "gen3"
+    ],
+    "composer": "辻村有記/伊藤賢",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/b5/a2/e5/b5a2e5d9-dc9a-4d3a-06de-dfd7730ea3d5/mzaf_3229823593619951172.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/fb/37/9b/fb379b8e-2906-a28e-a4b5-ea4570d3cab9/4547366565645.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%82%B4%E3%83%BC%E3%83%95%E3%83%AB%E3%81%A8%E5%90%9B/1623756614?i=1623756626&uo=4"
+  },
+  {
+    "id": "s079",
+    "title": "真夜中の懺悔大会",
+    "single": "7th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume",
+      "gen1"
+    ],
+    "composer": "SoichiroK/TomoLow",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/95/d0/6a/95d06a5c-6233-04df-204f-97ab77c23d35/mzaf_16215568047718831082.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/fb/37/9b/fb379b8e-2906-a28e-a4b5-ea4570d3cab9/4547366565645.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E7%9C%9F%E5%A4%9C%E4%B8%AD%E3%81%AE%E6%87%BA%E6%82%94%E5%A4%A7%E4%BC%9A/1623756614?i=1623756628&uo=4"
+  },
+  {
+    "id": "s080",
+    "title": "恋した魚は空を飛ぶ",
+    "single": "7th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume",
+      "gen2"
+    ],
+    "composer": "野村陽一郎",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/cc/01/05/cc0105b0-109d-6fc4-3249-b617d4e79aa6/mzaf_18438777468864779570.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/fb/37/9b/fb379b8e-2906-a28e-a4b5-ea4570d3cab9/4547366565645.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E6%81%8B%E3%81%97%E3%81%9F%E9%AD%9A%E3%81%AF%E7%A9%BA%E3%82%92%E9%A3%9B%E3%81%B6/1623756614?i=1623756631&uo=4"
+  },
+  {
+    "id": "s081",
+    "title": "知らないうちに愛されていた",
+    "single": "7th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "吉田司/村山シベリウス達彦",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/f4/ac/47/f4ac478e-c214-a6a4-aa21-e9596bfe391e/mzaf_3870466109017863285.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/fb/37/9b/fb379b8e-2906-a28e-a4b5-ea4570d3cab9/4547366565645.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E7%9F%A5%E3%82%89%E3%81%AA%E3%81%84%E3%81%86%E3%81%A1%E3%81%AB%E6%84%9B%E3%81%95%E3%82%8C%E3%81%A6%E3%81%84%E3%81%9F/1623756614?i=1623756633&uo=4"
+  },
+  {
+    "id": "s082",
+    "title": "月と星が踊るMidnight",
+    "single": "8th Single",
+    "era": "hinata",
+    "tags": [
+      "title",
+      "mv",
+      "costume"
+    ],
+    "composer": "TSUKIDA",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/52/c2/fb/52c2fb2a-41f1-d6d9-5dfd-a7abba56c6bc/mzaf_14430350100102647043.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/15/ec/2d/15ec2d1f-e624-4b75-2bfc-acac0842dbc7/4547366589177.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E6%9C%88%E3%81%A8%E6%98%9F%E3%81%8C%E8%B8%8A%E3%82%8Bmidnight/1648650817?i=1648651040&uo=4"
+  },
+  {
+    "id": "s083",
+    "title": "HEY! OHISAMA!",
+    "single": "8th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "草野将史",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/ce/c3/08/cec30875-f310-38bd-1bff-5f6c97e1ac14/mzaf_2588780148485666440.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/15/ec/2d/15ec2d1f-e624-4b75-2bfc-acac0842dbc7/4547366589177.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/hey-ohisama/1648650817?i=1648651062&uo=4"
+  },
+  {
+    "id": "s084",
+    "title": "孤独な瞬間",
+    "single": "8th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "unit"
+    ],
+    "composer": "伊藤心太郎",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/b0/cf/02/b0cf0277-31e4-6b5e-3a0c-56c1ff074ae8/mzaf_12611787805812887885.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/15/ec/2d/15ec2d1f-e624-4b75-2bfc-acac0842dbc7/4547366589177.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E5%AD%A4%E7%8B%AC%E3%81%AA%E7%9E%AC%E9%96%93/1648650817?i=1648651156&uo=4"
+  },
+  {
+    "id": "s085",
+    "title": "10秒天使",
+    "single": "8th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume",
+      "unit"
+    ],
+    "composer": "ターナ・カーター",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/94/ca/d3/94cad34e-1450-0e02-dd51-261820e91317/mzaf_11770519708929410187.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/15/ec/2d/15ec2d1f-e624-4b75-2bfc-acac0842dbc7/4547366589177.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/10%E7%A7%92%E5%A4%A9%E4%BD%BF/1648650817?i=1648651162&uo=4"
+  },
+  {
+    "id": "s086",
+    "title": "その他大勢タイプ",
+    "single": "8th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume",
+      "unit"
+    ],
+    "composer": "浦島健太/ツカダタカシゲ",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/e8/f9/2f/e8f92f47-d53c-7000-963e-2899791850ec/mzaf_5304960857468509338.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/15/ec/2d/15ec2d1f-e624-4b75-2bfc-acac0842dbc7/4547366589177.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%81%9D%E3%81%AE%E4%BB%96%E5%A4%A7%E5%8B%A2%E3%82%BF%E3%82%A4%E3%83%97/1648650817?i=1648651164&uo=4"
+  },
+  {
+    "id": "s087",
+    "title": "ブルーベリー&ラズベリー",
+    "single": "8th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume",
+      "gen4"
+    ],
+    "composer": "小野寺祐輔",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/0f/a1/45/0fa145c7-18f5-7f37-3333-808339410cb8/mzaf_16751896650206444743.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/15/ec/2d/15ec2d1f-e624-4b75-2bfc-acac0842dbc7/4547366589177.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%83%96%E3%83%AB%E3%83%BC%E3%83%99%E3%83%AA%E3%83%BC-%E3%83%A9%E3%82%BA%E3%83%99%E3%83%AA%E3%83%BC/1648650817?i=1648651170&uo=4"
+  },
+  {
+    "id": "s088",
+    "title": "一生一度の夏",
+    "single": "8th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "はるきP",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/fe/45/25/fe4525fa-afb6-8e11-5a42-46903d3e4237/mzaf_859475135549000672.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/15/ec/2d/15ec2d1f-e624-4b75-2bfc-acac0842dbc7/4547366589177.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E4%B8%80%E7%94%9F%E4%B8%80%E5%BA%A6%E3%81%AE%E5%A4%8F/1648650817?i=1648651175&uo=4"
+  },
+  {
+    "id": "s089",
+    "title": "One choice",
+    "single": "9th Single",
+    "era": "hinata",
+    "tags": [
+      "title",
+      "mv",
+      "costume"
+    ],
+    "composer": "セキヤヒサシ",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/79/8d/dc/798ddcee-76cd-d1a3-fbdd-386202803e47/mzaf_15086754677031604062.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/c8/00/4a/c8004a78-0b4a-11cb-b94c-70d5cc9a6edf/4547366617009.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/one-choice/1680646050?i=1680646059&uo=4"
+  },
+  {
+    "id": "s090",
+    "title": "恋は逃げ足が早い",
+    "single": "9th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume"
+    ],
+    "composer": "誉前和貴",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/fa/7b/61/fa7b61e4-0556-93a0-83c0-80699b51bdb8/mzaf_15419116684914661453.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/c8/00/4a/c8004a78-0b4a-11cb-b94c-70d5cc9a6edf/4547366617009.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E6%81%8B%E3%81%AF%E9%80%83%E3%81%92%E8%B6%B3%E3%81%8C%E6%97%A9%E3%81%84/1680646050?i=1680646373&uo=4"
+  },
+  {
+    "id": "s091",
+    "title": "愛はこっちのものだ",
+    "single": "9th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "gen1"
+    ],
+    "composer": "原田雄一",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/8f/ae/dd/8faedde3-682f-64d2-88da-dadb1be0d9ea/mzaf_2417804430031530892.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/c8/00/4a/c8004a78-0b4a-11cb-b94c-70d5cc9a6edf/4547366617009.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E6%84%9B%E3%81%AF%E3%81%93%E3%81%A3%E3%81%A1%E3%81%AE%E3%82%82%E3%81%AE%E3%81%A0/1680646050?i=1680646378&uo=4"
+  },
+  {
+    "id": "s092",
+    "title": "You're in my way",
+    "single": "9th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "gen2"
+    ],
+    "composer": "浅原裕太",
+    "lyricist": "秋元康",
+    "previewUrl": null,
+    "artworkUrl": null,
+    "image_url": null
+  },
+  {
+    "id": "s093",
+    "title": "パクチー ピーマン グリーンピース",
+    "single": "9th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "gen3"
+    ],
+    "composer": "佐久間和樹",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/89/d9/4e/89d94e31-2a1c-4aac-0acd-92d26375a8d3/mzaf_6068161037464749487.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/c8/00/4a/c8004a78-0b4a-11cb-b94c-70d5cc9a6edf/4547366617009.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%83%91%E3%82%AF%E3%83%81%E3%83%BC-%E3%83%94%E3%83%BC%E3%83%9E%E3%83%B3-%E3%82%B0%E3%83%AA%E3%83%BC%E3%83%B3%E3%83%94%E3%83%BC%E3%82%B9/1680646050?i=1680646387&uo=4"
+  },
+  {
+    "id": "s094",
+    "title": "シーラカンス",
+    "single": "9th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume",
+      "gen4"
+    ],
+    "composer": "水流雄一朗",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/39/3c/25/393c25ce-1417-8934-70eb-e1284dd43b8a/mzaf_1871020733985516388.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/c8/00/4a/c8004a78-0b4a-11cb-b94c-70d5cc9a6edf/4547366617009.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%82%B7%E3%83%BC%E3%83%A9%E3%82%AB%E3%83%B3%E3%82%B9/1680646050?i=1680646391&uo=4"
+  },
+  {
+    "id": "s095",
+    "title": "友よ 一番星だ",
+    "single": "9th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume"
+    ],
+    "composer": "草野将史",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/ac/5c/60/ac5c60aa-8a2a-9c99-6b10-b9fd3f6ae3f8/mzaf_15154426453696769920.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/c8/00/4a/c8004a78-0b4a-11cb-b94c-70d5cc9a6edf/4547366617009.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E5%8F%8B%E3%82%88-%E4%B8%80%E7%95%AA%E6%98%9F%E3%81%A0/1680646050?i=1680646548&uo=4"
+  },
+  {
+    "id": "s096",
+    "title": "Am I ready?",
+    "single": "10th Single",
+    "era": "hinata",
+    "tags": [
+      "title",
+      "mv",
+      "costume"
+    ],
+    "composer": "大河原昇",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/a1/eb/79/a1eb7959-070c-572c-7617-8ebdea48a5ce/mzaf_13573816035759892722.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/c1/86/98/c18698f7-fc94-9498-707f-7c436ae776c9/4547366633122.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/am-i-ready/1696937329?i=1696937338&uo=4"
+  },
+  {
+    "id": "s097",
+    "title": "見たことない魔物",
+    "single": "10th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume",
+      "gen4"
+    ],
+    "composer": "重永亮介",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/02/81/4b/02814b5b-2638-30bd-7dd2-51f4ddb6faaa/mzaf_3825249862317165349.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/c1/86/98/c18698f7-fc94-9498-707f-7c436ae776c9/4547366633122.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E8%A6%8B%E3%81%9F%E3%81%93%E3%81%A8%E3%81%AA%E3%81%84%E9%AD%94%E7%89%A9/1696937329?i=1696937344&uo=4"
+  },
+  {
+    "id": "s098",
+    "title": "接触と感情",
+    "single": "10th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "野村陽一郎",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/8a/61/c6/8a61c67f-689d-5d1c-a720-2b479dddeaba/mzaf_9627319624729453771.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/c1/86/98/c18698f7-fc94-9498-707f-7c436ae776c9/4547366633122.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E6%8E%A5%E8%A7%A6%E3%81%A8%E6%84%9F%E6%83%85/1696937329?i=1696937352&uo=4"
+  },
+  {
+    "id": "s099",
+    "title": "骨組みだらけの夏休み",
+    "single": "10th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "gen1"
+    ],
+    "composer": "鈴木まなか",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/ba/70/95/ba709517-1ad8-dd39-a4c9-49afbebd8cc1/mzaf_16958767374641739015.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/c1/86/98/c18698f7-fc94-9498-707f-7c436ae776c9/4547366633122.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E9%AA%A8%E7%B5%84%E3%81%BF%E3%81%A0%E3%82%89%E3%81%91%E3%81%AE%E5%A4%8F%E4%BC%91%E3%81%BF/1696937329?i=1696937656&uo=4"
+  },
+  {
+    "id": "s100",
+    "title": "君は逆立ちできるか?",
+    "single": "10th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "ジンツチハシ",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/c8/1a/22/c81a22d1-e91e-460b-eb9e-e9fbf4954153/mzaf_4044525264242734844.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/c1/86/98/c18698f7-fc94-9498-707f-7c436ae776c9/4547366633122.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E5%90%9B%E3%81%AF%E9%80%86%E7%AB%8B%E3%81%A1%E3%81%A7%E3%81%8D%E3%82%8B%E3%81%8B/1696937329?i=1696937664&uo=4"
+  },
+  {
+    "id": "s101",
+    "title": "愛のひきこもり",
+    "single": "10th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "gen3"
+    ],
+    "composer": "柳沢英樹",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/0e/94/89/0e948981-692c-d789-08f9-385dd0e215eb/mzaf_12926903366155459193.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/c1/86/98/c18698f7-fc94-9498-707f-7c436ae776c9/4547366633122.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E6%84%9B%E3%81%AE%E3%81%B2%E3%81%8D%E3%81%93%E3%82%82%E3%82%8A/1696937329?i=1696937668&uo=4"
+  },
+  {
+    "id": "s102",
+    "title": "ガラス窓が汚れてる",
+    "single": "10th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume"
+    ],
+    "composer": "杉山勝彦",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/e2/4e/5c/e24e5c42-d425-ab27-46e6-4a9e0691b712/mzaf_3921052897033836256.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/c1/86/98/c18698f7-fc94-9498-707f-7c436ae776c9/4547366633122.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%82%AC%E3%83%A9%E3%82%B9%E7%AA%93%E3%81%8C%E6%B1%9A%E3%82%8C%E3%81%A6%E3%82%8B/1696937329?i=1696937673&uo=4"
+  },
+  {
+    "id": "s103",
+    "title": "君は0から1になれ",
+    "single": "2nd Album",
+    "era": "hinata",
+    "tags": [
+      "title",
+      "mv",
+      "costume"
+    ],
+    "composer": "ZETTON/shogo",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/90/54/92/9054922d-94a6-cb92-dc95-4a1cc325da01/mzaf_8672861227778354208.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/a2/bd/c6/a2bdc6d2-3efb-d3b8-37dc-796fd9a1133a/4547366654196.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E5%90%9B%E3%81%AF0%E3%81%8B%E3%82%891%E3%81%AB%E3%81%AA%E3%82%8C/1714205673?i=1714205683&uo=4"
+  },
+  {
+    "id": "s104",
+    "title": "最初の白夜",
+    "single": "2nd Album",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "gen1"
+    ],
+    "composer": "水野谷怜",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/91/f6/1e/91f61e13-09f1-46f1-18c6-11e31176592d/mzaf_10686547387035164645.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/a2/bd/c6/a2bdc6d2-3efb-d3b8-37dc-796fd9a1133a/4547366654196.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E6%9C%80%E5%88%9D%E3%81%AE%E7%99%BD%E5%A4%9C/1714205673?i=1714206154&uo=4"
+  },
+  {
+    "id": "s105",
+    "title": "自販機と主体性",
+    "single": "2nd Album",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "gen2"
+    ],
+    "composer": "杉山勝彦",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/c9/fb/33/c9fb337f-5ceb-c41e-8720-2667ab327d38/mzaf_16066293727524476745.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/a2/bd/c6/a2bdc6d2-3efb-d3b8-37dc-796fd9a1133a/4547366654196.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E8%87%AA%E8%B2%A9%E6%A9%9F%E3%81%A8%E4%B8%BB%E4%BD%93%E6%80%A7/1714205673?i=1714206156&uo=4"
+  },
+  {
+    "id": "s106",
+    "title": "青春ポップコーン",
+    "single": "2nd Album",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "gen3"
+    ],
+    "composer": "久下真音",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/9b/83/e3/9b83e3e7-edf6-84da-29a9-37a0f4db7056/mzaf_3445525393589639017.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/a2/bd/c6/a2bdc6d2-3efb-d3b8-37dc-796fd9a1133a/4547366654196.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E9%9D%92%E6%98%A5%E3%83%9D%E3%83%83%E3%83%97%E3%82%B3%E3%83%BC%E3%83%B3/1714205673?i=1714206165&uo=4"
+  },
+  {
+    "id": "s107",
+    "title": "ロッククライミング",
+    "single": "2nd Album",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "gen4"
+    ],
+    "composer": "ジンツチハシ",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/29/4a/bf/294abf20-1814-0fe6-e104-07555024093f/mzaf_12064483243874089070.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/a2/bd/c6/a2bdc6d2-3efb-d3b8-37dc-796fd9a1133a/4547366654196.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%83%AD%E3%83%83%E3%82%AF%E3%82%AF%E3%83%A9%E3%82%A4%E3%83%9F%E3%83%B3%E3%82%B0/1714205673?i=1714206295&uo=4"
+  },
+  {
+    "id": "s108",
+    "title": "君はハニーデュー",
+    "single": "11th Single",
+    "era": "hinata",
+    "tags": [
+      "title",
+      "mv",
+      "costume"
+    ],
+    "composer": "野村陽一郎",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/0f/7f/ca/0f7fca3d-91d3-79b3-2f88-7576121a1f20/mzaf_3749900396149881969.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/e4/5e/75/e45e750c-7bbd-6726-9b9f-909ac667e1e2/4547366676297.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E5%90%9B%E3%81%AF%E3%83%8F%E3%83%8B%E3%83%BC%E3%83%87%E3%83%A5%E3%83%BC/1736655872?i=1736655959&uo=4"
+  },
+  {
+    "id": "s109",
+    "title": "錆つかない剣を持て！",
+    "single": "11th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume"
+    ],
+    "composer": "辻村有記/伊藤賢",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/a4/11/44/a41144bb-26a9-c16c-755d-437e7fcc3dca/mzaf_12255101065972869633.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/8b/22/4e/8b224e66-b32f-c0da-551f-a672c7fea701/4547366681796.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E9%8C%86%E3%81%A4%E3%81%8B%E3%81%AA%E3%81%84%E5%89%A3%E3%82%92%E6%8C%81%E3%81%A6/1739509957?i=1739509962&uo=4"
+  },
+  {
+    "id": "s110",
+    "title": "どこまでが道なんだ？",
+    "single": "11th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "草野将史",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/95/a4/e7/95a4e740-8fd6-0265-178f-16d59ae68bba/mzaf_13506850122653465533.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/8b/22/4e/8b224e66-b32f-c0da-551f-a672c7fea701/4547366681796.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%81%A9%E3%81%93%E3%81%BE%E3%81%A7%E3%81%8C%E9%81%93%E3%81%AA%E3%82%93%E3%81%A0/1739509957?i=1739509966&uo=4"
+  },
+  {
+    "id": "s111",
+    "title": "恋とあんバター",
+    "single": "11th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "unit"
+    ],
+    "composer": "杉山勝彦",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/0c/0a/92/0c0a9292-4fae-5867-a391-385ffe2ad807/mzaf_363729827850516732.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/8b/22/4e/8b224e66-b32f-c0da-551f-a672c7fea701/4547366681796.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E6%81%8B%E3%81%A8%E3%81%82%E3%82%93%E3%83%90%E3%82%BF%E3%83%BC/1739509957?i=1739510304&uo=4"
+  },
+  {
+    "id": "s112",
+    "title": "夜明けのスピード",
+    "single": "11th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "浅原裕太",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/89/0d/41/890d414f-8457-dc95-04ba-e4a79b165ad9/mzaf_9325858627836047023.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/8b/22/4e/8b224e66-b32f-c0da-551f-a672c7fea701/4547366681796.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E5%A4%9C%E6%98%8E%E3%81%91%E3%81%AE%E3%82%B9%E3%83%94%E3%83%BC%E3%83%89/1739509957?i=1739510313&uo=4"
+  },
+  {
+    "id": "s113",
+    "title": "雨が降ったって",
+    "single": "11th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume",
+      "gen4"
+    ],
+    "composer": "浦島健太/加藤優希",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/0d/03/bb/0d03bb4a-daf9-5ba4-5145-1590ae2b7b0b/mzaf_9656757802736120960.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/8b/22/4e/8b224e66-b32f-c0da-551f-a672c7fea701/4547366681796.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E9%9B%A8%E3%81%8C%E9%99%8D%E3%81%A3%E3%81%9F%E3%81%A3%E3%81%A6/1739509957?i=1739510316&uo=4"
+  },
+  {
+    "id": "s114",
+    "title": "僕に続け",
+    "single": "11th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume"
+    ],
+    "composer": "野村陽一郎",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/f1/76/47/f17647a9-bd19-5ed5-a3dd-5efaa98282b2/mzaf_6543445424797159070.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/09/b8/81/09b8817b-2c73-b5e7-e7af-7473e74c0f46/4547366680621.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E5%83%95%E3%81%AB%E7%B6%9A%E3%81%91/1738583248?i=1738583256&uo=4"
+  },
+  {
+    "id": "s115",
+    "title": "絶対的第六感",
+    "single": "12th Single",
+    "era": "hinata",
+    "tags": [
+      "title",
+      "mv",
+      "costume"
+    ],
+    "composer": "前迫潤哉/Yasutaka.Ishio",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/c5/ce/70/c5ce7013-9555-bf5c-1c8b-487b833a262d/mzaf_1411069560237753171.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/66/07/22/66072293-2688-3c97-a6ad-110fcbe3dca8/4547366702118.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E7%B5%B6%E5%AF%BE%E7%9A%84%E7%AC%AC%E5%85%AD%E6%84%9F/1762563134?i=1762563136&uo=4"
+  },
+  {
+    "id": "s116",
+    "title": "君を覚えてない",
+    "single": "12th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume"
+    ],
+    "composer": "TSUKIDA",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/31/29/1b/31291bae-d02e-ae35-7d14-953c6cbcbc19/mzaf_1248947120594187083.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/a0/e8/2e/a0e82e33-70a0-92b9-9ffd-c5a98fd8a55c/4547366705850.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E5%90%9B%E3%82%92%E8%A6%9A%E3%81%88%E3%81%A6%E3%81%AA%E3%81%84/1764194196?i=1764194208&uo=4"
+  },
+  {
+    "id": "s117",
+    "title": "永遠のソフィア",
+    "single": "12th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "浅原裕太",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/a2/50/ac/a250ac80-c11f-0c69-7bdb-dd7e86f71ff3/mzaf_4851868952546430222.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/48/53/d4/4853d417-b7d6-4163-141f-83a640c4f0f3/4547366708127.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E6%B0%B8%E9%81%A0%E3%81%AE%E3%82%BD%E3%83%95%E3%82%A3%E3%82%A2/1766653640?i=1766653648&uo=4"
+  },
+  {
+    "id": "s118",
+    "title": "どっちが先に言う？",
+    "single": "12th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "小網準",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/e1/4f/7d/e14f7d74-c6ec-421a-07e8-ee5ce5210813/mzaf_7548629411162847043.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/48/53/d4/4853d417-b7d6-4163-141f-83a640c4f0f3/4547366708127.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%81%A9%E3%81%A3%E3%81%A1%E3%81%8C%E5%85%88%E3%81%AB%E8%A8%80%E3%81%86/1766653640?i=1766653649&uo=4"
+  },
+  {
+    "id": "s119",
+    "title": "妄想コスモス",
+    "single": "12th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "ジンツチハシ",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/6c/5b/7b/6c5b7b34-ed04-4725-6263-bfd38ed60e2c/mzaf_3716380776947624022.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/48/53/d4/4853d417-b7d6-4163-141f-83a640c4f0f3/4547366708127.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E5%A6%84%E6%83%B3%E3%82%B3%E3%82%B9%E3%83%A2%E3%82%B9/1766653640?i=1766653650&uo=4"
+  },
+  {
+    "id": "s120",
+    "title": "雪は降る 心の世界に",
+    "single": "12th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "杉山勝彦",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/f3/e8/57/f3e8576c-de3e-e7c2-77bd-b945c9a935f7/mzaf_5053802201403908511.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/48/53/d4/4853d417-b7d6-4163-141f-83a640c4f0f3/4547366708127.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E9%9B%AA%E3%81%AF%E9%99%8D%E3%82%8B-%E5%BF%83%E3%81%AE%E4%B8%96%E7%95%8C%E3%81%AB/1766653640?i=1766653651&uo=4"
+  },
+  {
+    "id": "s121",
+    "title": "夕陽Dance",
+    "single": "12th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume",
+      "gen4"
+    ],
+    "composer": "浦島健太/野口大志",
+    "lyricist": "秋元康",
+    "previewUrl": null,
+    "artworkUrl": null,
+    "image_url": null
+  },
+  {
+    "id": "s122",
+    "title": "卒業写真が知ってる",
+    "single": "13th Single",
+    "era": "hinata",
+    "tags": [
+      "title",
+      "mv",
+      "costume"
+    ],
+    "composer": "杉山勝彦",
+    "lyricist": "秋元康",
+    "previewUrl": null,
+    "artworkUrl": null,
+    "image_url": null
+  },
+  {
+    "id": "s123",
+    "title": "SUZUKA",
+    "single": "13th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume"
+    ],
+    "composer": "野村陽一郎",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/35/65/cb/3565cb3e-a05e-01ee-3b32-dac78fcce230/mzaf_6269976052954643684.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/80/aa/46/80aa4655-019d-ce5d-b902-cc5f4a355da4/4547366728491.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/suzuka/1789297351?i=1789297353&uo=4"
+  },
+  {
+    "id": "s124",
+    "title": "孤独たちよ",
+    "single": "13th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "前迫潤哉",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/69/b8/92/69b8923b-fcbb-9a72-a1a6-e580e168145d/mzaf_14427992168078691499.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/c5/c6/b7/c5c6b792-f49a-f062-7675-62ec7a3c7cd9/4547366731682.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E5%AD%A4%E7%8B%AC%E3%81%9F%E3%81%A1%E3%82%88/1790683838?i=1790684275&uo=4"
+  },
+  {
+    "id": "s125",
+    "title": "あの娘にグイグイ",
+    "single": "13th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "草野将史",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/5e/35/b5/5e35b5f2-746d-76fc-0275-276ec3769feb/mzaf_10610346763635526468.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/c5/c6/b7/c5c6b792-f49a-f062-7675-62ec7a3c7cd9/4547366731682.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%81%82%E3%81%AE%E5%A8%98%E3%81%AB%E3%82%B0%E3%82%A4%E3%82%B0%E3%82%A4/1790683838?i=1790684282&uo=4"
+  },
+  {
+    "id": "s126",
+    "title": "43年待ちのコロッケ",
+    "single": "13th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "ジンツチハシ",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/17/69/ba/1769bacf-0eea-4b4d-a886-064bccde9228/mzaf_2783014801857187627.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/c5/c6/b7/c5c6b792-f49a-f062-7675-62ec7a3c7cd9/4547366731682.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/43%E5%B9%B4%E5%BE%85%E3%81%A1%E3%81%AE%E3%82%B3%E3%83%AD%E3%83%83%E3%82%B1/1790683838?i=1790684290&uo=4"
+  },
+  {
+    "id": "s127",
+    "title": "Instead of you",
+    "single": "13th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "白戸佑輔",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/a3/d6/6f/a3d66f64-3275-346d-24d2-7c4ca8e27288/mzaf_10571066896980919767.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/c5/c6/b7/c5c6b792-f49a-f062-7675-62ec7a3c7cd9/4547366731682.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/instead-of-you/1790683838?i=1790684298&uo=4"
+  },
+  {
+    "id": "s128",
+    "title": "足の小指を箪笥の角にぶつけた",
+    "single": "13th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume",
+      "gen4"
+    ],
+    "composer": "浦島健太/加藤優希",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/65/1c/45/651c451d-4963-ad16-a40f-7424f9dc2b9d/mzaf_939831232565389507.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/c5/c6/b7/c5c6b792-f49a-f062-7675-62ec7a3c7cd9/4547366731682.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E8%B6%B3%E3%81%AE%E5%B0%8F%E6%8C%87%E3%82%92%E7%AE%AA%E7%AC%A5%E3%81%AE%E8%A7%92%E3%81%AB%E3%81%B6%E3%81%A4%E3%81%91%E3%81%9F/1790683838?i=1790684400&uo=4"
+  },
+  {
+    "id": "s129",
+    "title": "Love yourself!",
+    "single": "14th Single",
+    "era": "hinata",
+    "tags": [
+      "title",
+      "mv",
+      "costume"
+    ],
+    "composer": "野村陽一郎",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/15/cf/3a/15cf3a42-ec48-5a26-6bf3-5f2a6a4115d8/mzaf_17143193908315692487.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/39/3e/9b/393e9bbf-6796-3947-ceba-97355c5ceb08/4547366748826.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/love-yourself/1811131891?i=1811132182&uo=4"
+  },
+  {
+    "id": "s130",
+    "title": "ジャーマンアイリス",
+    "single": "14th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume",
+      "gen5"
+    ],
+    "composer": "杉山勝彦",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/d3/bd/c5/d3bdc5f6-98fc-6777-14e4-f0e0dd54dc41/mzaf_4574223610286263207.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/23/24/86/2324865b-e3d1-eaf7-51f9-1be95b643b3f/4547366749090.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%82%B8%E3%83%A3%E3%83%BC%E3%83%9E%E3%83%B3%E3%82%A2%E3%82%A4%E3%83%AA%E3%82%B9/1811797869?i=1811798091&uo=4"
+  },
+  {
+    "id": "s131",
+    "title": "You are forever",
+    "single": "14th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "浅原裕太",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/65/74/61/6574617b-fc11-d585-1ee0-63cf37117d65/mzaf_14209911837126810852.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/9f/fb/ed/9ffbed6c-504b-0cc4-88a6-68e77bac52f8/4547366749939.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/you-are-forever/1813165563?i=1813165853&uo=4"
+  },
+  {
+    "id": "s132",
+    "title": "やらかした",
+    "single": "14th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "小網準",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/e0/b0/b2/e0b0b2fb-e118-5b8f-3d16-664fcebedbd5/mzaf_6335727700183036699.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/9f/fb/ed/9ffbed6c-504b-0cc4-88a6-68e77bac52f8/4547366749939.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%82%84%E3%82%89%E3%81%8B%E3%81%97%E3%81%9F/1813165563?i=1813165854&uo=4"
+  },
+  {
+    "id": "s133",
+    "title": "What you like!",
+    "single": "14th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "TSUKIDA",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/c8/07/6b/c8076b50-04a3-9d97-9cca-adbdc37f1b3b/mzaf_12333789197023807064.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/9f/fb/ed/9ffbed6c-504b-0cc4-88a6-68e77bac52f8/4547366749939.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/what-you-like/1813165563?i=1813165855&uo=4"
+  },
+  {
+    "id": "s134",
+    "title": "あのね そのね",
+    "single": "14th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "ジンツチハシ",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/14/64/2c/14642c68-cbe8-b286-acf3-7de9dc1b5f26/mzaf_10764764539404869980.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/9f/fb/ed/9ffbed6c-504b-0cc4-88a6-68e77bac52f8/4547366749939.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%81%82%E3%81%AE%E3%81%AD-%E3%81%9D%E3%81%AE%E3%81%AD/1813165563?i=1813165856&uo=4"
+  },
+  {
+    "id": "s135",
+    "title": "海風とわがまま",
+    "single": "14th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume"
+    ],
+    "composer": "前迫潤哉",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/48/84/ea/4884eac0-1057-9d15-4ab8-07b004a3bd96/mzaf_3181558821829789966.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/9f/fb/ed/9ffbed6c-504b-0cc4-88a6-68e77bac52f8/4547366749939.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E6%B5%B7%E9%A2%A8%E3%81%A8%E3%82%8F%E3%81%8C%E3%81%BE%E3%81%BE/1813165563?i=1813165859&uo=4"
+  },
+  {
+    "id": "s136",
+    "title": "お願いバッハ",
+    "single": "15th Single",
+    "era": "hinata",
+    "tags": [
+      "title",
+      "mv",
+      "costume"
+    ],
+    "composer": "杉山勝彦",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/ad/31/33/ad3133d8-7169-52de-ae7b-2aa09f891851/mzaf_11781117576576735651.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/15/f7/ec/15f7ec23-68c1-03a0-60ae-8cd0ba9887c0/4547366769975.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%81%8A%E9%A1%98%E3%81%84%E3%83%90%E3%83%83%E3%83%8F/1834868127?i=1834868129&uo=4"
+  },
+  {
+    "id": "s137",
+    "title": "空飛ぶ車",
+    "single": "15th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume",
+      "gen5"
+    ],
+    "composer": "野村陽一郎",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/2a/26/d8/2a26d8e1-acaa-b900-8e5b-8be6cc089f95/mzaf_3181797886248180665.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/39/ce/a7/39cea73f-43d6-9204-ade9-87b5661183c6/4547366776751.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E7%A9%BA%E9%A3%9B%E3%81%B6%E8%BB%8A/1838851024?i=1838851026&uo=4"
+  },
+  {
+    "id": "s138",
+    "title": "ライバル多すぎ問題",
+    "single": "15th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "草野将史",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/99/f3/70/99f370d2-ac03-4f7b-d1ca-fbc5ed1759d9/mzaf_3799257986614864459.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/39/ce/a7/39cea73f-43d6-9204-ade9-87b5661183c6/4547366776751.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%83%A9%E3%82%A4%E3%83%90%E3%83%AB%E5%A4%9A%E3%81%99%E3%81%8E%E5%95%8F%E9%A1%8C/1838851024?i=1838851027&uo=4"
+  },
+  {
+    "id": "s139",
+    "title": "愛はこっちのものだ 2025",
+    "single": "15th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "原田雄一",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/06/65/b2/0665b20a-8514-bb1f-3fdf-77599bfa002a/mzaf_4615806249213956687.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/39/ce/a7/39cea73f-43d6-9204-ade9-87b5661183c6/4547366776751.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E6%84%9B%E3%81%AF%E3%81%93%E3%81%A3%E3%81%A1%E3%81%AE%E3%82%82%E3%81%AE%E3%81%A0-2025/1838851024?i=1838851029&uo=4"
+  },
+  {
+    "id": "s140",
+    "title": "言葉の限界",
+    "single": "15th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume"
+    ],
+    "composer": "前迫潤哉",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/a5/90/49/a59049ee-4f18-3f11-afd2-9abadd3918a1/mzaf_8097994560411701986.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/89/b8/4e/89b84ee9-c753-a1f4-108c-b74e577f7e95/4547366774061.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E8%A8%80%E8%91%89%E3%81%AE%E9%99%90%E7%95%8C/1836469317?i=1836469319&uo=4"
+  },
+  {
+    "id": "s141",
+    "title": "ハロウィンのカボチャが割れた 2025",
+    "single": "15th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "unit"
+    ],
+    "composer": "サトウシンゴ",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/fe/d1/6d/fed16d16-64cf-b299-6d6c-a1c40bd3d70b/mzaf_12903465999502313065.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/39/ce/a7/39cea73f-43d6-9204-ade9-87b5661183c6/4547366776751.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%83%8F%E3%83%AD%E3%82%A6%E3%82%A3%E3%83%B3%E3%81%AE%E3%82%AB%E3%83%9C%E3%83%81%E3%83%A3%E3%81%8C%E5%89%B2%E3%82%8C%E3%81%9F-2025/1838851024?i=1838851032&uo=4"
+  },
+  {
+    "id": "s142",
+    "title": "Expected value",
+    "single": "15th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "白戸佑輔",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/72/05/6d/72056d5e-e57d-9f4e-2a42-faff08078c26/mzaf_8866762172041230083.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/39/ce/a7/39cea73f-43d6-9204-ade9-87b5661183c6/4547366776751.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/expected-value/1838851024?i=1838851153&uo=4"
+  },
+  {
+    "id": "s143",
+    "title": "クリフハンガー",
+    "single": "16th Single",
+    "era": "hinata",
+    "tags": [
+      "title",
+      "mv",
+      "costume"
+    ],
+    "composer": "野村陽一郎",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/e7/f0/6e/e7f06eff-f06c-e76c-ad28-dacbb97e769a/mzaf_7576402462509945648.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/61/86/7e/61867e5f-94d8-2093-f480-0b2cd73a5e7f/4547366793857.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%82%AF%E3%83%AA%E3%83%95%E3%83%8F%E3%83%B3%E3%82%AC%E3%83%BC/1863630851?i=1863630852&uo=4"
+  },
+  {
+    "id": "s144",
+    "title": "君と生きる",
+    "single": "16th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume"
+    ],
+    "composer": "TSUKIDA",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/60/ce/7a/60ce7a09-328e-9c69-84d0-7187d0e0a3fb/mzaf_5268780460166848123.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/cc/b6/e6/ccb6e606-94f0-2ea3-aa52-60f1c82bec21/4547366798982.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E5%90%9B%E3%81%A8%E7%94%9F%E3%81%8D%E3%82%8B/1866866056?i=1866866058&uo=4"
+  },
+  {
+    "id": "s145",
+    "title": "好きになるクレッシェンド",
+    "single": "16th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume",
+      "gen5"
+    ],
+    "composer": "杉山勝彦",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/59/ba/c8/59bac8e4-e284-9459-926c-f2f6c7a1a6be/mzaf_6005283775799076450.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ea/9c/85/ea9c852b-7c97-91d0-2a1e-bbab884d8004/4547366799002.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E5%A5%BD%E3%81%8D%E3%81%AB%E3%81%AA%E3%82%8B%E3%82%AF%E3%83%AC%E3%83%83%E3%82%B7%E3%82%A7%E3%83%B3%E3%83%89/1866883941?i=1866884115&uo=4"
+  },
+  {
+    "id": "s146",
+    "title": "Surf's up girl",
+    "single": "16th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "浅原裕太",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/e8/1d/fa/e81dfa44-20c6-cf62-11b7-7d73b8cee0cb/mzaf_14652663559436749448.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ea/9c/85/ea9c852b-7c97-91d0-2a1e-bbab884d8004/4547366799002.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/surfs-up-girl/1866883941?i=1866884116&uo=4"
+  },
+  {
+    "id": "s147",
+    "title": "涙目の太陽",
+    "single": "16th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "小網準",
+    "lyricist": "松田好花",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/eb/4d/95/eb4d956d-7393-57a2-777a-17bb4cbc20f0/mzaf_443680824051579616.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ea/9c/85/ea9c852b-7c97-91d0-2a1e-bbab884d8004/4547366799002.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E6%B6%99%E7%9B%AE%E3%81%AE%E5%A4%AA%E9%99%BD/1866883941?i=1866884117&uo=4"
+  },
+  {
+    "id": "s148",
+    "title": "恋と慣性の法則",
+    "single": "16th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "ジンツチハシ",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/4b/52/ca/4b52ca34-5b30-35d5-68c7-cee72d2f0688/mzaf_14409799997985309710.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ea/9c/85/ea9c852b-7c97-91d0-2a1e-bbab884d8004/4547366799002.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E6%81%8B%E3%81%A8%E6%85%A3%E6%80%A7%E3%81%AE%E6%B3%95%E5%89%87/1866883941?i=1866884119&uo=4"
+  },
+  {
+    "id": "s149",
+    "title": "Second Jump",
+    "single": "16th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "前迫潤哉",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/e6/16/3c/e6163c0a-1eff-b83b-c84e-28632027d330/mzaf_63261375148710753.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ea/9c/85/ea9c852b-7c97-91d0-2a1e-bbab884d8004/4547366799002.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/second-jump/1866883941?i=1866884121&uo=4"
+  },
+  {
+    "id": "s150",
+    "title": "Kind of love",
+    "single": "17th Single",
+    "era": "hinata",
+    "tags": [
+      "title",
+      "mv",
+      "costume"
+    ],
+    "composer": "杉山勝彦",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/00/6a/a4/006aa4ab-1546-c94b-f24c-c6ac2df7fe87/mzaf_12368897409741147901.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/c4/60/ce/c460ce7f-a3d3-d2e6-8d00-a2fabb1dd671/4547366819090.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/kind-of-love/1890452963?i=1890452966&uo=4"
+  },
+  {
+    "id": "s151",
+    "title": "Empty",
+    "single": "17th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume"
+    ],
+    "composer": "野村陽一郎",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/55/38/5b/55385b04-5e86-582b-afed-dd17313325a2/mzaf_1502365726492770314.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/60/09/98/600998e8-7a50-bf66-ab5d-f86354907a7a/4547366825091.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/empty/1895697282?i=6764236923&uo=4"
+  },
+  {
+    "id": "s152",
+    "title": "円周率",
+    "single": "17th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume",
+      "gen5"
+    ],
+    "composer": "草野将史",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/15/7a/2d/157a2d3d-3e29-fee0-4024-3b89fbd11490/mzaf_4778625060846874859.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/60/09/98/600998e8-7a50-bf66-ab5d-f86354907a7a/4547366825091.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E5%86%86%E5%91%A8%E7%8E%87/1895697282?i=6764236924&uo=4"
+  },
+  {
+    "id": "s153",
+    "title": "心のブランコ",
+    "single": "17th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "白戸佑輔",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/a5/85/63/a58563e7-2d8f-984d-638c-a07be1bcaea6/mzaf_10925193959098310911.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/60/09/98/600998e8-7a50-bf66-ab5d-f86354907a7a/4547366825091.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E5%BF%83%E3%81%AE%E3%83%96%E3%83%A9%E3%83%B3%E3%82%B3/1895697282?i=6764236925&uo=4"
+  },
+  {
+    "id": "s154",
+    "title": "SHUWA SHUWA",
+    "single": "17th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "TSUKIDA",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/93/22/12/9322126d-8da5-79e4-464f-226149887ce9/mzaf_560021768764118684.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/60/09/98/600998e8-7a50-bf66-ab5d-f86354907a7a/4547366825091.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/shuwa-shuwa/1895697282?i=6764236926&uo=4"
+  },
+  {
+    "id": "s155",
+    "title": "サラバ サラバ",
+    "single": "17th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "ジンツチハシ",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/45/f6/e0/45f6e0b9-a1ad-a913-f7b6-9f30990d3555/mzaf_4625896423165298945.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/60/09/98/600998e8-7a50-bf66-ab5d-f86354907a7a/4547366825091.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%82%B5%E3%83%A9%E3%83%90-%E3%82%B5%E3%83%A9%E3%83%90/1895697282?i=6764236927&uo=4"
+  },
+  {
+    "id": "s156",
+    "title": "君にやられた！",
+    "single": "17th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "前迫潤哉",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/cb/2a/69/cb2a695f-fc55-f760-6d14-bd6f202fc4b3/mzaf_16172060929430471046.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/60/09/98/600998e8-7a50-bf66-ab5d-f86354907a7a/4547366825091.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E5%90%9B%E3%81%AB%E3%82%84%E3%82%89%E3%82%8C%E3%81%9F/1895697282?i=6764236928&uo=4"
+  },
+  {
+    "id": "s157",
+    "title": "イチャイチャ虫",
+    "single": "18th Single",
+    "era": "hinata",
+    "tags": [
+      "title",
+      "mv",
+      "costume"
+    ],
+    "composer": "野村陽一郎",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/f5/45/35/f5453580-fbb4-f3ab-e6a0-3d3642a7a025/mzaf_8310675596913079661.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/51/e1/b4/51e1b4b6-b09a-f250-f2a4-232589449f33/4547366846188.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%82%A4%E3%83%81%E3%83%A3%E3%82%A4%E3%83%81%E3%83%A3%E8%99%AB/6801485187?i=6801485188&uo=4"
+  },
+  {
+    "id": "s158",
+    "title": "風にキンモクセイ",
+    "single": "18th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv",
+      "costume"
+    ],
+    "composer": "杉山勝彦",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/8d/61/98/8d61989a-70eb-aa0f-b07a-817079419dd4/mzaf_329299560615483144.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/aa/89/9b/aa899b61-d211-76f7-8a05-af6fd339c06b/4547366850680.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E9%A2%A8%E3%81%AB%E3%82%AD%E3%83%B3%E3%83%A2%E3%82%AF%E3%82%BB%E3%82%A4/6805380263?i=6805380265&uo=4"
+  },
+  {
+    "id": "s159",
+    "title": "それでもいつか",
+    "single": "18th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "gen5"
+    ],
+    "composer": "浅原裕太",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/6d/50/07/6d5007a4-8866-60c4-5f96-2561abf5a3b7/mzaf_7427981661933186821.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/50/9a/cd/509acdac-84c7-6092-8629-375809cc4a46/4547366852851.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%81%9D%E3%82%8C%E3%81%A7%E3%82%82%E3%81%84%E3%81%A4%E3%81%8B/6809365345?i=6809365359&uo=4"
+  },
+  {
+    "id": "s160",
+    "title": "ピンクのコスモス",
+    "single": "18th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "小網準",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/13/f9/c9/13f9c9ac-bf34-88dc-75bf-a2a90dd337f6/mzaf_6450006744832388994.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/50/9a/cd/509acdac-84c7-6092-8629-375809cc4a46/4547366852851.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%83%94%E3%83%B3%E3%82%AF%E3%81%AE%E3%82%B3%E3%82%B9%E3%83%A2%E3%82%B9/6809365345?i=6809365360&uo=4"
+  },
+  {
+    "id": "s161",
+    "title": "イントロ",
+    "single": "18th Single",
+    "era": "hinata",
+    "tags": [
+      "cw",
+      "mv"
+    ],
+    "composer": "TSUKIDA",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/cd/0e/7a/cd0e7ae2-689d-72d3-efdb-cc8f6ceba3ab/mzaf_5702088225520137510.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/50/9a/cd/509acdac-84c7-6092-8629-375809cc4a46/4547366852851.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%82%A4%E3%83%B3%E3%83%88%E3%83%AD/6809365345?i=6809365362&uo=4"
+  },
+  {
+    "id": "s162",
+    "title": "クリスマスカウントダウン",
+    "single": "18th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "ジンツチハシ",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/2f/7d/6b/2f7d6b66-b860-ffdc-fa7d-928b72c06caf/mzaf_9168584381788471257.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/50/9a/cd/509acdac-84c7-6092-8629-375809cc4a46/4547366852851.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E3%82%AF%E3%83%AA%E3%82%B9%E3%83%9E%E3%82%B9%E3%82%AB%E3%82%A6%E3%83%B3%E3%83%88%E3%83%80%E3%82%A6%E3%83%B3/6809365345?i=6809365363&uo=4"
+  },
+  {
+    "id": "s163",
+    "title": "僕はAnytime",
+    "single": "18th Single",
+    "era": "hinata",
+    "tags": [
+      "cw"
+    ],
+    "composer": "前迫潤哉",
+    "lyricist": "秋元康",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/51/97/a2/5197a273-31c1-a0ef-d1c3-5080bd8e00d1/mzaf_13901146904436439910.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/50/9a/cd/509acdac-84c7-6092-8629-375809cc4a46/4547366852851.jpg/600x600bb.jpg",
+    "image_url": null,
+    "appleMusicUrl": "https://music.apple.com/jp/album/%E5%83%95%E3%81%AFanytime/6809365345?i=6809365364&uo=4"
+  }
 ]
