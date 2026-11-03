@@ -1,1 +1,12 @@
-
+{"current":2026,
+ "editions":{"2026":{"year":2026,"categories":[
+  {"id":"title","name":{"zh":"表題曲賞","ja":"表題曲賞"},"filter":{"tag":"title"},"img":"artwork","view":"card"},
+  {"id":"cw","name":{"zh":"C/W曲賞","ja":"C/W曲賞"},"filter":{"tag":"cw"},"img":"artwork","view":"card"},
+  {"id":"composer","name":{"zh":"作曲賞","ja":"作曲賞"},"filter":{"all":true},"img":"artwork","view":"list","creator":"composer"},
+  {"id":"lyricist","name":{"zh":"作詞賞","ja":"作詞賞"},"filter":{"all":true},"img":"artwork","view":"list","creator":"lyricist"},
+  {"id":"mv","name":{"zh":"MV賞","ja":"MV賞"},"filter":{"tag":"mv"},"img":"image_url","view":"card"},
+  {"id":"cover","name":{"zh":"封面賞","ja":"ジャケット賞"},"filter":{"tag":"title"},"img":"artwork","view":"card"},
+  {"id":"costume","name":{"zh":"衣裝賞","ja":"衣装賞"},"filter":{"tag":"costume"},"img":"image_url","view":"card"},
+  {"id":"gen","name":{"zh":"期別曲賞","ja":"期別曲賞"},"filter":{"tagPrefix":"gen"},"img":"artwork","view":"list"},
+  {"id":"hiragana","name":{"zh":"平假曲賞","ja":"ひらがな曲賞"},"filter":{"era":"hiragana"},"img":"artwork","view":"list"},
+  {"id":"unit","name":{"zh":"Unit曲賞","ja":"ユニット曲賞"},"filter":{"tag":"unit"},"img":"artwork","view":"list"}]}}}
