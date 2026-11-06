@@ -1,12 +1,236 @@
-{"current":2026,
- "editions":{"2026":{"year":2026,"categories":[
-  {"id":"title","name":{"zh":"表題曲賞","ja":"表題曲賞"},"filter":{"tag":"title"},"img":"artwork","view":"card"},
-  {"id":"cw","name":{"zh":"C/W曲賞","ja":"C/W曲賞"},"filter":{"tag":"cw"},"img":"artwork","view":"card"},
-  {"id":"composer","name":{"zh":"作曲賞","ja":"作曲賞"},"filter":{"all":true},"img":"artwork","view":"list","creator":"composer"},
-  {"id":"lyricist","name":{"zh":"作詞賞","ja":"作詞賞"},"filter":{"all":true},"img":"artwork","view":"list","creator":"lyricist"},
-  {"id":"mv","name":{"zh":"MV賞","ja":"MV賞"},"filter":{"tag":"mv"},"img":"image_url","view":"card"},
-  {"id":"cover","name":{"zh":"封面賞","ja":"ジャケット賞"},"filter":{"tag":"title"},"img":"artwork","view":"card"},
-  {"id":"costume","name":{"zh":"衣裝賞","ja":"衣装賞"},"filter":{"tag":"costume"},"img":"image_url","view":"card"},
-  {"id":"gen","name":{"zh":"期別曲賞","ja":"期別曲賞"},"filter":{"tagPrefix":"gen"},"img":"artwork","view":"list"},
-  {"id":"hiragana","name":{"zh":"平假曲賞","ja":"ひらがな曲賞"},"filter":{"era":"hiragana"},"img":"artwork","view":"list"},
-  {"id":"unit","name":{"zh":"Unit曲賞","ja":"ユニット曲賞"},"filter":{"tag":"unit"},"img":"artwork","view":"list"}]}}}
+{
+ "current": 2026,
+ "editions": {
+  "2026": {
+   "year": 2026,
+   "minCount": 10,
+   "sources": {
+    "songs": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRbSDkQ5cL_1VOmBlJrZaq-YZ0cWonJ4bKgefj_cMgBt6oTBP8zDgLDE2vI1nCGukh_NvlAov_caBCe/pub?single=true&output=csv&gid=899677463",
+    "mv": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRbSDkQ5cL_1VOmBlJrZaq-YZ0cWonJ4bKgefj_cMgBt6oTBP8zDgLDE2vI1nCGukh_NvlAov_caBCe/pub?single=true&output=csv&gid=5001",
+    "releases": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRbSDkQ5cL_1VOmBlJrZaq-YZ0cWonJ4bKgefj_cMgBt6oTBP8zDgLDE2vI1nCGukh_NvlAov_caBCe/pub?single=true&output=csv&gid=5003"
+   },
+   "groups": [
+    {
+     "id": "gen",
+     "name": {
+      "zh": "期別曲賞",
+      "ja": "期別曲賞"
+     }
+    }
+   ],
+   "categories": [
+    {
+     "id": "title",
+     "name": {
+      "zh": "表題曲賞",
+      "ja": "表題曲賞"
+     },
+     "unit": {
+      "zh": "首",
+      "ja": "曲"
+     },
+     "filter": {
+      "tag": "title"
+     }
+    },
+    {
+     "id": "cw",
+     "name": {
+      "zh": "C/W曲賞",
+      "ja": "C/W曲賞"
+     },
+     "unit": {
+      "zh": "首",
+      "ja": "曲"
+     },
+     "filter": {
+      "tag": "cw"
+     }
+    },
+    {
+     "id": "composer",
+     "name": {
+      "zh": "作曲賞",
+      "ja": "作曲賞"
+     },
+     "unit": {
+      "zh": "首",
+      "ja": "曲"
+     },
+     "filter": {
+      "all": true
+     },
+     "creator": "composer"
+    },
+    {
+     "id": "lyricist",
+     "name": {
+      "zh": "作詞賞",
+      "ja": "作詞賞"
+     },
+     "unit": {
+      "zh": "首",
+      "ja": "曲"
+     },
+     "filter": {
+      "all": true
+     },
+     "creator": "lyricist"
+    },
+    {
+     "id": "mv",
+     "name": {
+      "zh": "MV賞",
+      "ja": "MV賞"
+     },
+     "unit": {
+      "zh": "支",
+      "ja": "本"
+     },
+     "filter": {
+      "kind": "mv"
+     },
+     "view": "mv"
+    },
+    {
+     "id": "cover",
+     "name": {
+      "zh": "封面賞",
+      "ja": "ジャケット賞"
+     },
+     "unit": {
+      "zh": "張",
+      "ja": "枚"
+     },
+     "filter": {
+      "kind": "release"
+     },
+     "view": "cover"
+    },
+    {
+     "id": "gen1",
+     "name": {
+      "zh": "一期曲賞",
+      "ja": "1期生曲賞"
+     },
+     "unit": {
+      "zh": "首",
+      "ja": "曲"
+     },
+     "filter": {
+      "tag": "gen1"
+     },
+     "group": "gen",
+     "short": {
+      "zh": "一期",
+      "ja": "1期"
+     }
+    },
+    {
+     "id": "gen2",
+     "name": {
+      "zh": "二期曲賞",
+      "ja": "2期生曲賞"
+     },
+     "unit": {
+      "zh": "首",
+      "ja": "曲"
+     },
+     "filter": {
+      "tag": "gen2"
+     },
+     "group": "gen",
+     "short": {
+      "zh": "二期",
+      "ja": "2期"
+     }
+    },
+    {
+     "id": "gen3",
+     "name": {
+      "zh": "三期曲賞",
+      "ja": "3期生曲賞"
+     },
+     "unit": {
+      "zh": "首",
+      "ja": "曲"
+     },
+     "filter": {
+      "tag": "gen3"
+     },
+     "group": "gen",
+     "short": {
+      "zh": "三期",
+      "ja": "3期"
+     }
+    },
+    {
+     "id": "gen4",
+     "name": {
+      "zh": "四期曲賞",
+      "ja": "4期生曲賞"
+     },
+     "unit": {
+      "zh": "首",
+      "ja": "曲"
+     },
+     "filter": {
+      "tag": "gen4"
+     },
+     "group": "gen",
+     "short": {
+      "zh": "四期",
+      "ja": "4期"
+     }
+    },
+    {
+     "id": "gen5",
+     "name": {
+      "zh": "五期曲賞",
+      "ja": "5期生曲賞"
+     },
+     "unit": {
+      "zh": "首",
+      "ja": "曲"
+     },
+     "filter": {
+      "tag": "gen5"
+     },
+     "group": "gen",
+     "short": {
+      "zh": "五期",
+      "ja": "5期"
+     }
+    },
+    {
+     "id": "hiragana",
+     "name": {
+      "zh": "平假曲賞",
+      "ja": "ひらがな曲賞"
+     },
+     "unit": {
+      "zh": "首",
+      "ja": "曲"
+     },
+     "filter": {
+      "era": "hiragana"
+     }
+    },
+    {
+     "id": "unit",
+     "name": {
+      "zh": "Unit曲賞",
+      "ja": "ユニット曲賞"
+     },
+     "unit": {
+      "zh": "首",
+      "ja": "曲"
+     },
+     "filter": {
+      "tag": "unit"
+     }
+    }
+   ]
+  }
+ }
+}
