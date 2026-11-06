@@ -47,7 +47,7 @@ input,select{font:inherit}
 .tg2{font-size:13px;font-weight:700;color:var(--mut);line-height:1.6}
 .chips2{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin-top:10px}
 .cnt{display:inline-flex;align-items:center;gap:6px;background:#fff;font-size:13px;padding:4px 12px 4px 8px}
-.days{font-size:13px;font-weight:800;color:var(--mut)}
+.days{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 14px;border-radius:999px;background:#fff;box-shadow:0 2px 6px rgba(31,53,82,.12);font-size:14px;font-weight:900;color:var(--ink)}
 .menu{position:absolute;right:0;top:56px;width:250px;max-width:calc(100vw - 32px);background:#fff;border-radius:14px;box-shadow:0 10px 28px rgba(31,53,82,.25);z-index:20;overflow:hidden}
 .pm{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1.5px solid var(--ln)}
 .pm .av{width:38px;height:38px;font-size:15px;box-shadow:none}
@@ -163,6 +163,8 @@ input,select{font:inherit}
 .ci{width:12px;height:12px;border-radius:50%;border:1.5px solid var(--sky);background:#fff;flex:none}
 .go{min-height:56px;border-radius:16px;background:var(--sun);color:var(--ink);font-size:18px;font-weight:900;border:4px solid #fff;box-shadow:0 4px 12px rgba(31,53,82,.25);padding:0 18px}
 .bar .go{min-height:48px;font-size:16px;flex:none}
+.bar .up{flex:none;width:48px;height:48px;min-height:48px;padding:0;margin-left:auto;border-radius:50%;background:#fff;border:2px solid var(--sky);color:var(--ink);display:inline-flex;align-items:center;justify-content:center}
+.bar .up svg{width:22px;height:22px}
 .go:active{transform:scale(.98)}
 .go[aria-disabled="true"]{opacity:.55;box-shadow:none}
 
@@ -234,7 +236,7 @@ input,select{font:inherit}
 <!-- GA4：把首頁那段 gtag 程式碼原封不動貼在這裡（同一個 G-XXXX） -->
 </head>
 <body>
-<svg class="bgp" aria-hidden="true" focusable="false"><defs><pattern id="cl" width="240" height="240" patternUnits="userSpaceOnUse"><g fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".65"><g transform="translate(8 6)"><path d="M24 60a12 12 0 0 1-2-23a18 18 0 0 1 34-6a14 14 0 0 1 26 8a11 11 0 0 1 4 21z"/><path d="M34 56l12-16M44 56l14-20M54 56l14-22M64 56l14-20M74 56l8-12"/></g><g transform="translate(120 96) scale(.8)"><path d="M24 60a12 12 0 0 1-2-23a18 18 0 0 1 34-6a14 14 0 0 1 26 8a11 11 0 0 1 4 21z"/></g><g transform="translate(18 156) scale(.9)"><path d="M24 60a12 12 0 0 1-2-23a18 18 0 0 1 34-6a14 14 0 0 1 26 8a11 11 0 0 1 4 21z"/><path d="M36 56l10-14M46 56l12-18M56 56l12-18M66 56l10-16"/></g></g></pattern></defs><rect width="100%" height="100%" fill="url(#cl)"/></svg>
+<svg class="bgp" aria-hidden="true" focusable="false"><defs><pattern id="cl" width="720" height="720" patternUnits="userSpaceOnUse"><g fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g opacity="0.7" transform="translate(3.6 2.5) scale(1.1)"><path d="M24 60a12 12 0 0 1-2-23a18 18 0 0 1 34-6a14 14 0 0 1 26 8a11 11 0 0 1 4 21z"/><path d="M34 56l12-16M44 56l14-20M54 56l14-22M64 56l14-20M74 56l8-12"/></g><g opacity="0.55" transform="translate(453.2 2.5) scale(0.7)"><path d="M24 60a12 12 0 0 1-2-23a18 18 0 0 1 34-6a14 14 0 0 1 26 8a11 11 0 0 1 4 21z"/></g><g opacity="0.65" transform="translate(88.4 177.5) scale(0.9)"><path d="M24 60a12 12 0 0 1-2-23a18 18 0 0 1 34-6a14 14 0 0 1 26 8a11 11 0 0 1 4 21z"/><path d="M34 56l12-16M44 56l14-20M54 56l14-22M64 56l14-20M74 56l8-12"/></g><g opacity="0.55" transform="translate(385.6 220.0) scale(0.6)"><path d="M24 60a12 12 0 0 1-2-23a18 18 0 0 1 34-6a14 14 0 0 1 26 8a11 11 0 0 1 4 21z"/></g><g opacity="0.7" transform="translate(496.0 355.0) scale(1)"><path d="M24 60a12 12 0 0 1-2-23a18 18 0 0 1 34-6a14 14 0 0 1 26 8a11 11 0 0 1 4 21z"/><path d="M34 56l12-16M44 56l14-20M54 56l14-22M64 56l14-20M74 56l8-12"/></g><g opacity="0.6" transform="translate(330.8 455.0) scale(0.8)"><path d="M24 60a12 12 0 0 1-2-23a18 18 0 0 1 34-6a14 14 0 0 1 26 8a11 11 0 0 1 4 21z"/></g><g opacity="0.55" transform="translate(123.2 547.5) scale(0.7)"><path d="M24 60a12 12 0 0 1-2-23a18 18 0 0 1 34-6a14 14 0 0 1 26 8a11 11 0 0 1 4 21z"/><path d="M34 56l12-16M44 56l14-20M54 56l14-22M64 56l14-20M74 56l8-12"/></g><g opacity="0.65" transform="translate(396.0 590.0) scale(1)"><path d="M24 60a12 12 0 0 1-2-23a18 18 0 0 1 34-6a14 14 0 0 1 26 8a11 11 0 0 1 4 21z"/></g></g><image opacity="0.75" href="img/clouds/cloud2.png" x="250" y="70" width="56" height="66"/><image opacity="0.75" href="img/clouds/cloud1.png" x="600" y="150" width="78" height="69"/><image opacity="0.75" href="img/clouds/cloud3.png" x="230" y="330" width="92" height="61"/><image opacity="0.7" href="img/clouds/cloud1.png" x="40" y="400" width="64" height="57"/><image opacity="0.7" href="img/clouds/cloud2.png" x="620" y="500" width="60" height="71"/><image opacity="0.7" href="img/clouds/cloud3.png" x="30" y="650" width="76" height="50"/></pattern></defs><rect width="100%" height="100%" fill="url(#cl)"/></svg>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><filter id="rough"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="2.4"/></filter></svg>
 <div class="wrap"><header id="top"></header><main id="app"></main><footer id="ft"></footer></div>
 <div id="bar" class="bar"></div>
@@ -256,8 +258,8 @@ const DATA = 'data/vote/';
 const I = {
   zh: { ttl: '日向坂46 歌曲總選舉', en: 'HINATAZAKA46 SONG ELECTION', badge: y => `${y} 投票進行中`, badgeEnd: '投票已截止',
     tag1: '一起選出，觸動內心的那首歌！',
-    cntOn: n => `已有 ${n} 位おひさま參加`, cntLow: '一起來投票吧！', days: n => `距離截止還有 ${n} 天`, dayLast: '今天是最後一天！',
-    login: '登入', logout: '登出', upgrade: '升級為 Google 帳號', acctMenu: '帳號選單', googleIn: '已用 Google 登入', anonNow: '匿名投票中', anonCh: '匿', lang: '切換語言',
+    cntOn: n => `已有 ${n} 位おひさま參加`, cntLow: '一起來投票吧！', days: n => `距離投票截止還有 ${n} 天`, dayLast: '今天是最後一天！',
+    login: '登入', logout: '登出', upgrade: '升級為 Google 帳號', acctMenu: '帳號選單', googleIn: '已用 Google 登入', anonNow: '匿名投票中', anonCh: '匿', lang: '切換語言', top: '回到最上方',
     search: '搜尋歌名、作曲者、作詞者', searchMv: '搜尋歌名', allS: '全部單曲／專輯', allC: '全部', eraA: '全部', eraH: '平假名櫸坂', eraN: '日向坂',
     hint: u => `每個獎項最多可選 3 ${u}，等值不排名，沒想法也可跳過。`, voted: '你已投過票，截止前可修改。',
     foot: d => `不必每個獎項都投，隨時可以送出；截止前（${d}）都能回來修改。`, footNoD: '不必每個獎項都投，隨時可以送出；截止前都能回來修改。',
@@ -278,7 +280,7 @@ const I = {
   ja: { ttl: '日向坂46 楽曲総選挙', en: 'HINATAZAKA46 SONG ELECTION', badge: y => `${y} 投票受付中`, badgeEnd: '投票は締め切られました',
     tag1: 'みんなで選ぼう、心を動かす一曲を！',
     cntOn: n => `${n}人のおひさまが参加中`, cntLow: 'みんなで投票しよう！', days: n => `締切まであと${n}日`, dayLast: '本日が最終日です！',
-    login: 'ログイン', logout: 'ログアウト', upgrade: 'Googleアカウントにアップグレード', acctMenu: 'アカウントメニュー', googleIn: 'Googleでログイン中', anonNow: '匿名で投票中', anonCh: '匿', lang: '言語切替',
+    login: 'ログイン', logout: 'ログアウト', upgrade: 'Googleアカウントにアップグレード', acctMenu: 'アカウントメニュー', googleIn: 'Googleでログイン中', anonNow: '匿名で投票中', anonCh: '匿', lang: '言語切替', top: '一番上へ戻る',
     search: '曲名・作曲者・作詞者で検索', searchMv: '曲名で検索', allS: 'すべてのシングル／アルバム', allC: 'すべて', eraA: 'すべて', eraH: 'ひらがなけやき', eraN: '日向坂',
     hint: u => `各賞、最大3${u}まで選べます。順位はなく、どれも同じ1票です。思いつかなければスキップもOK。`, voted: '投票済みです。締切前なら修正できます。',
     foot: d => `すべての賞に投票する必要はありません。いつでも送信でき、締切前（${d}）なら修正もできます。`, footNoD: 'すべての賞に投票する必要はありません。いつでも送信でき、締切前なら修正もできます。',
@@ -338,7 +340,7 @@ let tT; const toast = m => { const e = $('#toast'); e.textContent = m; e.style.o
 const save = () => { try { localStorage.setItem('hv_draft_' + year, JSON.stringify(sel)); } catch {} };
 
 // ---------- 試聽 ----------
-const au = new Audio(); let pb = null, playUrl = '';
+const au = new Audio(); au.volume = 0.8; let pb = null, playUrl = '';
 const stopUI = () => { if (pb) { pb.innerHTML = PLAY; pb.classList.remove('on'); pb.closest('.tk')?.classList.remove('air'); if (pb.dataset.l) pb.setAttribute('aria-label', pb.dataset.l); pb = null; } };
 const stopAudio = () => { au.pause(); playUrl = ''; stopUI(); };
 au.onended = () => { playUrl = ''; stopUI(); };
@@ -370,7 +372,7 @@ function head() {
     <div class="en">${t('en')} ${year ?? ''}</div>
     <h1 class="ttl"><span class="hl"><span class="bl">${esc(t('ttl').split(' ')[0])}</span> ${esc(t('ttl').split(' ').slice(1).join(' '))}</span>${SUN_B}</h1>
     <div class="tg1">${t('tag1')}</div>
-    <div class="chips2"><span class="stk cnt" style="background:#fff">${SUN_SM}${esc(cnt)}</span>${dl == null || cl ? '' : `<span class="days">${dl <= 1 ? t('dayLast') : t('days')(dl)}</span>`}</div></div>`;
+    <div class="chips2">${count != null && count >= minC ? `<span class="stk cnt" style="background:#fff">${SUN_SM}${esc(cnt)}</span>` : ''}${dl == null || cl ? '' : `<span class="days">${SUN_SM}${dl <= 1 ? t('dayLast') : t('days')(dl)}</span>`}</div></div>`;
   $('#ft').innerHTML = `<div class="ft">${SUN_SM}<br>${t('footer')}　<a href="privacy.html">${t('cPriv')}</a></div>`;
 }
 
@@ -439,6 +441,7 @@ function renderList(keep = readCars()) {
 function barHTML() {
   const c = curCat(), tb = curTab(), n = tabsDone(), tot = tabs.length, cl = closed(), nn = picked().length;
   return `<div class="bl2"><div class="b1">${esc(tabs.length ? nm(tb.cats.length > 1 ? c : tb) : '')}　${nOf(c)} / ${MAX}</div><div class="b2" aria-hidden="true"><span>${t('done')(n, tot)}</span>${tabs.map((x, i) => x.cats.some(nOf) ? sunMini('f' + (popTab === i ? ' bump' : '')) : '<i class="ci"></i>').join('')}</div></div>
+    <button class="btn up" data-act="top" aria-label="${t('top')}">${ic('<path d="M12 19V6M6 12l6-6 6 6"/>', { s: 22 })}</button>
     <button id="sub" class="btn go" aria-disabled="${cl || !nn}">${cl ? t('closed') : hasVoted ? t('upd') : t('vote')}</button>`;
 }
 const bar = () => { $('#bar').innerHTML = barHTML(); };
@@ -616,7 +619,8 @@ document.addEventListener('click', async e => {
   else if (d.car) { const car = carOf(d.for); if (car) goSlide(car, Math.round(car.scrollLeft / car.clientWidth) + +d.car); }
   else if (d.act) {
     const a = d.act;
-    if (a === 'lang') { lang = lang === 'ja' ? 'zh' : 'ja'; localStorage.setItem('hv_lang', lang); route(); }
+    if (a === 'top') scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth' });
+    else if (a === 'lang') { lang = lang === 'ja' ? 'zh' : 'ja'; localStorage.setItem('hv_lang', lang); route(); }
     else if (a === 'acct') { menuOpen = !menuOpen; head(); }
     else if (a === 'login' || a === 'upgrade') { menuOpen = false; try { if (await consent(true) && await upgrade()) { head(); if (hasVoted) bar(); } else head(); } catch { toast(t('fail')); } }
     else if (a === 'logout') { menuOpen = false; try { await signOut(auth); sel = {}; hasVoted = false; localStorage.removeItem('hv_draft_' + year); } catch { toast(t('fail')); } }
