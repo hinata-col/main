@@ -48,7 +48,7 @@ input,select{font:inherit}
 .chips2{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin-top:10px}
 .cnt{display:inline-flex;align-items:center;gap:6px;background:#fff;font-size:13px;padding:4px 12px 4px 8px}
 .days{font-size:13px;font-weight:800;color:var(--mut)}
-.pop{position:absolute;right:0;top:56px;width:250px;max-width:calc(100vw - 32px);background:#fff;border-radius:14px;box-shadow:0 10px 28px rgba(31,53,82,.25);z-index:20;overflow:hidden}
+.menu{position:absolute;right:0;top:56px;width:250px;max-width:calc(100vw - 32px);background:#fff;border-radius:14px;box-shadow:0 10px 28px rgba(31,53,82,.25);z-index:20;overflow:hidden}
 .pm{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1.5px solid var(--ln)}
 .pm .av{width:38px;height:38px;font-size:15px;box-shadow:none}
 .pm b{display:block;font-size:15px;line-height:1.3;word-break:break-all}
@@ -60,16 +60,16 @@ input,select{font:inherit}
 /* 便利貼、分頁 */
 .note{margin-top:14px;background:#FBF6C8;border:3px solid #fff;border-radius:14px;box-shadow:0 3px 10px rgba(31,53,82,.15);padding:10px 14px;font-size:13px;font-weight:700;line-height:1.6}
 .note2{margin-top:18px;font-size:13px;line-height:1.6;color:var(--mut);font-weight:700;padding:14px 16px}
-.tabs{display:flex;gap:10px;overflow-x:auto;padding:4px 4px 12px;margin:10px -4px 0;scrollbar-width:none}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;padding:4px 0 8px;margin:10px 0 0}
 .tabs::-webkit-scrollbar,.subs::-webkit-scrollbar{display:none}
-.tab{flex:none;min-height:44px;padding:0 16px;border-radius:999px;background:#fff;box-shadow:0 2px 6px rgba(31,53,82,.12);font-size:15px;font-weight:800;border:3px solid transparent;display:inline-flex;align-items:center;gap:6px}
+.tab{flex:none;min-height:44px;padding:0 14px;border-radius:999px;background:#fff;box-shadow:0 2px 6px rgba(31,53,82,.12);font-size:15px;font-weight:800;border:3px solid transparent;display:inline-flex;align-items:center;gap:6px}
 .tab.act{background:var(--sun);border-color:#fff;box-shadow:0 3px 8px rgba(31,53,82,.25)}
 .n{font-style:normal;background:var(--co);color:#fff;border-radius:9px;min-width:18px;height:18px;padding:0 4px;font-size:11px;display:inline-flex;align-items:center;justify-content:center}
 .sec{display:flex;align-items:center;gap:12px;margin-top:8px}
 .sec h2{margin:0;font-size:22px;font-weight:900;line-height:1.3}
 .sec .cl{margin-left:auto;display:inline-flex;align-items:center;gap:4px;font-size:14px;font-weight:800;white-space:nowrap}
 .num{width:46px;height:46px;border-radius:50%;background:var(--bl);color:#fff;border:3px solid #fff;box-shadow:0 3px 8px rgba(31,53,82,.2);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;flex:none}
-.subs{display:flex;gap:8px;overflow-x:auto;padding:6px 4px 8px;margin:6px -4px 0;scrollbar-width:none}
+.subs{display:flex;flex-wrap:wrap;gap:8px;padding:6px 0 8px;margin:6px 0 0}
 .sub{flex:none;min-height:44px;padding:0 14px;border-radius:12px;background:#fff;font-size:14px;font-weight:800;box-shadow:0 2px 6px rgba(31,53,82,.1);border:2.5px solid transparent;display:inline-flex;align-items:center;gap:6px}
 .sub.act{border-color:var(--ink)}
 .sub i{font-style:normal;font-size:12px;color:var(--mut)}
@@ -198,9 +198,8 @@ input,select{font:inherit}
 
 /* 分享結果頁、歷年結果 */
 .banner{position:relative;padding:16px 18px;margin-top:14px}
-.banner .nm{font-size:26px;font-weight:900;line-height:1.3;margin-top:8px;padding-right:70px;overflow-wrap:anywhere}
+.banner .nm{font-size:26px;font-weight:900;line-height:1.3;margin-top:8px;overflow-wrap:anywhere}
 .banner .nm small{font-size:18px}
-.banner .sunb{right:14px;top:12px}
 .cta{padding:18px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:22px}
 .cta a.go{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;width:100%}
 .rk{position:relative;background:#fff;border-radius:12px;margin-bottom:6px;overflow:hidden}
@@ -218,10 +217,10 @@ input,select{font:inherit}
 @keyframes rise{from{transform:translateY(70px);opacity:0}to{transform:none;opacity:1}}
 @keyframes tw{0%,100%{opacity:.25;transform:scale(.8)}50%{opacity:1;transform:scale(1.15)}}
 @keyframes up{from{transform:translateY(100%)}to{transform:none}}
-.hb.pop svg{animation:pop .32s ease-out}
-.stp.pop{animation:stamp .26s ease-out both}
+.hb.bump svg{animation:pop .32s ease-out}
+.stp.bump{animation:stamp .26s ease-out both}
 .spin svg{animation:spin1 .7s ease-in-out}
-.sn.pop{animation:pop .4s ease-out}
+.sn.bump{animation:pop .4s ease-out}
 .flip{animation:fade .18s ease-out}
 .rise{animation:rise .7s cubic-bezier(.2,.9,.3,1) both}
 .tw{animation:tw 1.6s infinite}
@@ -256,7 +255,7 @@ const DATA = 'data/vote/';
 // ---------- 文字（中／日） ----------
 const I = {
   zh: { ttl: '日向坂46 歌曲總選舉', en: 'HINATAZAKA46 SONG ELECTION', badge: y => `${y} 投票進行中`, badgeEnd: '投票已截止',
-    tag1: '一起選出，心中最閃亮的那首歌！', tag2: '每一票，都是給日向坂的小小應援。',
+    tag1: '一起選出，觸動內心的那首歌！',
     cntOn: n => `已有 ${n} 位おひさま參加`, cntLow: '一起來投票吧！', days: n => `距離截止還有 ${n} 天`, dayLast: '今天是最後一天！',
     login: '登入', logout: '登出', upgrade: '升級為 Google 帳號', acctMenu: '帳號選單', googleIn: '已用 Google 登入', anonNow: '匿名投票中', anonCh: '匿', lang: '切換語言',
     search: '搜尋歌名、作曲者、作詞者', searchMv: '搜尋歌名', allS: '全部單曲／專輯', allC: '全部', eraA: '全部', eraH: '平假名櫸坂', eraN: '日向坂',
@@ -277,7 +276,7 @@ const I = {
     footer: 'おひさま自製的非官方調查・結果僅供參考', resT: '歷年結果', resNone: '結果尚未公布', resAll: '全部票', resG: '僅 Google 登入', ppl: n => `${n} 人參與`,
     fatalT: '資料載入失敗', fatalB: '請檢查網路連線後再試一次。', retry: '重新整理' },
   ja: { ttl: '日向坂46 楽曲総選挙', en: 'HINATAZAKA46 SONG ELECTION', badge: y => `${y} 投票受付中`, badgeEnd: '投票は締め切られました',
-    tag1: 'みんなで選ぼう、心に一番輝く一曲を！', tag2: 'あなたの一票が、日向坂への小さな応援です。',
+    tag1: 'みんなで選ぼう、心を動かす一曲を！',
     cntOn: n => `${n}人のおひさまが参加中`, cntLow: 'みんなで投票しよう！', days: n => `締切まであと${n}日`, dayLast: '本日が最終日です！',
     login: 'ログイン', logout: 'ログアウト', upgrade: 'Googleアカウントにアップグレード', acctMenu: 'アカウントメニュー', googleIn: 'Googleでログイン中', anonNow: '匿名で投票中', anonCh: '匿', lang: '言語切替',
     search: '曲名・作曲者・作詞者で検索', searchMv: '曲名で検索', allS: 'すべてのシングル／アルバム', allC: 'すべて', eraA: 'すべて', eraH: 'ひらがなけやき', eraN: '日向坂',
@@ -317,7 +316,7 @@ const GLOBE = ic('<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15
 const SUNP = '<circle cx="12" cy="12" r="5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9 7 7M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/>';
 const sunMini = cls => `<svg class="sn ${cls}" viewBox="0 0 24 24" aria-hidden="true">${SUNP}</svg>`;
 const SUN_SM = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F3552" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="5" fill="#F5E050"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9 7 7M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>`;
-const SUN_B = `<svg class="sunb rough" width="54" height="54" viewBox="0 0 54 54" fill="none" stroke="#1F3552" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="27" cy="27" r="9" fill="#F5E050"/><path d="M27 4v8M27 42v8M4 27h8M42 27h8M10.5 10.5l5.5 5.5M43.5 10.5L38 16M10.5 43.5L16 38M43.5 43.5L38 38"/></svg>`;
+const SUN_B = `<svg class="sunb" width="54" height="54" viewBox="0 0 54 54" fill="none" stroke="#1F3552" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="27" cy="27" r="9" fill="#F5E050"/><path d="M27 4v8M27 42v8M4 27h8M42 27h8M10.5 10.5l5.5 5.5M43.5 10.5L38 16M10.5 43.5L16 38M43.5 43.5L38 38"/></svg>`;
 const SUN_H = `<svg class="rise" width="190" height="106" viewBox="0 0 200 112" fill="none" stroke="#1F3552" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M52 100a48 48 0 0 1 96 0z" fill="#F5E050"/><path d="M160 100l22 0M152 70l19-11M130 48l11-19M100 40V18M70 48 59 29M48 70 29 59M40 100H18"/><path d="M8 102h184" stroke="#7EC2E8"/></svg>`;
 const SPK = (c, s, sty) => `<svg class="sp tw" style="${sty}" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 3v6M12 15v6M3 12h6M15 12h6"/></svg>`;
 
@@ -358,7 +357,7 @@ function acctHTML() {
 function menuHTML() {
   if (!menuOpen || !user) return '';
   const g = !user.isAnonymous;
-  return `<div id="menu" class="pop" role="menu"><div class="pm"><span class="av" aria-hidden="true">${esc(g ? ([...(user.displayName || 'G')][0] || 'G').toUpperCase() : t('anonCh'))}</span><div><b>${esc(g ? (user.displayName || 'Google') : t('anonNow'))}</b><span>${g ? t('googleIn') : ''}</span></div></div>`
+  return `<div id="menu" class="menu" role="menu"><div class="pm"><span class="av" aria-hidden="true">${esc(g ? ([...(user.displayName || 'G')][0] || 'G').toUpperCase() : t('anonCh'))}</span><div><b>${esc(g ? (user.displayName || 'Google') : t('anonNow'))}</b><span>${g ? t('googleIn') : ''}</span></div></div>`
     + (g ? `<button class="mi" role="menuitem" data-act="logout">${t('logout')}</button>` : `<button class="mi" role="menuitem" data-act="upgrade">${t('upgrade')}</button>`)
     + (hasVoted ? `<button class="mi" role="menuitem" data-act="delv">${t('delVote')}</button>` : '')
     + `<button class="mi dg" role="menuitem" data-act="dela">${t('delAcct')}</button></div>`;
@@ -370,16 +369,16 @@ function head() {
   $('#top').innerHTML = `<div class="hd"><div class="hd1"><span class="stk">${cl ? t('badgeEnd') : t('badge')(year ?? '')}</span><div class="hr"><button class="btn lang" data-act="lang" aria-label="${t('lang')}">${GLOBE}${lang === 'ja' ? '中文' : '日本語'}</button>${acctHTML()}</div></div>${menuHTML()}
     <div class="en">${t('en')} ${year ?? ''}</div>
     <h1 class="ttl"><span class="hl"><span class="bl">${esc(t('ttl').split(' ')[0])}</span> ${esc(t('ttl').split(' ').slice(1).join(' '))}</span>${SUN_B}</h1>
-    <div class="tg1">${t('tag1')}</div><div class="tg2">${t('tag2')}</div>
+    <div class="tg1">${t('tag1')}</div>
     <div class="chips2"><span class="stk cnt" style="background:#fff">${SUN_SM}${esc(cnt)}</span>${dl == null || cl ? '' : `<span class="days">${dl <= 1 ? t('dayLast') : t('days')(dl)}</span>`}</div></div>`;
   $('#ft').innerHTML = `<div class="ft">${SUN_SM}<br>${t('footer')}　<a href="privacy.html">${t('cPriv')}</a></div>`;
 }
 
 // ---------- 畫面：項目 ----------
 const noteBtn = s => s.note ? `<button class="info" data-note="${esc(s.id)}" aria-label="${t('noteBtn')}">i</button>` : '';
-const heartBtn = (s, c) => { const on = has(c, s.id), full = !on && nOf(c) >= MAX, pop = on && lastPick === s.id ? ' pop' : '';
+const heartBtn = (s, c) => { const on = has(c, s.id), full = !on && nOf(c) >= MAX, pop = on && lastPick === s.id ? ' bump' : '';
   return `<button class="btn hb${on ? ' on' : ''}${full ? ' dim' : ''}${pop}" data-pick="${esc(s.id)}" aria-pressed="${on}" aria-label="${on ? t('picked') : t('pick')} ${esc(s.title)}">${heartI(on)}</button>`; };
-const stamp = (id, c) => has(c, id) ? `<span class="stp${lastPick === id ? ' pop' : ''}" aria-hidden="true">選</span>` : '';
+const stamp = (id, c) => has(c, id) ? `<span class="stp${lastPick === id ? ' bump' : ''}" aria-hidden="true">選</span>` : '';
 const imgTag = (u, fb) => u ? `<img src="${esc(u)}" alt="" loading="lazy" ${fb ? `data-f="${esc(fb)}"` : ''} onerror="if(this.dataset.f&&this.src!==this.dataset.f){this.src=this.dataset.f}else{this.remove()}">` : '';
 
 function songHTML(s, c, ro) {
@@ -439,7 +438,7 @@ function renderList(keep = readCars()) {
 }
 function barHTML() {
   const c = curCat(), tb = curTab(), n = tabsDone(), tot = tabs.length, cl = closed(), nn = picked().length;
-  return `<div class="bl2"><div class="b1">${esc(tabs.length ? nm(tb.cats.length > 1 ? c : tb) : '')}　${nOf(c)} / ${MAX}</div><div class="b2" aria-hidden="true"><span>${t('done')(n, tot)}</span>${tabs.map((x, i) => x.cats.some(nOf) ? sunMini('f' + (popTab === i ? ' pop' : '')) : '<i class="ci"></i>').join('')}</div></div>
+  return `<div class="bl2"><div class="b1">${esc(tabs.length ? nm(tb.cats.length > 1 ? c : tb) : '')}　${nOf(c)} / ${MAX}</div><div class="b2" aria-hidden="true"><span>${t('done')(n, tot)}</span>${tabs.map((x, i) => x.cats.some(nOf) ? sunMini('f' + (popTab === i ? ' bump' : '')) : '<i class="ci"></i>').join('')}</div></div>
     <button id="sub" class="btn go" aria-disabled="${cl || !nn}">${cl ? t('closed') : hasVoted ? t('upd') : t('vote')}</button>`;
 }
 const bar = () => { $('#bar').innerHTML = barHTML(); };
@@ -533,23 +532,37 @@ let pvT; const queuePreview = () => { clearTimeout(pvT); pvT = setTimeout(drawPr
 const loadImg = u => new Promise(r => { if (!u) return r(null); const i = new Image(); i.crossOrigin = 'anonymous'; i.onload = () => r(i); i.onerror = () => r(null); i.src = u; setTimeout(() => r(null), 6000); });
 const sunC = (g, x, y, r) => { g.save(); g.strokeStyle = '#1F3552'; g.lineWidth = 6; g.lineCap = 'round'; for (let k = 0; k < 8; k++) { const a = k * Math.PI / 4; g.beginPath(); g.moveTo(x + Math.cos(a) * (r + 14), y + Math.sin(a) * (r + 14)); g.lineTo(x + Math.cos(a) * (r + 30), y + Math.sin(a) * (r + 30)); g.stroke(); } g.beginPath(); g.arc(x, y, r, 0, 7); g.fillStyle = '#F5E050'; g.fill(); g.stroke(); g.restore(); };
 const fit = (g, s, w) => { while (g.measureText(s).width > w && s.length > 3) s = s.slice(0, -2) + '…'; return s; };
+const CLOUD_D = 'M24 60a12 12 0 0 1-2-23a18 18 0 0 1 34-6a14 14 0 0 1 26 8a11 11 0 0 1 4 21z', HATCH_D = 'M34 56l12-16M44 56l14-20M54 56l14-22M64 56l14-20M74 56l8-12';
+const cloudImgs = ['cloud1', 'cloud2', 'cloud3'].map(n => new URL(`img/clouds/${n}.png`, location.href).href);
+function skyBg(g, W, H) {
+  const CLOUD = new Path2D(CLOUD_D), HATCH = new Path2D(HATCH_D);
+  const gr = g.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, '#B9E2F8'); gr.addColorStop(.5, '#CFEAF9'); gr.addColorStop(1, '#E6F4FC'); g.fillStyle = gr; g.fillRect(0, 0, W, H);
+  g.save(); g.strokeStyle = '#fff'; g.lineJoin = g.lineCap = 'round';
+  [[40, 210, 3.2, 0, .8], [800, 300, 3.6, 1, .8], [420, 640, 2.4, 0, .7], [60, 760, 3, 1, .8], [830, 880, 3.2, 0, .8], [380, 1040, 3.6, 1, .8], [800, 1180, 2.6, 0, .8], [30, 1210, 3, 0, .8]].forEach(([x, y, s, h, al]) => {
+    g.save(); g.translate(x, y); g.scale(s, s); g.globalAlpha = al; g.lineWidth = 3.1 / s; g.stroke(CLOUD); if (h) { g.lineWidth = 1.9 / s; g.stroke(HATCH); } g.restore(); });
+  g.restore();
+}
 async function card(withImg) {
   try { await document.fonts.load('900 40px VoteRound'); } catch {}
   const F = '"VoteRound","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif', W = 1080, H = 1350, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
   const ps = picked(), main = ps.find(c => c.id === 'title') || ps.find(c => c.view !== 'mv' && c.view !== 'cover') || ps[0], ids = sel[main.id].slice(0, 3);
-  const ims = withImg ? await Promise.all(ids.map(i => loadImg(items[i]?.img))) : ids.map(() => null);
-  g.fillStyle = '#DCEEF9'; g.fillRect(0, 0, W, H); g.fillStyle = '#7EC2E8'; g.fillRect(0, 0, W, 176);
+  const [ims, faces] = withImg ? await Promise.all([Promise.all(ids.map(i => loadImg(items[i]?.img))), Promise.all(cloudImgs.map(loadImg))]) : [ids.map(() => null), [null, null, null]];
+  skyBg(g, W, H);
+  // 手繪雲臉：混在背景（卡片後面、從邊緣探出來）
+  [[faces[0], -50, 1000, 330], [faces[1], 800, 1040, 290], [faces[2], 560, 1190, 360], [faces[1], 880, 520, 200], [faces[0], -70, 560, 190]].forEach(([im, x, y, w]) => { if (im) { g.drawImage(im, x, y, w, w * im.height / im.width); } });
+  g.fillStyle = '#7EC2E8'; g.fillRect(0, 0, W, 176);
   g.fillStyle = '#1F3552'; g.font = `900 58px ${F}`; g.fillText(t('ttl'), 50, 86); g.font = `700 32px ${F}`; g.fillText(String(year) + (nick ? '　' + nick + t('nickSuf') : ''), 50, 138); sunC(g, W - 110, 88, 30);
-  g.fillStyle = '#fff'; g.beginPath(); g.roundRect(40, 206, 1000, 470, 36); g.fill();
+  const card1 = (x, y, w, h, r, a) => { g.save(); g.shadowColor = 'rgba(31,53,82,.16)'; g.shadowBlur = 24; g.shadowOffsetY = 8; g.fillStyle = `rgba(255,255,255,${a})`; g.beginPath(); g.roundRect(x, y, w, h, r); g.fill(); g.restore(); };
+  card1(40, 206, 1000, 470, 36, 1);
   g.font = `900 44px ${F}`; const lb = t('mine') + nm(main), lw = g.measureText(lb).width; g.fillStyle = 'rgba(245,224,80,.85)'; g.fillRect(74, 262, lw + 12, 20); g.fillStyle = '#1F3552'; g.fillText(lb, 80, 276);
   const sz = ids.length === 1 ? 300 : ids.length === 2 ? 290 : 270, gap = 36, x0 = 40 + (1000 - (sz * ids.length + gap * (ids.length - 1))) / 2;
   ids.forEach((id, k) => { const x = x0 + k * (sz + gap), y = 306; g.save(); g.beginPath(); g.roundRect(x, y, sz, sz, 28); g.clip();
     if (ims[k]) g.drawImage(ims[k], x, y, sz, sz); else { g.fillStyle = '#BFE3F5'; g.fillRect(x, y, sz, sz); } g.restore();
     g.fillStyle = '#1F3552'; g.font = `800 26px ${F}`; g.fillText(fit(g, ttlOf(id), sz), x, y + sz + 36); });
-  const rest = ps.filter(c => c !== main), cap = 10, colW = 470;
-  rest.slice(0, cap).forEach((c, k) => { const x = 50 + (k % 2) * 510, y = 740 + Math.floor(k / 2) * 104;
-    g.fillStyle = '#1F7FBF'; g.font = `900 28px ${F}`; g.fillText(fit(g, nm(c), colW), x, y);
-    g.fillStyle = '#1F3552'; g.font = `700 32px ${F}`; g.fillText(fit(g, ttlOf(sel[c.id][0]) + (sel[c.id].length > 1 ? t('etc')(sel[c.id].length) : ''), colW), x, y + 44); });
+  const rest = ps.filter(c => c !== main), cap = 8;
+  rest.slice(0, cap).forEach((c, k) => { const x = 40 + (k % 2) * 510, y = 710 + Math.floor(k / 2) * 136; card1(x, y, 490, 118, 24, .88);
+    g.fillStyle = '#1F7FBF'; g.font = `900 27px ${F}`; g.fillText(fit(g, nm(c), 430), x + 24, y + 42);
+    g.fillStyle = '#1F3552'; g.font = `700 32px ${F}`; g.fillText(fit(g, ttlOf(sel[c.id][0]) + (sel[c.id].length > 1 ? t('etc')(sel[c.id].length) : ''), 430), x + 24, y + 90); });
   if (rest.length > cap) { g.fillStyle = '#1F7FBF'; g.font = `800 30px ${F}`; g.fillText(t('more')(rest.length - cap), 50, 1262); }
   g.fillStyle = '#4A6178'; g.font = `700 28px ${F}`; g.fillText('#日向坂46歌曲總選舉　' + location.host + location.pathname, 50, H - 36); return cv;
 }
@@ -565,7 +578,7 @@ async function shareImg(dl) {
 function shared(h) {
   const d = decodeShare(h, cats, items), ps = cats.filter(c => d.picks[c.id]), no = c => tabs.findIndex(x => x.cats.includes(c)) + 1;
   head(); $('#bar').innerHTML = ''; document.title = t('shNick')(d.year, d.nick);
-  $('#app').innerHTML = `<div class="card banner"><span class="tag" style="margin:0">${t('shared')}</span><div class="nm"><span class="hl">${esc(d.nick || t('guest'))}</span> <small>${t('nickSuf')}</small></div><div class="tg2" style="margin-top:6px">${esc(d.year || year)} ${t('ttl')}</div>${SUN_B}</div>`
+  $('#app').innerHTML = `<div class="card banner"><span class="tag" style="margin:0">${t('shared')}</span><div class="nm"><span class="hl">${esc(d.nick || t('guest'))}</span> <small>${t('nickSuf')}</small></div><div class="tg2" style="margin-top:6px">${esc(d.year || year)} ${t('ttl')}</div></div>`
     + (ps.length ? ps.map(c => `<div class="sec" style="margin-top:22px"><span class="num">${pad(no(c))}</span><h2><span class="hl">${esc(nm(c))}</span></h2></div><div class="${gridCls(c)}">${d.picks[c.id].map(id => itemHTML(items[id], c, true)).join('')}</div>`).join('') : `<div class="card empty">${t('empty')}</div>`)
     + `<div class="card cta"><div style="font-size:20px;font-weight:900"><span class="hl">${t('ask')}</span></div><div class="tg2">${esc(t('askSub')(deadline ? fmtDeadline(deadline) : ''))}</div><a class="btn go" href="${esc(location.pathname)}">${t('me')}</a></div>`;
   bindCars();
