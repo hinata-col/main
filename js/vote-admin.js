@@ -24,7 +24,10 @@ async function panel(root, { songs, cats, year }) {
   const all = mk(), goog = mk(); let total = 0, totalG = 0;
   Object.values(votes).forEach(v => { total++; const g = v.via === 'google'; if (g) totalG++;
     Object.entries(v.choices || {}).forEach(([c, a]) => Object.values(a).forEach(id => { if (!all[c]) return; all[c][id] = (all[c][id] || 0) + 1; if (g) goog[c][id] = (goog[c][id] || 0) + 1; })); });
-  const result = { year, total, totalGoogle: totalG, tally: all, tallyGoogle: goog, settledAt: Date.now() };
+  // 候選名稱快照：之後改試算表，歷年結果頁也不會跟著變
+  const titles = {}; cats.forEach(c => Object.keys(all[c.id] || {}).forEach(id => { titles[id] = songs[id]?.title || id; }));
+  const catNames = Object.fromEntries(cats.map(c => [c.id, c.name]));
+  const result = { year, total, totalGoogle: totalG, tally: all, tallyGoogle: goog, titles, catNames, settledAt: Date.now() };
   await chartJs().catch(() => {});
   root.replaceChildren(el('h2', 'text-xl font-black', `管理後台｜${year}｜共 ${total} 人（Google ${totalG}／匿名 ${total - totalG}）`));
   const sel = el('select', 'min-h-[44px] rounded-xl border border-slate-300 px-3'); cats.forEach(c => sel.append(new Option(c.name.zh, c.id)));
