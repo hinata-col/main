@@ -354,8 +354,8 @@
                         <div id="oshi-current-list" class="space-y-2.5 mb-4 max-h-40 overflow-y-auto hide-scrollbar"></div>
 
                         <div class="flex gap-2 mb-3">
-                            <button onclick="setOshiMode('oshi')" id="oshi-mode-oshi" class="flex-1 text-[11px] font-black py-2.5 rounded-xl border-2 transition active:scale-95">☀️ 選本命（可複選）</button>
-                            <button onclick="setOshiMode('watch')" id="oshi-mode-watch" class="flex-1 text-[11px] font-black py-2.5 rounded-xl border-2 transition active:scale-95">♥ 在意成員（可複選）</button>
+                            <button onclick="setOshiMode('oshi')" id="oshi-mode-oshi" class="flex-1 text-[11px] font-black py-2.5 rounded-xl border-2 transition active:scale-95">♥ 選本命（可複選）</button>
+                            <button onclick="setOshiMode('watch')" id="oshi-mode-watch" class="flex-1 text-[11px] font-black py-2.5 rounded-xl border-2 transition active:scale-95">☀️ 在意成員（可複選）</button>
                         </div>
                         <p id="oshi-mode-hint" class="text-[10.5px] text-slate-400 mb-3"></p>
 
@@ -2020,9 +2020,9 @@
             const btnWatch = document.getElementById('oshi-mode-watch');
             if(!btnOshi) return;
             btnOshi.className = "flex-1 text-[11px] font-black py-2.5 rounded-xl border-2 transition active:scale-95 " +
-                (oshiMode === 'oshi' ? "bg-sky-400 border-sky-400 text-white" : "bg-white border-slate-100 text-slate-500");
+                (oshiMode === 'oshi' ? "bg-rose-400 border-rose-400 text-white" : "bg-white border-slate-100 text-slate-500");
             btnWatch.className = "flex-1 text-[11px] font-black py-2.5 rounded-xl border-2 transition active:scale-95 " +
-                (oshiMode === 'watch' ? "bg-rose-400 border-rose-400 text-white" : "bg-white border-slate-100 text-slate-500");
+                (oshiMode === 'watch' ? "bg-sky-400 border-sky-400 text-white" : "bg-white border-slate-100 text-slate-500");
             document.getElementById('oshi-mode-hint').innerText = oshiMode === 'oshi'
                 ? "點成員頭像加入／移除本命，可複選，各自記錄陪伴起始日"
                 : "點成員頭像加入／移除在意名單，可複選";
@@ -2038,8 +2038,8 @@
                     if(!m) return '';
                     const since = oshiState.map[id];
                     const avatarHtml = m.avatar
-                        ? `<img src="${m.avatar}" onerror="this.replaceWith(Object.assign(document.createElement('div'), {className:'w-11 h-11 rounded-full flex-shrink-0 ring-2 ring-sky-300 bg-sky-200 text-sky-700 font-black text-sm flex items-center justify-center', innerText:'${m.name.slice(0,1)}'}))" class="w-11 h-11 rounded-full object-cover object-[center_20%] flex-shrink-0 ring-2 ring-sky-300">`
-                        : `<div class="w-11 h-11 rounded-full flex-shrink-0 ring-2 ring-sky-300 bg-sky-200 text-sky-700 font-black text-sm flex items-center justify-center">${m.name.slice(0,1)}</div>`;
+                        ? `<img src="${m.avatar}" onerror="this.replaceWith(Object.assign(document.createElement('div'), {className:'w-11 h-11 rounded-full flex-shrink-0 ring-2 ring-rose-300 bg-sky-200 text-sky-700 font-black text-sm flex items-center justify-center', innerText:'${m.name.slice(0,1)}'}))" class="w-11 h-11 rounded-full object-cover object-[center_20%] flex-shrink-0 ring-2 ring-rose-300">`
+                        : `<div class="w-11 h-11 rounded-full flex-shrink-0 ring-2 ring-rose-300 bg-sky-200 text-sky-700 font-black text-sm flex items-center justify-center">${m.name.slice(0,1)}</div>`;
                     return `
                         <div class="flex items-center gap-3 bg-sky-50/60 border border-sky-100 rounded-2xl p-2.5">
                             ${avatarHtml}
@@ -2081,9 +2081,9 @@
                 const cardsHtml = membersInGen.map(m => {
                     const isOshi = Object.prototype.hasOwnProperty.call(oshiState.map, m.id);
                     const isWatch = !!oshiState.watch[m.id];
-                    const ringClass = isOshi ? "ring-4 ring-sky-300" : isWatch ? "ring-4 ring-rose-300" : "ring-2 ring-transparent";
-                    const badge = isOshi ? `<span class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-sky-400 text-white text-[9px] flex items-center justify-center">☀</span>`
-                        : isWatch ? `<span class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-rose-400 text-white text-[9px] flex items-center justify-center">♥</span>` : '';
+                    const ringClass = isOshi ? "ring-4 ring-rose-300" : isWatch ? "ring-4 ring-sky-300" : "ring-2 ring-transparent";
+                    const badge = isOshi ? `<span class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-rose-400 text-white text-[9px] flex items-center justify-center">♥</span>`
+                        : isWatch ? `<span class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-sky-400 text-white text-[9px] flex items-center justify-center">☀</span>` : '';
                     const memberAvatarHtml = m.avatar
                         ? `<img src="${m.avatar}" onerror="this.replaceWith(Object.assign(document.createElement('div'), {className:'w-14 h-14 rounded-full transition ${ringClass} bg-slate-200 text-slate-500 font-black text-base flex items-center justify-center', innerText:'${m.name.slice(0,1)}'}))" class="w-14 h-14 rounded-full object-cover object-[center_20%] transition ${ringClass} group-hover:-translate-y-0.5">`
                         : `<div class="w-14 h-14 rounded-full transition ${ringClass} bg-slate-200 text-slate-500 font-black text-base flex items-center justify-center">${m.name.slice(0,1)}</div>`;
@@ -2358,14 +2358,14 @@
             tape(panelX + panelW - 70, panelY + 6, 0.35, '#bfe3f7');
 
             let y = panelY + 80;
-            cardPill(ctx, '推しメン・本命', W / 2, y, 30, CARD_C.sky, '#ffffff');
+            cardPill(ctx, '♥ 推しメン・本命', W / 2, y, 30, CARD_C.pink, '#ffffff');
             y += 60;
 
             // ---- 本命 ----
             if (n === 0) {
-                ctx.save(); ctx.setLineDash([14, 12]); ctx.lineWidth = 6; ctx.strokeStyle = '#bfe3f7';
+                ctx.save(); ctx.setLineDash([14, 12]); ctx.lineWidth = 6; ctx.strokeStyle = '#ffc9d3';
                 ctx.beginPath(); ctx.arc(W / 2, y + oshiR + 20, oshiR, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
-                cardText(ctx, '?', W / 2, y + oshiR + 20, 110, '#bfe3f7');
+                cardText(ctx, '?', W / 2, y + oshiR + 20, 110, '#ffc9d3');
                 cardText(ctx, '尚未選擇本命', W / 2, y + oshiR * 2 + 90, 38, '#94a3b8');
                 y += oshiCellH;
             } else {
@@ -2378,8 +2378,8 @@
                         const cx = startX + cellW * i + cellW / 2;
                         const cy = y + oshiR * 1.12 + 10;
                         const tilt = n === 1 ? 0 : (idx % 2 === 0 ? -0.05 : 0.05);
-                        cardAvatar(ctx, oshiImgs[idx], m, cx, cy, oshiR, CARD_C.sky, tilt);
-                        cardSun(ctx, cx + oshiR * 0.78, cy - oshiR * 0.78, oshiR * 0.2, false);
+                        cardAvatar(ctx, oshiImgs[idx], m, cx, cy, oshiR, CARD_C.pink, tilt);
+                        cardHeart(ctx, cx + oshiR * 0.8, cy - oshiR * 0.8, oshiR * 0.17, CARD_C.pink);
                         const nameY = cy + oshiR * 1.12 + 50 * oshiScale;
                         cardText(ctx, m.name, cx, nameY, 50 * oshiScale, CARD_C.ink, 'center', cellW - 30);
                         const days = daysSinceOshi(oshiState.map[m.id]);
@@ -2401,7 +2401,7 @@
             y += 70;
 
             // ---- 在意成員 ----
-            cardPill(ctx, '♥ 気になる・在意的成員', W / 2, y, 28, CARD_C.pinkPale, CARD_C.pinkDeep);
+            cardPill(ctx, '気になる・在意的成員', W / 2, y, 28, CARD_C.skyPale, CARD_C.skyDeep);
             y += 70;
             if (wn === 0) {
                 cardText(ctx, '尚未選擇在意的成員', W / 2, y + 30, 34, '#94a3b8');
@@ -2413,8 +2413,8 @@
                         const idx = row * wPerRow + i;
                         const cx = startX + wCellW * i + wCellW / 2;
                         const cy = y + wR + 14;
-                        cardAvatar(ctx, watchImgs[idx], m, cx, cy, wR, CARD_C.pink, idx % 2 === 0 ? -0.06 : 0.06);
-                        cardHeart(ctx, cx + wR * 0.8, cy - wR * 0.8, 13, CARD_C.pink);
+                        cardAvatar(ctx, watchImgs[idx], m, cx, cy, wR, CARD_C.sky, idx % 2 === 0 ? -0.06 : 0.06);
+                        cardSun(ctx, cx + wR * 0.78, cy - wR * 0.78, 14, false);
                         cardText(ctx, m.name, cx, cy + wR + 44, 30, CARD_C.ink, 'center', wCellW - 10);
                     });
                     y += wCellH;
