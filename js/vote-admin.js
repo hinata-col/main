@@ -1,7 +1,7 @@
 // 管理後台：#admin。只有 Rules 裡 ADMIN_UID 那個 Google 帳號讀得到資料。
 import { getApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getAuth, signInWithPopup, GoogleAuthProvider } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { getDatabase, ref, get, set } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
+import { getDatabase, ref, get, set, update } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
 const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };
 const B = 'min-h-[44px] rounded-xl px-4 font-bold text-sm ';
 let chart;
@@ -47,4 +47,37 @@ async function panel(root, { songs, cats, year }) {
       try { await set(ref(db, `votes/${year}`), null); alert('已刪除'); panel(root, { songs, cats, year }); } catch { alert('失敗'); } }));
   root.append(row, cv, el('p', 'text-xs text-slate-500 mt-4', '匯出的 JSON 請放到 data/results/' + year + '.json，歷年結果頁會優先讀這份靜態檔。Google 登入者的 Email 在 Firebase Authentication 頁面，需另外清理。'));
   draw();
+  await reasonsPanel(root, { db, songs, cats, year });
+}
+// ---- 留言總表：每個獎項、每首歌，大家寫了什麼 ----
+async function reasonsPanel(root, { db, songs, cats, year }) {
+  const box = el('div', 'mt-8'); root.append(box, el('div', 'h-8'));
+  box.append(el('h3', 'text-lg font-black mb-2', '留言總表'));
+  let data;
+  try { data = (await get(ref(db, `songReasons/${year}`))).val() || {}; }
+  catch { box.append(el('p', 'text-sm text-rose-700', '讀不到留言。請確認已發布最新的 database.rules.json（songReasons 要允許管理員讀取）。')); return; }
+  const rows = []; // { cat, song, code, nick, text }
+  Object.entries(data).forEach(([song, byCode]) => Object.entries(byCode || {}).forEach(([code, r]) => Object.entries(r?.c || {}).forEach(([cat, text]) => rows.push({ cat, song, code, nick: r.n || '', text: String(text), only: Object.keys(r.c).length === 1, id: r }))));
+  const order = Object.fromEntries(cats.map((c, i) => [c.id, i])), cname = Object.fromEntries(cats.map(c => [c.id, c.name.zh]));
+  rows.sort((x, y) => (order[x.cat] ?? 99) - (order[y.cat] ?? 99) || (songs[x.song]?.title || x.song).localeCompare(songs[y.song]?.title || y.song, 'ja'));
+  const sel = el('select', 'min-h-[44px] rounded-xl border border-slate-300 px-3'); sel.append(new Option('全部獎項', ''));
+  cats.forEach(c => { const n = rows.filter(r => r.cat === c.id).length; if (n) sel.append(new Option(`${c.name.zh}（${n}）`, c.id)); });
+  const q = el('input', 'min-h-[44px] rounded-xl border border-slate-300 px-3 flex-1 min-w-[140px]'); q.placeholder = '搜尋歌名、暱稱、留言';
+  const bar = el('div', 'flex flex-wrap gap-2 mb-3'), list = el('div', 'space-y-4'), cnt = el('p', 'text-xs text-slate-500 mb-2');
+  const csv = el('button', B + 'bg-sky-100 text-sky-700', '匯出留言 CSV');
+  csv.onclick = () => { const e = s => '"' + String(s).replace(/"/g, '""') + '"', body = ['獎項,歌名,暱稱,留言,分享代碼', ...rows.map(r => [cname[r.cat] || r.cat, songs[r.song]?.title || r.song, r.nick, r.text, r.code].map(e).join(','))].join('\n');
+    const a = el('a'); a.href = URL.createObjectURL(new Blob(['\ufeff' + body], { type: 'text/csv' })); a.download = `reasons-${year}.csv`; a.click(); };
+  bar.append(sel, q, csv); box.append(bar, cnt, list);
+  const del = async r => { if (!confirm(`刪除「${r.nick || '匿名'}」在 ${songs[r.song]?.title || r.song} 的這則留言？`)) return;
+    const up = { [`shares/${year}/${r.code}/reasons/${r.cat}/${r.song}`]: null };
+    up[r.only ? `songReasons/${year}/${r.song}/${r.code}` : `songReasons/${year}/${r.song}/${r.code}/c/${r.cat}`] = null;
+    try { await update(ref(db), up); rows.splice(rows.indexOf(r), 1); show(); } catch { alert('刪除失敗'); } };
+  const show = () => { const k = q.value.trim().toLowerCase(), v = rows.filter(r => (!sel.value || r.cat === sel.value) && (!k || [songs[r.song]?.title || r.song, r.nick, r.text].some(s => s.toLowerCase().includes(k))));
+    cnt.textContent = `共 ${v.length} 則留言`; list.replaceChildren();
+    let lastCat = '', lastSong = '', blk;
+    v.forEach(r => { if (r.cat !== lastCat) { list.append(el('h4', 'font-black text-sky-700 mt-4', cname[r.cat] || r.cat)); lastCat = r.cat; lastSong = ''; }
+      if (r.song !== lastSong) { blk = el('div', 'bg-white rounded-xl p-3 shadow-sm'); blk.append(el('div', 'font-bold mb-1', songs[r.song]?.title || r.song)); list.append(blk); lastSong = r.song; }
+      const line = el('div', 'flex items-start gap-2 text-sm py-1 border-t border-slate-100'), t = el('div', 'flex-1'); t.append(el('b', 'text-sky-700', (r.nick || '匿名') + ' '), document.createTextNode('📢 ' + r.text));
+      const x = el('button', 'text-xs text-rose-600 px-2 py-1', '刪除'); x.onclick = () => del(r); line.append(t, x); blk.append(line); }); };
+  sel.onchange = show; q.oninput = show; show();
 }

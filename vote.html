@@ -405,7 +405,7 @@ function head() {
     <h1 class="ttl"><span class="hl"><span class="bl">${esc(t('ttl').split(' ')[0])}</span> ${esc(t('ttl').split(' ').slice(1).join(' '))}</span></h1>
     <div class="tg1">${t('tag1')}</div>
     <div class="chips2">${count != null && count >= minC ? `<span class="stk cnt" style="background:#fff">${SUN_SM}${esc(cnt)}</span>` : ''}${dl == null || cl ? '' : `<span class="days">${SUN_SM}${dl <= 1 ? t('dayLast') : t('days')(dl)}</span>`}</div></div>`;
-  $('#ft').innerHTML = `<div class="ft">${SUN_SM}<br>${t('footer')}　<a href="privacy.html">${t('cPriv')}</a></div>`;
+  $('#ft').innerHTML = `<div class="ft">${t('footer')}　<a href="privacy.html">${t('cPriv')}</a></div>`;
 }
 
 // ---------- 畫面：項目 ----------
