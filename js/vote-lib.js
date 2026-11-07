@@ -146,39 +146,17 @@ export function linkify(text) {
 }
 
 // ---------- 分享連結 ----------
-// 新格式 #v=2026~title:s2h.s1w~mv:m23&n=暱稱；編號壓成 36 進位（s089→s2h、mv-s075→m23、r07→r7）。
-// 舊格式 #r=… 仍可讀取，所以已經傳出去的連結不會失效。
-const pad = (n, w) => String(n).padStart(w, '0');
-function encId(id) {
-  let m;
-  if ((m = id.match(/^s(\d+)$/)) && pad(+m[1], 3) === m[1]) return 's' + (+m[1]).toString(36);
-  if ((m = id.match(/^mv-s(\d+)$/)) && pad(+m[1], 3) === m[1]) return 'm' + (+m[1]).toString(36);
-  if ((m = id.match(/^r(\d+)$/)) && pad(+m[1], 2) === m[1]) return 'r' + (+m[1]).toString(36);
-  return 'x' + id;
-}
-function decId(tok) {
-  const k = tok[0], v = tok.slice(1), n = parseInt(v, 36);
-  if (k === 'x') return v;
-  if (!/^[0-9a-z]+$/.test(v) || !Number.isFinite(n)) return '';
-  return k === 's' ? 's' + pad(n, 3) : k === 'm' ? 'mv-s' + pad(n, 3) : k === 'r' ? 'r' + pad(n, 2) : '';
-}
-
 export function encodeShare(base, year, cats, sel, nick) {
-  const body = cats.filter(c => sel[c.id]?.length).map(c => c.id + ':' + sel[c.id].map(encId).join('.')).join('~');
-  return base + '#v=' + year + '~' + body + (nick ? '&n=' + encodeURIComponent(nick) : '');
+  const body = cats.filter(c => sel[c.id]?.length).map(c => c.id + ':' + sel[c.id].join(',')).join(';');
+  return base + '#r=' + year + '~' + body + (nick ? '&n=' + encodeURIComponent(nick) : '');
 }
 
 export function decodeShare(hash, cats, items) {
-  hash = String(hash); const isNew = hash.startsWith('#v=');
-  const [main, nk] = hash.slice(3).split('&n='), parts = isNew ? main.split('~') : null, picks = {};
-  let year, body; if (isNew) { year = parts.shift(); } else [year, body] = main.split('~');
+  const [main, nk] = String(hash).slice(3).split('&n='), [year, body] = main.split('~'), picks = {};
   let nick = ''; try { nick = decodeURIComponent(nk || '').slice(0, 20); } catch {}
-  const pairs = isNew ? parts : (body || '').split(';');
-  pairs.forEach(p => {
+  (body || '').split(';').forEach(p => {
     const [c, v] = p.split(':');
-    if (!v || !cats.some(x => x.id === c)) return;
-    const raw = isNew ? v.split('.').map(decId) : v.split(',');
-    const ids = raw.filter(i => i && items[i] && !items[i].hidden).slice(0, MAX); if (ids.length) picks[c] = ids;
+    if (v && cats.some(x => x.id === c)) { const ids = v.split(',').filter(i => items[i] && !items[i].hidden).slice(0, MAX); if (ids.length) picks[c] = ids; }
   });
   return { year, nick, picks };
 }
