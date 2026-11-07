@@ -262,6 +262,21 @@ input,select{font:inherit}
 .ft .poka{display:block;margin:0 auto 6px}.ft .fcp{font-size:11px;font-weight:600;max-width:420px;margin:6px auto 0;padding:0 16px;line-height:1.7}
 .ft .igl{display:inline-flex;align-items:center;gap:4px}.ft .ig{flex:none}
 .ft .fl{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:0 6px;margin-top:6px}.ft .fl a{padding:8px 0}.ft .fcp{text-wrap:balance}
+.mdl.os{background:#fff;gap:0;max-width:520px}
+.oa{position:relative;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:#BFE3F5;color:#1F7FBF;font-weight:900;overflow:hidden;flex:none}
+.oa::before{content:attr(data-i)}.oa img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 20%}
+.oa44{width:44px;height:44px;font-size:17px}.oa56{width:56px;height:56px;font-size:20px}.oa.pk{box-shadow:0 0 0 3px #FF8FA3}.oa.sk{box-shadow:0 0 0 3px #7EC2E8}
+.osr{display:flex;align-items:center;gap:10px;background:#F2F8FD;border-radius:14px;padding:8px 10px;margin-top:8px}
+.osn{flex:1;min-width:0}.osn b{display:block;font-size:14px}.osd{display:inline-block;background:#FFF8CC;border-radius:999px;padding:1px 8px;font-size:12px;font-weight:800;margin-right:6px}
+.osdi{font:inherit;font-size:12px;border:1px solid #cfe3f1;border-radius:8px;padding:2px 4px;background:#fff;max-width:132px}
+.osx{width:30px;height:30px;border-radius:50%;background:#fff;color:#7C93A8;font-weight:900;flex:none}
+.osnone{border:2px dashed #cfe3f1;border-radius:14px;padding:14px;text-align:center;font-size:13px;color:var(--mut);margin-top:8px}
+.osg summary{display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding:10px 2px;font-weight:900;font-size:14px;list-style:none}.osg summary::-webkit-details-marker{display:none}
+.osg summary em{font-style:normal;background:#E3F1FA;color:#1F7FBF;border-radius:999px;padding:1px 8px;font-size:11px}
+.osgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px 6px;padding:2px 0 10px}
+.osm{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;font-weight:700;background:none;padding:0}.osm>span:last-child{text-align:center;line-height:1.25}
+.osm .bd{position:absolute;top:-2px;right:6px;width:18px;height:18px;border-radius:50%;color:#fff;font-style:normal;font-size:10px;display:flex;align-items:center;justify-content:center}.bd.pk{background:#FF8FA3}.bd.sk{background:#7EC2E8}
+.oscard{position:relative;margin-top:10px;border-radius:16px;overflow:hidden;min-height:120px}.oscard img{width:100%;display:block;border-radius:16px}.oscard #osld{padding:30px 0;text-align:center}
 </style>
 <!-- GA4：把首頁那段 gtag 程式碼原封不動貼在這裡（同一個 G-XXXX） -->
 </head>
@@ -277,6 +292,7 @@ input,select{font:inherit}
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getAuth, onAuthStateChanged, signInAnonymously, GoogleAuthProvider, signOut, linkWithPopup, signInWithCredential, deleteUser, reauthenticateWithPopup } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { getDatabase, ref, get, update, increment, serverTimestamp, query, limitToFirst } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
+import { OSHI_MEMBERS, OS_T, oshiHTML, makeOshiCard, cleanState, today } from './js/oshi.js';
 import { MAX, buildData, match, buildTabs, esc, linkify, encodeShare, decodeShare, daysLeft, fmtDeadline, ytUrl } from './js/vote-lib.js';
 
 // 投票專用 Firebase 專案（hinata-vote）
@@ -395,6 +411,7 @@ function menuHTML() {
   if (!menuOpen || !user) return '';
   const g = !user.isAnonymous;
   return `<div id="menu" class="menu" role="menu"><div class="pm"><span class="av" aria-hidden="true">${esc(g ? ([...(user.displayName || 'G')][0] || 'G').toUpperCase() : t('anonCh'))}</span><div><b>${esc(g ? (user.displayName || 'Google') : t('anonNow'))}</b><span>${g ? t('googleIn') : ''}</span></div></div>`
+    + (g ? `<button class="mi" role="menuitem" data-act="oshi">${OS_T[lang].title}</button>` : '')
     + (g ? `<button class="mi" role="menuitem" data-act="logout">${t('logout')}</button>` : `<button class="mi" role="menuitem" data-act="upgrade">${t('upgrade')}</button>`)
     + (hasVoted ? `<button class="mi" role="menuitem" data-act="delv">${t('delVote')}</button>` : '')
     + `<button class="mi dg" role="menuitem" data-act="dela">${t('delAcct')}</button></div>`;
@@ -550,7 +567,7 @@ async function delData(acct) {
     if (hasVoted) { const gone = shareCode ? { [`shares/${year}/${shareCode}`]: null, ...Object.fromEntries(pubIds.map(i => [`songReasons/${year}/${i}/${shareCode}`, null])) } : {};
       try { await update(ref(db), { ...gone, [`votes/${year}/${u.uid}`]: null, [`stats/${year}/count`]: increment(-1) }); if (count) count--; } catch { await update(ref(db), { ...gone, [`votes/${year}/${u.uid}`]: null }); } }
     hasVoted = false; sel = {}; resetShare(); localStorage.removeItem('hv_draft_' + year);
-    if (acct) { try { await deleteUser(u); } catch (e) { if (e.code === 'auth/requires-recent-login') { await reauthenticateWithPopup(u, new GoogleAuthProvider()); await deleteUser(auth.currentUser); } else throw e; } }
+    if (acct) { try { await update(ref(db), { [`users/${u.uid}`]: null }); } catch {} try { await deleteUser(u); } catch (e) { if (e.code === 'auth/requires-recent-login') { await reauthenticateWithPopup(u, new GoogleAuthProvider()); await deleteUser(auth.currentUser); } else throw e; } }
     toast(t('deleted')); render(); } catch (e) { console.error(e); toast(t('fail')); }
 }
 
@@ -719,6 +736,7 @@ document.addEventListener('click', async e => {
     else if (a === 'acct') { menuOpen = !menuOpen; head(); }
     else if (a === 'login' || a === 'upgrade') { menuOpen = false; try { if (await consent(true) && await upgrade()) { head(); if (hasVoted) bar(); } else head(); } catch { toast(t('fail')); } }
     else if (a === 'logout') { menuOpen = false; try { await signOut(auth); sel = {}; hasVoted = false; resetShare(); localStorage.removeItem('hv_draft_' + year); } catch { toast(t('fail')); } }
+    else if (a === 'oshi') openOshi();
     else if (a === 'delv' || a === 'dela') { menuOpen = false; head(); delData(a === 'dela'); }
   }
 });
@@ -728,6 +746,39 @@ document.addEventListener('input', e => { const id = e.target.id;
   else if (id === 'nick') { nick = e.target.value.trim(); try { localStorage.setItem('hv_nick', nick); } catch {} queuePreview(); } });
 document.addEventListener('change', e => { const id = e.target.id; if (id === 'fS') { fS = e.target.value; renderList(); } else if (id === 'fC') { fC = e.target.value; renderList(); } });
 document.addEventListener('keydown', e => { if (e.key !== 'Escape') return; if (!$('#modal').hidden) endModal(pend ? null : undefined); else if (menuOpen) { menuOpen = false; head(); } });
+// ---------- 本命設定（登入 Google 後，存在自己的帳號底下） ----------
+let os = null, osUid = '', osBlob = null, osRid = 0; const osUi = { tab: 'edit', mode: 'oshi', open: new Set([1]) };
+const osSave = async () => { try { await update(ref(db), { [`users/${user.uid}/oshi`]: (Object.keys(os.map).length || Object.keys(os.watch).length) ? os : null }); return true; } catch (e) { console.error(e); toast(OS_T[lang].saveErr); return false; } };
+function osDraw() { const box = $('#modal .mdl.os'); if (!box) return; const sc = box.scrollTop; osRid++; box.innerHTML = oshiHTML(os, osUi, lang, esc); box.scrollTop = sc; if (osUi.tab === 'card') osCard(); }
+async function openOshi() {
+  if (!user || user.isAnonymous) return; menuOpen = false; head();
+  const m = $('#modal'); m.className = 'ov'; m.hidden = false; m.innerHTML = `<div class="mdl os" role="dialog" aria-modal="true" aria-label="${esc(OS_T[lang].title)}" tabindex="-1"><div class="tg2">${t('whyLoad')}</div></div>`; m.firstElementChild.focus();
+  if (osUid !== user.uid) { try { os = cleanState((await get(ref(db, `users/${user.uid}/oshi`))).val()); osUid = user.uid; } catch (e) { console.error(e); os = null; osUid = ''; } }
+  if (!os) { endModal(); return toast(t('fail')); }
+  osUi.tab = 'edit'; osDraw();
+}
+async function osCard() {
+  const my = osRid, T = OS_T[lang];
+  try { const [faces, poka] = await Promise.all([Promise.all(cloudImgs.map(loadImg)), loadImg(new URL('img/icons/favicon-192.png', location.href).href)]);
+    const cv = await makeOshiCard({ lang, st: os, nick, skyBg, faces, poka, host: location.host + location.pathname });
+    const blob = await new Promise(r => cv.toBlob(r)); if (!blob) throw new Error('blob'); if (my !== osRid || !$('#osimg')) return;
+    osBlob = blob; $('#osimg').src = URL.createObjectURL(blob); $('#osimg').hidden = false; $('#osld').hidden = true; $('#ossv').disabled = false;
+  } catch (e) { console.error(e); if (my === osRid && $('#osld')) $('#osld').textContent = T.fail; }
+}
+async function osShare() {
+  if (!osBlob) return; const f = new File([osBlob], 'my-hinata-oshi.png', { type: 'image/png' });
+  if (navigator.canShare?.({ files: [f] })) { try { await navigator.share({ files: [f] }); return; } catch (e) { if (e.name === 'AbortError') return; } }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(osBlob); a.download = f.name; a.click(); toast(OS_T[lang].saved);
+}
+$('#modal').addEventListener('click', e => { const b = e.target.closest('[data-os]'); if (!b || !os) return; const [a, v] = b.dataset.os.split(':');
+  if (a === 'save') return osShare();
+  const box = b.closest('.mdl'); box.querySelectorAll('details[data-gen]').forEach(d => d.open ? osUi.open.add(+d.dataset.gen) : osUi.open.delete(+d.dataset.gen));
+  if (a === 'tab') osUi.tab = v; else if (a === 'mode') osUi.mode = v;
+  else if (a === 'tog') { if (osUi.mode === 'oshi') { if (v in os.map) delete os.map[v]; else os.map[v] = today(); } else if (os.watch[v]) delete os.watch[v]; else os.watch[v] = true; osSave(); }
+  else if (a === 'rm') { delete os.map[v]; osSave(); }
+  osDraw(); });
+$('#modal').addEventListener('change', e => { const id = e.target.dataset?.osd; if (!id || !os) return; const v = e.target.value;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(v)) { os.map[id] = v > today() ? today() : v; osSave(); } osDraw(); });
 $('#modal').addEventListener('click', async e => { const k = e.target.closest('[data-m]')?.dataset.m;
   if (pend) { if (k === 'cg' || k === 'ca') { if (!$('#cchk').checked) return toast(t('cNeed')); localStorage.setItem('hv_consent', '1'); return endModal(k === 'cg' ? 'google' : 'anon'); }
     if (k === 'cx' || e.target.id === 'modal') return endModal(null); return; }
