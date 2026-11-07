@@ -156,8 +156,8 @@ input,select{font:inherit}
 .nav.nx{right:8px}
 @media (hover:hover){.carw:hover .nav{display:flex}}
 .carw:focus-within .nav{display:flex}
-.ths{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;padding:6px 0}
-.th{position:relative;width:54px;height:54px;border-radius:12px;overflow:hidden;padding:0;box-shadow:inset 0 0 0 1.5px rgba(31,53,82,.12);background:linear-gradient(135deg,#BFE3F5,#FAF5C8)}
+.ths{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;padding:6px 0}
+.th{position:relative;width:52px;height:52px;border-radius:12px;overflow:hidden;padding:0;box-shadow:inset 0 0 0 1.5px rgba(31,53,82,.12);background:linear-gradient(135deg,#BFE3F5,#FAF5C8)}
 .th img{width:100%;height:100%;object-fit:cover;display:block}
 .th.act{box-shadow:0 0 0 3px #fff,0 0 0 5.5px var(--ink)}
 .th .lb{position:absolute;left:3px;bottom:3px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:#fff;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center}
@@ -435,7 +435,7 @@ function coverHTML(s, c, ro) {
   const slides = n ? im.map((x, i) => `<div class="sl"><img src="${esc(x.url)}" alt="${esc(s.title)} ${esc(x.label)}" loading="${i ? 'lazy' : 'eager'}" onerror="this.remove()">${x.label ? `<span class="lb2">${esc(x.label)}</span>` : ''}</div>`).join('') : `<div class="sl ph">${t('cover')}</div>`;
   return `<div class="cvc${on ? ' on' : ''}">${on ? stamp(s.id, c) : ''}<div class="carw"><div class="car" data-id="${esc(s.id)}" tabindex="0" role="group" aria-label="${esc(s.title)}">${slides}</div>
     ${n > 1 ? `<span class="ctr" aria-hidden="true">1 / ${n}</span><button class="nav pv" data-car="-1" data-for="${esc(s.id)}" aria-label="${t('navP')}">${ic('<path d="M15 5l-7 7 7 7"/>', { s: 18, w: 3 })}</button><button class="nav nx" data-car="1" data-for="${esc(s.id)}" aria-label="${t('navN')}">${ic('<path d="M9 5l7 7-7 7"/>', { s: 18, w: 3 })}</button>` : ''}</div>
-    ${n > 1 ? `<div class="ths">${im.map((x, i) => `<button class="th${i ? '' : ' act'}" data-slide="${i}" data-for="${esc(s.id)}" aria-label="${esc(x.label)}">${imgTag(x.url)}<span class="lb">${esc(x.short)}</span></button>`).join('')}</div>` : ''}
+    ${n > 1 ? `<div class="ths">${im.map((x, i) => `<button class="th${i ? '' : ' act'}" data-slide="${i}" data-for="${esc(s.id)}" aria-label="${esc(x.label)}">${imgTag(x.url)}</button>`).join('')}</div>` : ''}
     <div class="perf"></div><div class="cvf"><div><span class="tag" style="margin:0">${t(s.rtype === 'album' ? 'album' : 'single')}</span><div class="t">${esc(s.title)}${noteBtn(s)}</div></div>${ro ? '' : heartBtn(s, c)}</div></div>`;
 }
 const itemHTML = (s, c, ro) => s.kind === 'mv' ? mvHTML(s, c, ro) : s.kind === 'release' ? coverHTML(s, c, ro) : songHTML(s, c, ro);
