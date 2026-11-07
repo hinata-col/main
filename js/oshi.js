@@ -106,8 +106,8 @@ export async function makeOshiCard(o) {
   const wr = 46, wPer = 7, wCell = wr * 2 + 56, avail = 1190 - 206 - 22 - p1, wRows = Math.max(1, Math.min(3, Math.floor((avail - 90) / wCell))), wShow = wIds.slice(0, wRows * wPer);
   const wRowsN = Math.max(1, Math.ceil(wShow.length / wPer)), p2 = 76 + (wShow.length ? wRowsN * wCell : 56) + 12;
   const [oi, wi] = await Promise.all([Promise.all(oShow.map(id => loadAvatar(byId[id].avatar))), Promise.all(wShow.map(id => loadAvatar(byId[id].avatar)))]);
-  skyBg(g, W, H, faces);
-  g.fillStyle = '#7EC2E8'; g.fillRect(0, 0, W, 176);
+  skyBg(g, W, H, faces, ['#D3EBFA', '#E6F4FC']);
+  g.fillStyle = '#A9D8F2'; g.fillRect(0, 0, W, 176);
   g.fillStyle = '#1F3552'; g.textBaseline = 'alphabetic'; g.textAlign = 'left'; g.font = `900 58px ${F}`; g.fillText(T.cardTtl, 50, 86);
   g.font = `700 32px ${F}`; g.fillText(nick ? nick + T.cardSub : String(new Date().getFullYear()), 50, 138);
   if (poka) g.drawImage(poka, W - 170, 22, 132, 132 * poka.height / poka.width);

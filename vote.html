@@ -277,6 +277,7 @@ input,select{font:inherit}
 .osm{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;font-weight:700;background:none;padding:0}.osm>span:last-child{text-align:center;line-height:1.25}
 .osm .bd{position:absolute;top:-2px;right:6px;width:18px;height:18px;border-radius:50%;color:#fff;font-style:normal;font-size:10px;display:flex;align-items:center;justify-content:center}.bd.pk{background:#FF8FA3}.bd.sk{background:#7EC2E8}
 .oscard{position:relative;margin-top:10px;border-radius:16px;overflow:hidden;min-height:120px}.oscard img{width:100%;display:block;border-radius:16px}.oscard #osld{padding:30px 0;text-align:center}
+.mdl.os>*{flex-shrink:0}
 </style>
 <!-- GA4：把首頁那段 gtag 程式碼原封不動貼在這裡（同一個 G-XXXX） -->
 </head>
@@ -632,9 +633,9 @@ const fit = (g, s, w) => { while (g.measureText(s).width > w && s.length > 3) s 
 const CLOUD_D = 'M24 60a12 12 0 0 1-2-23a18 18 0 0 1 34-6a14 14 0 0 1 26 8a11 11 0 0 1 4 21z', HATCH_D = 'M34 56l12-16M44 56l14-20M54 56l14-22M64 56l14-20M74 56l8-12';
 const cloudImgs = ['cloud1', 'cloud2', 'cloud3'].map(n => new URL(`img/clouds/${n}.png`, location.href).href);
 // 底部一排雲：一般雲與笑臉雲交錯，大小接近、間距平均，不壓到任何文字
-function skyBg(g, W, H, faces) {
+function skyBg(g, W, H, faces, pal = ['#A9DAF3', '#C4E6F8']) {
   const CLOUD = new Path2D(CLOUD_D), HATCH = new Path2D(HATCH_D), gr = g.createLinearGradient(0, 0, 0, H);
-  gr.addColorStop(0, '#A9DAF3'); gr.addColorStop(1, '#C4E6F8'); g.fillStyle = gr; g.fillRect(0, 0, W, H);
+  gr.addColorStop(0, pal[0]); gr.addColorStop(1, pal[1]); g.fillStyle = gr; g.fillRect(0, 0, W, H);
   g.save(); g.strokeStyle = '#fff'; g.lineWidth = 3.2; g.lineJoin = g.lineCap = 'round'; g.globalAlpha = .9;
   [[40, 1230, 1.4, 1], [310, 1236, 1.2, 0], [600, 1228, 1.4, 1], [860, 1234, 1.2, 0]].forEach(([x, y, s, h]) => {
     g.save(); g.translate(x - 24 * s, y - 25 * s); g.scale(s, s); g.lineWidth = 3.2 / s; g.stroke(CLOUD); if (h) { g.lineWidth = 2 / s; g.stroke(HATCH); } g.restore(); });
