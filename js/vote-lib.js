@@ -64,7 +64,10 @@ export function normalizeSong(o, base) {
   if (!o.id || !o.title) return null;
   const tags = [];
   if (truthy(o.is_title)) tags.push('title');
-  if (truthy(o.is_cw)) tags.push('cw');
+  // C/W：只認「共通」（每張 CD 都有）與「通常盤」（只收錄在通常盤）；「待分類」或其他文字都不會進入投票
+  const cw = String(o.is_cw || '').trim();
+  if (/^通常盤?$/.test(cw)) tags.push('cw', 'cwn'); else if (/^(共通|common)$/i.test(cw)) tags.push('cw', 'cwc');
+  if (truthy(o.is_live)) tags.push('live');
   if (truthy(o.is_unit)) tags.push('unit');
   tags.push(...genTags(o.gen));
   return { kind: 'song', id: o.id, title: o.title, single: o.single || '', era: (o.era || '').toLowerCase(), tags,
@@ -82,7 +85,8 @@ export function normalizeMV(o, items, base) {
     era: song?.era || '', tags: [], note: o.note || '', hidden: !!song?.hidden };
 }
 
-export const SLIDES = [['jacketA', 'Type A', 'A'], ['jacketB', 'Type B', 'B'], ['jacketC', 'Type C', 'C'], ['jacketD', 'Type D', 'D'], ['jacketN', '通常盤', '通常'], ['jacketX', '其他', '其他']];
+export const SLIDES = [['jacketA', 'Type A', 'A'], ['jacketB', 'Type B', 'B'], ['jacketC', 'Type C', 'C'], ['jacketD', 'Type D', 'D'], ['jacketN', '通常盤', '通常'], ['jacketX', '其他', '其他'],
+  ['backA', 'Type A 封底', 'A底'], ['backB', 'Type B 封底', 'B底'], ['backC', 'Type C 封底', 'C底'], ['backD', 'Type D 封底', 'D底'], ['backN', '通常盤 封底', '通常底']];
 
 export function normalizeRelease(o, items, base) {
   if (!o.id || !o.title) return null;
@@ -146,17 +150,71 @@ export function linkify(text) {
 }
 
 // ---------- 分享連結 ----------
+// 新格式 #v=2026~title:s2h.s1w~mv:m23&n=暱稱；編號壓成 36 進位（s089→s2h、mv-s075→m23、r07→r7）。
+// 舊格式 #r=… 仍可讀取，所以已經傳出去的連結不會失效。
+const pad = (n, w) => String(n).padStart(w, '0');
+function encId(id) {
+  let m;
+  if ((m = id.match(/^s(\d+)$/)) && pad(+m[1], 3) === m[1]) return 's' + (+m[1]).toString(36);
+  if ((m = id.match(/^mv-s(\d+)$/)) && pad(+m[1], 3) === m[1]) return 'm' + (+m[1]).toString(36);
+  if ((m = id.match(/^r(\d+)$/)) && pad(+m[1], 2) === m[1]) return 'r' + (+m[1]).toString(36);
+  return 'x' + id;
+}
+function decId(tok) {
+  const k = tok[0], v = tok.slice(1), n = parseInt(v, 36);
+  if (k === 'x') return v;
+  if (!/^[0-9a-z]+$/.test(v) || !Number.isFinite(n)) return '';
+  return k === 's' ? 's' + pad(n, 3) : k === 'm' ? 'mv-s' + pad(n, 3) : k === 'r' ? 'r' + pad(n, 2) : '';
+}
+
+// 最短格式 #w=2026~<獎項序號><每個編號2碼>~…：獎項用在清單中的順序（0-9a-z），編號依獎項類型還原（歌曲 s###／MV mv-s###／封面 r##）。
+// 所以 editions.json 的獎項順序不要調整，新獎項只能加在最後面。任何一個編號不符合規則時，自動改用 #v 格式。
+const KIND = { mv: ['mv-s', 3], release: ['r', 2] };
+const kindOf = c => KIND[c.filter?.kind] || ['s', 3];
+function compactBody(cats, sel) {
+  const out = [];
+  for (let i = 0; i < cats.length; i++) {
+    const ids = sel[cats[i].id]; if (!ids?.length) continue;
+    if (i > 35) return null;
+    const [pre, w] = kindOf(cats[i]); let s = i.toString(36);
+    for (const id of ids) {
+      if (!id.startsWith(pre)) return null; const d = id.slice(pre.length), n = +d;
+      if (!/^\d+$/.test(d) || pad(n, w) !== d || n > 1295) return null; s += n.toString(36).padStart(2, '0');
+    }
+    out.push(s);
+  }
+  return out.join('~');
+}
 export function encodeShare(base, year, cats, sel, nick) {
-  const body = cats.filter(c => sel[c.id]?.length).map(c => c.id + ':' + sel[c.id].join(',')).join(';');
-  return base + '#r=' + year + '~' + body + (nick ? '&n=' + encodeURIComponent(nick) : '');
+  const cb = compactBody(cats, sel), nk = nick ? '&n=' + encodeURIComponent(nick) : '';
+  if (cb != null) return base + '#w=' + year + '~' + cb + nk;
+  const body = cats.filter(c => sel[c.id]?.length).map(c => c.id + ':' + sel[c.id].map(encId).join('.')).join('~');
+  return base + '#v=' + year + '~' + body + (nick ? '&n=' + encodeURIComponent(nick) : '');
 }
 
 export function decodeShare(hash, cats, items) {
-  const [main, nk] = String(hash).slice(3).split('&n='), [year, body] = main.split('~'), picks = {};
+  hash = String(hash);
+  if (hash.startsWith('#w=')) {
+    const [main, nk] = hash.slice(3).split('&n='), parts = main.split('~'), year = parts.shift(), picks = {};
+    let nick = ''; try { nick = decodeURIComponent(nk || '').slice(0, 20); } catch {}
+    parts.forEach(p => {
+      const c = cats[parseInt(p[0], 36)]; if (!c || !/^[0-9a-z]+$/.test(p)) return;
+      const [pre, w] = kindOf(c), ids = [];
+      for (let k = 1; k + 1 < p.length; k += 2) ids.push(pre + pad(parseInt(p.slice(k, k + 2), 36), w));
+      const ok = ids.filter(i => items[i] && !items[i].hidden).slice(0, MAX); if (ok.length) picks[c.id] = ok;
+    });
+    return { year, nick, picks };
+  }
+  const isNew = hash.startsWith('#v=');
+  const [main, nk] = hash.slice(3).split('&n='), parts = isNew ? main.split('~') : null, picks = {};
+  let year, body; if (isNew) { year = parts.shift(); } else [year, body] = main.split('~');
   let nick = ''; try { nick = decodeURIComponent(nk || '').slice(0, 20); } catch {}
-  (body || '').split(';').forEach(p => {
+  const pairs = isNew ? parts : (body || '').split(';');
+  pairs.forEach(p => {
     const [c, v] = p.split(':');
-    if (v && cats.some(x => x.id === c)) { const ids = v.split(',').filter(i => items[i] && !items[i].hidden).slice(0, MAX); if (ids.length) picks[c] = ids; }
+    if (!v || !cats.some(x => x.id === c)) return;
+    const raw = isNew ? v.split('.').map(decId) : v.split(',');
+    const ids = raw.filter(i => i && items[i] && !items[i].hidden).slice(0, MAX); if (ids.length) picks[c] = ids;
   });
   return { year, nick, picks };
 }
