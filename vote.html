@@ -751,12 +751,17 @@ document.addEventListener('keydown', e => { if (e.key !== 'Escape') return; if (
 let os = null, osUid = '', osBlob = null, osRid = 0; const osUi = { tab: 'edit', mode: 'oshi', open: new Set([1]) };
 const osSave = async () => { try { await update(ref(db), { [`users/${user.uid}/oshi`]: (Object.keys(os.map).length || Object.keys(os.watch).length) ? os : null }); return true; } catch (e) { console.error(e); toast(OS_T[lang].saveErr); return false; } };
 function osDraw() { const box = $('#modal .mdl.os'); if (!box) return; const sc = box.scrollTop; osRid++; box.innerHTML = oshiHTML(os, osUi, lang, esc); box.scrollTop = sc; if (osUi.tab === 'card') osCard(); }
+// 成員頭像：主站有自動同步的最新照片（hinata-collection 的 members/{id}/avatar），讀得到就用，讀不到沿用名單內建網址
+let photosP = null;
+const MAIN_DB = 'https://hinata-collection-default-rtdb.asia-southeast1.firebasedatabase.app';
+const osPhotos = () => photosP ||= Promise.race([fetch(MAIN_DB + '/members.json').then(r => r.ok ? r.json() : null), new Promise(r => setTimeout(() => r(null), 4000))])
+  .then(o => { if (o && typeof o === 'object') OSHI_MEMBERS.forEach(m => { const u = o[m.id]?.avatar; if (typeof u === 'string' && /^https:\/\//.test(u)) m.avatar = u; }); }).catch(() => {});
 async function openOshi() {
   if (!user || user.isAnonymous) return; menuOpen = false; head();
   const m = $('#modal'); m.className = 'ov'; m.hidden = false; m.innerHTML = `<div class="mdl os" role="dialog" aria-modal="true" aria-label="${esc(OS_T[lang].title)}" tabindex="-1"><div class="tg2">${t('whyLoad')}</div></div>`; m.firstElementChild.focus();
   if (osUid !== user.uid) { try { os = cleanState((await get(ref(db, `users/${user.uid}/oshi`))).val()); osUid = user.uid; } catch (e) { console.error(e); os = null; osUid = ''; } }
   if (!os) { endModal(); return toast(t('fail')); }
-  osUi.tab = 'edit'; osDraw();
+  await osPhotos(); osUi.tab = 'edit'; osDraw();
 }
 async function osCard() {
   const my = osRid, T = OS_T[lang];

@@ -102,9 +102,14 @@ export async function makeOshiCard(o) {
   const oIds = sortIds(Object.keys(st.map)), wIds = sortIds(Object.keys(st.watch));
   const OC = 10, oShow = oIds.slice(0, OC);
   const L = n => n <= 1 ? [1, 170] : n === 2 ? [2, 140] : n === 3 ? [3, 108] : n === 4 ? [4, 84] : n <= 6 ? [3, 84] : n <= 8 ? [4, 72] : [5, 62];
-  const [per, r] = L(oShow.length), rows = Math.max(1, Math.ceil(oShow.length / per)), cellH = Math.round(r * 2.63 + 104), p1 = 76 + (oShow.length ? rows * cellH : 70) + 14;
-  const wr = 46, wPer = 7, wCell = wr * 2 + 56, avail = 1190 - 206 - 22 - p1, wRows = Math.max(1, Math.min(3, Math.floor((avail - 90) / wCell))), wShow = wIds.slice(0, wRows * wPer);
-  const wRowsN = Math.max(1, Math.ceil(wShow.length / wPer)), p2 = 76 + (wShow.length ? wRowsN * wCell : 56) + 12;
+  const [per, rBase] = L(oShow.length), rows = Math.max(1, Math.ceil(oShow.length / per)), wn0 = wIds.length;
+  const wrBase = wn0 <= 4 ? 78 : wn0 <= 12 ? 62 : 52, wPer = wn0 <= 4 ? 4 : wn0 <= 12 ? 6 : 7, wMax = Math.min(wn0, 21), wNeed = Math.max(1, Math.ceil(wMax / wPer));
+  let r, cellH, p1, wr, wCell, p2, wRows;
+  for (const s of [1, .92, .84, .76, .68, .6, .5]) { // 內容多時整體縮小，確保放得進畫面
+    r = Math.round(rBase * s); cellH = Math.round(r * 2.63 + 118); p1 = 76 + (oShow.length ? rows * cellH : 70) + 14;
+    wr = Math.round(wrBase * s); wCell = Math.round(wr * 2.2 + 62); p2 = 76 + (wn0 ? wNeed * wCell : 56) + 12;
+    wRows = wNeed; if (206 + p1 + 22 + p2 <= 1190) break; }
+  const wShow = wIds.slice(0, wRows * wPer), wRowsN = Math.max(1, Math.ceil(wShow.length / wPer));
   const [oi, wi] = await Promise.all([Promise.all(oShow.map(id => loadAvatar(byId[id].avatar))), Promise.all(wShow.map(id => loadAvatar(byId[id].avatar)))]);
   skyBg(g, W, H, faces, ['#D3EBFA', '#E6F4FC']);
   g.fillStyle = '#A9D8F2'; g.fillRect(0, 0, W, 176);
@@ -129,14 +134,14 @@ export async function makeOshiCard(o) {
   if (!oShow.length) { g.fillStyle = '#7C93A8'; g.textAlign = 'center'; g.font = `800 34px ${F}`; g.fillText(T.cNone, W / 2, 206 + 76 + 52); g.textAlign = 'left'; }
   oShow.forEach((id, k) => { const m = byId[id], row = Math.floor(k / per), inRow = Math.min(per, oShow.length - row * per), cw = 1000 / per, x0 = 40 + (1000 - inRow * cw) / 2, cx = x0 + (k % per) * cw + cw / 2, cy = 206 + 76 + row * cellH + r * 1.1 + 6;
     face(oi[k], m, cx, cy, r, '#FF8FA3', ((k % 3) - 1) * .035);
-    ctext(m.name, cx, cy + r * 1.1 + 52, cw - 24, Math.round(r * .3 + 10), 900, '#1F3552');
-    pill(T.days(daysSince(st.map[id])), cx, cy + r * 1.1 + 52 + Math.round(r * .26 + 22), Math.round(r * .2 + 12)); });
+    ctext(m.name, cx, cy + r * 1.1 + 68, cw - 24, Math.round(r * .3 + 10), 900, '#1F3552');
+    pill(T.days(daysSince(st.map[id])), cx, cy + r * 1.1 + 68 + Math.round(r * .26 + 22), Math.round(r * .2 + 12)); });
   if (oIds.length > OC) { g.fillStyle = '#1F7FBF'; g.font = `800 28px ${F}`; g.textAlign = 'right'; g.fillText(T.more(oIds.length - OC), 1000, 206 + 70); g.textAlign = 'left'; }
   // 在意成員
   const y2 = 206 + p1 + 22; panel(y2, p2); label('☀ ' + T.cWatch, y2);
   if (!wShow.length) { g.fillStyle = '#7C93A8'; g.textAlign = 'center'; g.font = `800 30px ${F}`; g.fillText(T.cNoneW, W / 2, y2 + 76 + 40); g.textAlign = 'left'; }
   wShow.forEach((id, k) => { const m = byId[id], row = Math.floor(k / wPer), inRow = Math.min(wPer, wShow.length - row * wPer), cw = 1000 / wPer, x0 = 40 + (1000 - inRow * cw) / 2, cx = x0 + (k % wPer) * cw + cw / 2, cy = y2 + 76 + row * wCell + wr * 1.1 + 14;
-    face(wi[k], m, cx, cy, wr, '#7EC2E8', 0); ctext(m.name, cx, cy + wr * 1.1 + 30, cw - 8, 22, 800, '#1F3552'); });
+    face(wi[k], m, cx, cy, wr, '#7EC2E8', 0); ctext(m.name, cx, cy + wr * 1.1 + 32, cw - 8, Math.round(wr * .4 + 4), 800, '#1F3552'); });
   if (wIds.length > wShow.length) { g.fillStyle = '#1F7FBF'; g.font = `800 28px ${F}`; g.textAlign = 'right'; g.fillText(T.more(wIds.length - wShow.length), 1000, y2 + 70); g.textAlign = 'left'; }
   g.fillStyle = '#4A6178'; g.font = `700 28px ${F}`; g.fillText(T.tag + '　' + host, 50, H - 30);
   return cv;
