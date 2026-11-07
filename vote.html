@@ -361,7 +361,9 @@ const curTab = () => tabs[cur] || tabs[0];
 const curCat = () => { const tb = curTab(); return tb.cats.find(c => c.id === subOf[tb.id]) || tb.cats[0]; };
 const has = (c, id) => !!sel[c.id]?.includes(id);
 const nOf = c => sel[c.id]?.length || 0;
-const picked = () => cats.filter(c => nOf(c));
+// 顯示順序：同一個大獎項的小分類排在一起（資料順序不動，連結編碼才不會變）
+const dcats = () => { const o = [], seen = new Set(); cats.forEach(c => { if (seen.has(c.id)) return; (c.group ? cats.filter(x => x.group === c.group) : [c]).forEach(x => { seen.add(x.id); o.push(x); }); }); return o; };
+const picked = () => dcats().filter(c => nOf(c));
 const tabsDone = () => tabs.filter(tb => tb.cats.some(nOf)).length;
 const cand = c => all.filter(s => match(c, s));
 const ttlOf = id => items[id]?.title || id;
@@ -653,7 +655,7 @@ async function shareImg(dl) {
 
 // ---------- 分享連結（唯讀）與歷年結果 ----------
 function renderShared(d) {
-  const ps = cats.filter(c => d.picks[c.id]), no = c => tabs.findIndex(x => x.cats.includes(c)) + 1;
+  const ps = dcats().filter(c => d.picks[c.id]), no = c => tabs.findIndex(x => x.cats.includes(c)) + 1;
   head(); $('#bar').innerHTML = ''; document.title = t('shNick')(d.year, d.nick);
   $('#app').innerHTML = `<div class="card banner"><span class="tag" style="margin:0">${t('shared')}</span><div class="nm"><span class="hl">${esc(d.nick || t('guest'))}</span> <small>${t('nickSuf')}</small></div><div class="tg2" style="margin-top:6px">${esc(d.year || year)} ${t('ttl')}</div></div>`
     + (ps.length ? ps.map(c => `<div class="sec" style="margin-top:22px"><span class="num">${pad(no(c))}</span><h2><span class="hl">${esc(nm(c))}</span></h2></div><div class="${gridCls(c)}">${d.picks[c.id].map(id => { const w = d.reasons?.[c.id]?.[id]; return `<div class="itw">${itemHTML(items[id], c, true)}${w ? `<div class="why"><b>${t('whyTag')}</b>${esc(w)}</div>` : ''}</div>`; }).join('')}</div>`).join('') : `<div class="card empty">${t('empty')}</div>`)
@@ -679,7 +681,7 @@ async function results(y) {
       <select id="ry" class="field" style="width:auto">${Object.keys(E.editions).map(k => `<option ${k == y ? 'selected' : ''}>${k}</option>`).join('')}</select>
       <button class="btn sg${g ? '' : ' on'}" style="background:#fff;padding:0 14px;border-radius:12px" data-g="0">${t('resAll')}</button><button class="btn sg${g ? ' on' : ''}" style="background:#fff;padding:0 14px;border-radius:12px" data-g="1">${t('resG')}</button></div>` +
       (!d ? `<div class="card pad" style="margin-top:14px;font-weight:800">${t('resNone')}</div>` :
-        `<p class="tg2" style="margin:12px 0">${t('ppl')(n ?? 0)}</p>` + (d.catNames ? Object.keys(d.catNames) : cats.map(c => c.id)).map(id => { const c = cats.find(x => x.id === id), cn = d.catNames?.[id]?.[lang] || (c ? nm(c) : id), e = Object.entries(tl[id] || {}).sort((a, b) => b[1] - a[1]).slice(0, 10), mx = e[0]?.[1] || 1;
+        `<p class="tg2" style="margin:12px 0">${t('ppl')(n ?? 0)}</p>` + (d.catNames ? Object.keys(d.catNames) : dcats().map(c => c.id)).map(id => { const c = cats.find(x => x.id === id), cn = d.catNames?.[id]?.[lang] || (c ? nm(c) : id), e = Object.entries(tl[id] || {}).sort((a, b) => b[1] - a[1]).slice(0, 10), mx = e[0]?.[1] || 1;
           return e.length ? `<h3 style="font-size:19px;font-weight:900;margin:22px 0 8px"><span class="hl">${esc(cn)}</span></h3>` + e.map(([i, v], k) => `<div class="rk"><div class="bar2" style="width:${v / mx * 100}%"></div><div class="rw"><b class="no">${k + 1}</b><span class="ti">${esc(d.titles?.[i] || ttlOf(i))}</span><b>${v}</b></div></div>`).join('') : ''; }).join(''));
     $('#ry')?.addEventListener('change', e => { location.hash = '#results/' + e.target.value; });
     $('#app').querySelectorAll('[data-g]').forEach(b => b.onclick = () => { g = b.dataset.g === '1'; draw(); }); };
