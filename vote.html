@@ -258,6 +258,7 @@ input,select{font:inherit}
 .wq{background:#FFF8CC;border-radius:12px;padding:6px 11px;font-size:14px;font-weight:700;overflow-wrap:anywhere}
 .rl{display:flex;flex-direction:column;gap:8px;margin-top:6px;max-height:42vh;overflow-y:auto}.rr{background:#FFF8CC;border-radius:12px;padding:8px 12px}.rn{font-size:14px;font-weight:900;color:var(--bl)}.rx{font-size:14px;font-weight:700;overflow-wrap:anywhere}
 .whygo{min-height:40px;font-size:14px;padding:0 18px;margin-top:6px;border-radius:12px}
+.acts{position:sticky;bottom:-18px;margin:0 -16px -18px;padding:10px 16px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(#EAF4FB00,#EAF4FB 14px);display:flex;flex-direction:column;gap:10px;z-index:2}
 </style>
 <!-- GA4：把首頁那段 gtag 程式碼原封不動貼在這裡（同一個 G-XXXX） -->
 </head>
@@ -587,9 +588,9 @@ function doneModal() {
     <div class="card pad"><div class="h">${t('myVotes')(ps.length)}</div><p class="tg2" style="margin:2px 0 8px">${t('whyPub')}</p>${ps.map(c => `<div class="pr"><b>【${esc(nm(c))}】</b></div>${sel[c.id].map(id => whyRow(c, id)).join('')}`).join('')}</div>
     <div class="card pad"><label class="lbl" for="nick">${t('nickLbl')}</label><input id="nick" class="field" maxlength="20" value="${esc(nick)}" placeholder="${esc(t('nickPh'))}"></div>
     <div class="card pad"><div class="h" style="margin-bottom:8px">${t('pv')}</div><div id="pv" class="pvbox"></div></div>
-    <button class="btn go" data-m="share">${ic('<path d="M12 15V4M8 8l4-4 4 4M5 12v7h14v-7"/>', { s: 22, w: 2.6 })}${t('shareI')}</button>
+    <div class="acts"><button class="btn go" data-m="share">${ic('<path d="M12 15V4M8 8l4-4 4 4M5 12v7h14v-7"/>', { s: 22, w: 2.6 })}${t('shareI')}</button>
     <div class="g3"><button class="btn b3" data-m="dl">${ic('<path d="M12 4v11M7.5 11 12 15.5 16.5 11M5 19h14"/>')}<span>${t('dl')}</span></button><button class="btn b3" data-m="ct">${ic('<path d="M7 3h7l4 4v14H7zM14 3v4h4M10 12h5M10 16h5"/>')}<span>${t('copyT')}</span></button><button class="btn b3" data-m="cl">${ic('<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>')}<span>${t('copyL')}</span></button></div>
-    <button class="btn cls" data-m="x">${t('close')}</button></div>`;
+    <button class="btn cls" data-m="x">${t('close')}</button></div></div>`;
   m.firstElementChild.focus(); drawPreview();
 }
 function drawPreview() { if (!$('#pv') || !picked().length) return; card(true).then(cv => { const b = $('#pv'); if (!b) return; cv.className = 'pvc'; cv.removeAttribute('style'); b.replaceChildren(cv); }).catch(() => {}); }
