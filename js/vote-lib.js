@@ -66,8 +66,9 @@ export function normalizeSong(o, base) {
   if (truthy(o.is_title)) tags.push('title');
   // C/W：只認「共通」（每張 CD 都有）與「通常盤」（只收錄在通常盤）；「待分類」或其他文字都不會進入投票
   const cw = String(o.is_cw || '').trim();
-  if (/^通常盤?$/.test(cw)) tags.push('cw', 'cwn'); else if (/^(共通|common)$/i.test(cw)) tags.push('cw', 'cwc');
+  if (/^通常盤?$/.test(cw)) tags.push('cw', 'cwn'); else if (/^(共通|common)$/i.test(cw)) tags.push('cw', 'cwc'); else if (/^(其他|その他|other)$/i.test(cw)) tags.push('cw', 'cwo');
   if (truthy(o.is_live)) tags.push('live');
+  if (truthy(o.is_hirn)) tags.push('hirn');
   if (truthy(o.is_unit)) tags.push('unit');
   tags.push(...genTags(o.gen));
   return { kind: 'song', id: o.id, title: o.title, single: o.single || '', era: (o.era || '').toLowerCase(), tags,
