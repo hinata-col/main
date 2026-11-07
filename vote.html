@@ -259,6 +259,7 @@ input,select{font:inherit}
 .rl{display:flex;flex-direction:column;gap:8px;margin-top:6px;max-height:42vh;overflow-y:auto}.rr{background:#FFF8CC;border-radius:12px;padding:8px 12px}.rn{font-size:14px;font-weight:900;color:var(--bl)}.rx{font-size:14px;font-weight:700;overflow-wrap:anywhere}
 .whygo{min-height:40px;font-size:14px;padding:0 18px;margin-top:6px;border-radius:12px}
 .acts{position:sticky;bottom:-18px;margin:0 -16px -18px;padding:10px 16px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(#EAF4FB00,#EAF4FB 14px);display:flex;flex-direction:column;gap:10px;z-index:2}
+.mvth[data-yt]{cursor:pointer}.pbig{position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:rgba(255,255,255,.88);border:2px solid #1F3552;display:flex;align-items:center;justify-content:center;pointer-events:none}.pbig svg{width:20px;height:20px;margin-left:3px}.ytw{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#000}.ytw iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 </style>
 <!-- GA4：把首頁那段 gtag 程式碼原封不動貼在這裡（同一個 G-XXXX） -->
 </head>
@@ -422,10 +423,10 @@ function songHTML(s, c, ro) {
 const playBtn = s => `<button class="btn rd" data-play="${esc(s.previewUrl)}" data-l="${t('play')} ${esc(s.title)}" aria-label="${t('play')} ${esc(s.title)}">${PLAY}</button>`;
 
 function mvHTML(s, c, ro) {
-  const on = !ro && has(c, s.id);
-  return `<div class="card2${on ? ' on' : ''}"><div class="mvth">${imgTag(s.img, s.fallback)}${on ? stamp(s.id, c) : ''}</div>
-    <div class="mvb"><div class="t">${esc(s.title)}${noteBtn(s)}</div>${s.sub ? `<div class="sub2">${esc(s.sub)}</div>` : ''}</div>
-    <div class="mva">${s.ytId ? `<a class="btn yt" href="${esc(ytUrl(s.ytId))}" target="_blank" rel="noopener noreferrer">${PLAY}${t('yt')}</a>` : '<span></span>'}${ro ? '' : heartBtn(s, c)}</div></div>`;
+  const on = !ro && has(c, s.id), yid = lang === 'ja' && s.ytJa ? s.ytJa : s.ytId;
+  return `<div class="card2${on ? ' on' : ''}"><div class="mvth"${yid ? ` data-yt="${esc(yid)}" data-l="${esc(s.title)}" role="button" tabindex="0"` : ''}>${imgTag(s.img, s.fallback)}${yid ? `<span class="pbig">${PLAY}</span>` : ''}${on ? stamp(s.id, c) : ''}</div>
+    <div class="mvb"><div class="t">${esc(s.title)}${noteBtn(s)}</div>${(lang === 'ja' ? s.subJa : s.sub) ? `<div class="sub2">${esc(lang === 'ja' ? s.subJa : s.sub)}</div>` : ''}</div>
+    <div class="mva">${yid ? `<a class="btn yt" href="${esc(ytUrl(yid))}" target="_blank" rel="noopener noreferrer">${PLAY}${t('yt')}</a>` : '<span></span>'}${ro ? '' : heartBtn(s, c)}</div></div>`;
 }
 
 function coverHTML(s, c, ro) {
@@ -516,6 +517,13 @@ async function loadReasons(id) {
     Object.values(snap).forEach(r => Object.entries(r?.c || {}).forEach(([cid, tx]) => { const c = cats.find(x => x.id === cid); const tx2 = String(tx); if ((/[\u3040-\u30ff]/.test(tx2) ? 'ja' : 'zh') === lang) rows.push({ n: r.n, tx: tx2 }); }));
     if (box()) box().innerHTML = rows.length ? rows.map(r => `<div class="rr"><b class="rn">${esc(r.n || t('guest'))}</b>📢 <span class="rx">${esc(r.tx)}</span></div>`).join('') : `<div class="tg2">${t('whyNone')}</div>`;
   } catch { if (box()) box().innerHTML = `<div class="tg2">${t('whyFail')}</div>`; }
+}
+function ytModal(id, title) {
+  try { au.pause(); } catch {} const m = $('#modal'); m.className = 'ov'; m.hidden = false;
+  m.innerHTML = `<div class="mdl" style="background:#fff" role="dialog" aria-modal="true" aria-label="${esc(title)}" tabindex="-1"><div class="t" style="font-size:17px">${esc(title)}</div>
+    <div class="ytw"><iframe src="https://www.youtube-nocookie.com/embed/${esc(id)}?autoplay=1&rel=0&playsinline=1" title="${esc(title)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+    <a class="btn yt" style="align-self:flex-start" href="${esc(ytUrl(id))}" target="_blank" rel="noopener noreferrer">${PLAY}${t('yt')}</a><button class="btn go" data-m="x">${t('close')}</button></div>`;
+  m.firstElementChild.focus();
 }
 function endModal(v) { const m = $('#modal'); m.hidden = true; m.className = 'ov'; m.innerHTML = ''; if (pend) { const p = pend; pend = null; p(v); } }
 const consent = onlyG => new Promise(res => { pend = res; const m = $('#modal'); m.className = 'ov'; m.hidden = false;
@@ -681,7 +689,7 @@ async function results(y) {
 // ---------- 事件 ----------
 document.addEventListener('click', async e => {
   if (menuOpen && !e.target.closest('#menu,[data-act="acct"]')) { menuOpen = false; head(); }
-  const b = e.target.closest('[data-tab],[data-sub],[data-pick],[data-play],[data-era],[data-act],[data-note],[data-slide],[data-car],[data-why],[data-whygo],#sub'); if (!b) return;
+  const b = e.target.closest('[data-tab],[data-sub],[data-pick],[data-play],[data-era],[data-act],[data-note],[data-slide],[data-car],[data-why],[data-whygo],[data-yt],#sub'); if (!b) return;
   if (b.id === 'sub') { if (b.getAttribute('aria-disabled') === 'true' && !closed()) return toast(t('none')); return submit(); }
   const d = b.dataset;
   if (d.tab != null) { cur = +d.tab; q = fS = fE = fC = ''; stopAudio(); fade = true; render(); }
@@ -696,6 +704,7 @@ document.addEventListener('click', async e => {
   else if (d.play != null && b.hasAttribute('data-play')) play(b, d.play);
   else if (d.era != null) { fE = d.era; render(); }
   else if (d.note) noteSheet(d.note);
+  else if (d.yt) ytModal(d.yt, b.dataset.l);
   else if (d.slide != null) { const car = carOf(d.for); if (car) goSlide(car, +d.slide); }
   else if (d.car) { const car = carOf(d.for); if (car) goSlide(car, Math.round(car.scrollLeft / car.clientWidth) + +d.car); }
   else if (d.act) {
