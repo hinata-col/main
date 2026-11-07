@@ -256,7 +256,7 @@ input,select{font:inherit}
 .pen{flex:none;width:40px;height:40px;border-radius:50%;background:#fff;border:2px solid var(--ln);display:inline-flex;align-items:center;justify-content:center;padding:0}.pen.has{background:var(--sun);border-color:var(--sun)}
 .whyf{width:100%;resize:none;margin-top:4px;font-size:15px}.wc{text-align:right;font-size:12px;color:var(--mut);font-weight:700}
 .wq{background:#FFF8CC;border-radius:12px;padding:6px 11px;font-size:14px;font-weight:700;overflow-wrap:anywhere}
-.rl{display:flex;flex-direction:column;gap:8px;margin-top:6px;max-height:42vh;overflow-y:auto}.rr{background:#FFF8CC;border-radius:12px;padding:8px 12px}.rm{font-size:12px;font-weight:800;color:var(--bl)}.rx{font-size:14px;font-weight:700;overflow-wrap:anywhere}
+.rl{display:flex;flex-direction:column;gap:8px;margin-top:6px;max-height:42vh;overflow-y:auto}.rr{background:#FFF8CC;border-radius:12px;padding:8px 12px}.rn{font-size:14px;font-weight:900;color:var(--bl)}.rx{font-size:14px;font-weight:700;overflow-wrap:anywhere}
 .whygo{min-height:40px;font-size:14px;padding:0 18px;margin-top:6px;border-radius:12px}
 </style>
 <!-- GA4：把首頁那段 gtag 程式碼原封不動貼在這裡（同一個 G-XXXX） -->
@@ -512,8 +512,8 @@ async function loadReasons(id) {
   const box = () => { const b = $('#rl'); return b && b.dataset.id === id ? b : null; };
   try { await dbP; if (!db) throw 0;
     const snap = (await get(query(ref(db, `songReasons/${year}/${id}`), limitToFirst(40)))).val() || {}, rows = [];
-    Object.values(snap).forEach(r => Object.entries(r?.c || {}).forEach(([cid, tx]) => { const c = cats.find(x => x.id === cid); rows.push({ n: r.n, c: c ? nm(c) : '', tx: String(tx) }); }));
-    if (box()) box().innerHTML = rows.length ? rows.map(r => `<div class="rr"><div class="rm">${esc(r.c)}${r.c ? ' · ' : ''}${esc(r.n || t('guest'))}</div><div class="rx">${esc(r.tx)}</div></div>`).join('') : `<div class="tg2">${t('whyNone')}</div>`;
+    Object.values(snap).forEach(r => Object.entries(r?.c || {}).forEach(([cid, tx]) => { const c = cats.find(x => x.id === cid); const tx2 = String(tx); if ((/[\u3040-\u30ff]/.test(tx2) ? 'ja' : 'zh') === lang) rows.push({ n: r.n, tx: tx2 }); }));
+    if (box()) box().innerHTML = rows.length ? rows.map(r => `<div class="rr"><b class="rn">${esc(r.n || t('guest'))}</b>📢 <span class="rx">${esc(r.tx)}</span></div>`).join('') : `<div class="tg2">${t('whyNone')}</div>`;
   } catch { if (box()) box().innerHTML = `<div class="tg2">${t('whyFail')}</div>`; }
 }
 function endModal(v) { const m = $('#modal'); m.hidden = true; m.className = 'ov'; m.innerHTML = ''; if (pend) { const p = pend; pend = null; p(v); } }
