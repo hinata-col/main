@@ -248,6 +248,15 @@ input,select{font:inherit}
 .eqi i:nth-child(2){animation-delay:.2s}
 @keyframes eqb{0%,100%{height:3px}50%{height:13px}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+.itw{display:flex;flex-direction:column;gap:8px;min-width:0}
+.why{background:#FFF8CC;border-radius:14px;padding:9px 13px;font-size:14px;font-weight:700;line-height:1.5;overflow-wrap:anywhere}
+.why b{display:block;font-size:12px;color:var(--bl);margin-bottom:2px}
+.wr{padding:2px 0 8px}.wt{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:15px;font-weight:800;min-height:40px}.wt span{min-width:0;overflow-wrap:anywhere}
+.pen{flex:none;width:40px;height:40px;border-radius:50%;background:#fff;border:2px solid var(--ln);display:inline-flex;align-items:center;justify-content:center;padding:0}.pen.has{background:var(--sun);border-color:var(--sun)}
+.whyf{width:100%;resize:none;margin-top:4px;font-size:15px}.wc{text-align:right;font-size:12px;color:var(--mut);font-weight:700}
+.wq{background:#FFF8CC;border-radius:12px;padding:6px 11px;font-size:14px;font-weight:700;overflow-wrap:anywhere}
+.rl{display:flex;flex-direction:column;gap:8px;margin-top:6px;max-height:42vh;overflow-y:auto}.rr{background:#FFF8CC;border-radius:12px;padding:8px 12px}.rm{font-size:12px;font-weight:800;color:var(--bl)}.rx{font-size:14px;font-weight:700;overflow-wrap:anywhere}
 </style>
 <!-- GA4：把首頁那段 gtag 程式碼原封不動貼在這裡（同一個 G-XXXX） -->
 </head>
@@ -262,7 +271,7 @@ input,select{font:inherit}
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getAuth, onAuthStateChanged, signInAnonymously, GoogleAuthProvider, signOut, linkWithPopup, signInWithCredential, deleteUser, reauthenticateWithPopup } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { getDatabase, ref, get, update, increment, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
+import { getDatabase, ref, get, update, increment, serverTimestamp, query, limitToFirst } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
 import { MAX, buildData, match, buildTabs, esc, linkify, encodeShare, decodeShare, daysLeft, fmtDeadline, ytUrl } from './js/vote-lib.js';
 
 // 投票專用 Firebase 專案（hinata-vote）
@@ -283,12 +292,13 @@ const I = {
     done: (a, b) => `已選 ${a} / ${b} 個獎項`, play: '試聽', pause: '暫停', err: '此片段無法播放', composer: '作曲', lyricist: '作詞', allCr: '全部',
     cnt: (n, u) => `共 ${n} ${u}`, empty: '沒有符合的項目', yt: '在 YouTube 開啟', noteT: '備註', noteBtn: '看備註', close: '關閉', remove: '移除',
     single: '單曲', album: '專輯', navP: '上一張', navN: '下一張', cover: '封面',
+    whyBtn: '寫推薦理由', whyPh: '為什麼選它？一句話就好（選填，會公開顯示）', whyBad: '理由不能包含網址', whyPub: '推薦理由與暱稱會公開顯示，請不要寫入個人資料。', whyTitle: '大家的推薦理由', whyNone: '還沒有人留下推薦理由，你也來寫一句吧！', whyLoad: '讀取中…', whyFail: '暫時讀不到推薦理由', shareMiss: '找不到這份分享，可能已被刪除。', whySave: '已儲存', whyTag: '推薦理由',
     ok: '投票完成！', okLine: '謝謝你的參與！一生一緒日向坂♪', okSub: '截止前隨時可以回來修改', myVotes: n => `我的投票・共 ${n} 個獎項`, pv: '分享圖卡預覽',
     copyT: '複製文字', copyL: '複製連結', shareI: '分享圖卡', dl: '下載圖片', copied: '已複製', fail: '失敗，請稍後再試',
     shared: '分享的投票結果', guest: '網友', nickLbl: '暱稱（選填，會顯示在分享連結與圖卡上）', nickPh: '例如：おひさま小花', nickSuf: '的投票結果',
     shNick: (y, n) => `${y}日向坂46 歌曲總選舉，${n || '網友'}的投票結果`, me: '我也要投票', ask: '哪首是你的必推神曲？', askSub: d => d ? `你也來投一票吧！截止：${d}` : '你也來投一票吧！',
     mine: '我的', more: n => `另有 ${n} 個獎項，點連結看完整結果`, etc: n => `…等 ${n} 個`, conn: '連線失敗，請重新整理',
-    cTitle: '投票前請確認', cList: ['本次投票會記錄你選擇的項目、投票時間，以及一組識別碼（匿名或 Google 帳號）。', '若使用 Google 登入，管理員在後台可以看到你的 Google 帳號名稱與 Email；匿名投票則看不到。', '個別投票內容只有管理員能看，公開的只有彙整後的結果。資料僅用於統計票數與公布結果，不會用於其他用途或提供給第三方。', '資料儲存在 Google Firebase，傳輸皆採 HTTPS 加密。原始投票資料於結果公布後 3 個月刪除。', '你可以隨時在右上角的帳號選單刪除自己的投票或帳號。', '本站使用 Google Analytics 進行匿名流量統計。'],
+    cTitle: '投票前請確認', cList: ['本次投票會記錄你選擇的項目、投票時間，以及一組識別碼（匿名或 Google 帳號）。', '若使用 Google 登入，管理員在後台可以看到你的 Google 帳號名稱與 Email；匿名投票則看不到。', '個別投票內容只有管理員能看，公開的只有彙整後的結果。資料僅用於統計票數與公布結果，不會用於其他用途或提供給第三方。', '資料儲存在 Google Firebase，傳輸皆採 HTTPS 加密。原始投票資料於結果公布後 3 個月刪除。', '你可以隨時在右上角的帳號選單刪除自己的投票或帳號。', '本站使用 Google Analytics 進行匿名流量統計。', '你按下分享或寫下推薦理由後，你的暱稱、選擇與理由會公開，任何人都能看到；刪除我的投票時會一併刪除。請不要在理由裡寫入個人資料。'],
     cAgree: '我已閱讀並同意', cGoogle: 'Google 登入並投票', cLogin: 'Google 登入', cAnon: '匿名投票', cAnonNote: '匿名投票：換裝置或清除瀏覽器資料後，將無法找回或修改。', cPriv: '隱私說明', cCancel: '取消', cNeed: '請先勾選同意',
     delVote: '刪除我的投票', delAcct: '刪除我的帳號與投票', delVoteQ: '確定刪除這一屆你的投票？', delAcctQ: '確定刪除帳號與投票？此操作無法復原。', deleted: '已刪除', existing: '這個 Google 帳號已有投票紀錄，已為你載入，請確認後再提交。',
     footer: 'おひさま自製的非官方調查・結果僅供參考', resT: '歷年結果', resNone: '結果尚未公布', resAll: '全部票', resG: '僅 Google 登入', ppl: n => `${n} 人參與`,
@@ -304,12 +314,13 @@ const I = {
     done: (a, b) => `${a} / ${b} 部門に投票済み`, play: '試聴', pause: '停止', err: '再生できません', composer: '作曲', lyricist: '作詞', allCr: 'すべて',
     cnt: (n, u) => `全${n}${u}`, empty: '該当する項目がありません', yt: 'YouTubeで開く', noteT: '備考', noteBtn: '備考を見る', close: '閉じる', remove: '削除',
     single: 'シングル', album: 'アルバム', navP: '前へ', navN: '次へ', cover: 'ジャケット',
+    whyBtn: 'おすすめ理由を書く', whyPh: 'どうして選んだ？一言でOK（任意・公開されます）', whyBad: '理由にURLは入れられません', whyPub: 'おすすめ理由とニックネームは公開されます。個人情報は書かないでください。', whyTitle: 'みんなのおすすめ理由', whyNone: 'まだ理由がありません。あなたも一言どうぞ！', whyLoad: '読み込み中…', whyFail: 'おすすめ理由を読み込めません', shareMiss: 'この共有は見つかりません。削除された可能性があります。', whySave: '保存しました', whyTag: 'おすすめ理由',
     ok: '投票完了！', okLine: 'ご参加ありがとうございます！一生一緒日向坂♪', okSub: '締切前ならいつでも修正できます', myVotes: n => `私の投票・${n}部門`, pv: '共有画像のプレビュー',
     copyT: 'テキストをコピー', copyL: 'リンクをコピー', shareI: '画像を共有', dl: '画像を保存', copied: 'コピーしました', fail: '失敗しました',
     shared: '共有された投票結果', guest: 'ファン', nickLbl: 'ニックネーム（任意・共有リンクと画像に表示されます）', nickPh: '例：おひさま花子', nickSuf: 'さんの投票結果',
     shNick: (y, n) => `${y}日向坂46 楽曲総選挙、${n ? n + 'さん' : 'ファン'}の投票結果`, me: '私も投票する', ask: 'あなたの推し曲はどれ？', askSub: d => d ? `あなたもぜひ一票を！締切：${d}` : 'あなたもぜひ一票を！',
     mine: '私の', more: n => `他${n}部門はリンクから`, etc: n => `…ほか${n}件`, conn: '接続に失敗しました',
-    cTitle: '投票前にご確認ください', cList: ['投票内容（選んだ項目）、投票日時、識別コード（匿名またはGoogleアカウント）を記録します。', 'Googleログインの場合、管理者は管理画面でGoogleアカウント名とメールアドレスを確認できます。匿名投票では確認できません。', '個別の投票内容は管理者のみが閲覧でき、公開されるのは集計結果のみです。集計と結果発表以外の目的には使用せず、第三者に提供しません。', 'データはGoogle Firebaseに保存され、通信はHTTPSで暗号化されます。個別の投票データは結果発表の3か月後に削除します。', '右上のアカウントメニューからいつでも自分の投票やアカウントを削除できます。', '本サイトはGoogleアナリティクスで匿名のアクセス解析を行っています。'],
+    cTitle: '投票前にご確認ください', cList: ['投票内容（選んだ項目）、投票日時、識別コード（匿名またはGoogleアカウント）を記録します。', 'Googleログインの場合、管理者は管理画面でGoogleアカウント名とメールアドレスを確認できます。匿名投票では確認できません。', '個別の投票内容は管理者のみが閲覧でき、公開されるのは集計結果のみです。集計と結果発表以外の目的には使用せず、第三者に提供しません。', 'データはGoogle Firebaseに保存され、通信はHTTPSで暗号化されます。個別の投票データは結果発表の3か月後に削除します。', '右上のアカウントメニューからいつでも自分の投票やアカウントを削除できます。', '本サイトはGoogleアナリティクスで匿名のアクセス解析を行っています。', '共有ボタンを押すかおすすめ理由を書くと、ニックネーム・選んだ曲・理由が公開され、誰でも見られるようになります。投票を削除すると一緒に削除されます。理由に個人情報は書かないでください。'],
     cAgree: '内容を確認し、同意します', cGoogle: 'Googleでログインして投票', cLogin: 'Googleでログイン', cAnon: '匿名で投票', cAnonNote: '匿名投票は、端末の変更やブラウザデータの削除後に投票の確認・修正ができなくなります。', cPriv: 'プライバシーについて', cCancel: 'キャンセル', cNeed: '同意にチェックしてください',
     delVote: '自分の投票を削除', delAcct: 'アカウントと投票を削除', delVoteQ: '今回の投票を削除しますか？', delAcctQ: 'アカウントと投票を削除しますか？元に戻せません。', deleted: '削除しました', existing: 'このGoogleアカウントには投票履歴があります。読み込みました。内容を確認して再度送信してください。',
     footer: 'おひさまによる非公式調査・結果は参考値です', resT: '過去の結果', resNone: '結果は未公開です', resAll: 'すべての票', resG: 'Googleログインのみ', ppl: n => `${n}人が参加`,
@@ -342,6 +353,7 @@ const SPK = (c, s, sty) => `<svg class="sp tw" style="${sty}" width="${s}" heigh
 let E, ed, all = [], items = {}, cats = [], tabs = [], year, sel = {}, cur = 0, subOf = {}, q = '', fS = '', fE = '', fC = '';
 let user = null, deadline = 0, hasVoted = false, count = null, pend = null, db, auth, menuOpen = false, lastPick = '', fullCat = '', popTab = -1, fade = false;
 let nick = localStorage.getItem('hv_nick') || '';
+let shareCode = '', pubOk = false, pubIds = [], why = {}, whyDirty = false, whyT, whyOpen = new Set(), dbReady; const dbP = new Promise(r => dbReady = r);
 const closed = () => deadline && Date.now() > deadline;
 const curTab = () => tabs[cur] || tabs[0];
 const curCat = () => { const tb = curTab(); return tb.cats.find(c => c.id === subOf[tb.id]) || tb.cats[0]; };
@@ -393,7 +405,7 @@ function head() {
 }
 
 // ---------- 畫面：項目 ----------
-const noteBtn = s => s.note ? `<button class="info" data-note="${esc(s.id)}" aria-label="${t('noteBtn')}">i</button>` : '';
+const noteBtn = s => `<button class="info" data-note="${esc(s.id)}" aria-label="${t('noteBtn')}">i</button>`;
 const heartBtn = (s, c) => { const on = has(c, s.id), full = !on && nOf(c) >= MAX, pop = on && lastPick === s.id ? ' bump' : '';
   return `<button class="btn hb${on ? ' on' : ''}${full ? ' dim' : ''}${pop}" data-pick="${esc(s.id)}" aria-pressed="${on}" aria-label="${on ? t('picked') : t('pick')} ${esc(s.title)}">${heartI(on)}</button>`; };
 const stamp = (id, c) => has(c, id) ? `<span class="stp${lastPick === id ? ' bump' : ''}" aria-hidden="true">選</span>` : '';
@@ -491,8 +503,17 @@ function noteSheet(id) {
   const s = items[id]; if (!s) return; const m = $('#modal');
   m.className = 'ov sheetmode'; m.hidden = false;
   m.innerHTML = `<div class="mdl sheet" role="dialog" aria-modal="true" aria-label="${t('noteT')}" tabindex="-1"><div class="grab"></div><div class="t" style="font-size:20px">${esc(s.title)}</div>${s.single ? `<span class="tag" style="margin-top:4px;align-self:flex-start">${esc(s.single)}</span>` : ''}
-    <div class="h" style="margin-top:14px">${t('noteT')}</div><div class="nt" style="margin-top:4px">${linkify(s.note)}</div><button class="btn go" style="margin-top:18px;min-height:52px" data-m="x">${t('close')}</button></div>`;
-  m.firstElementChild.focus();
+    ${s.note ? `<div class="h" style="margin-top:14px">${t('noteT')}</div><div class="nt" style="margin-top:4px">${linkify(s.note)}</div>` : ''}
+    <div class="h" style="margin-top:16px">${t('whyTitle')}</div><div id="rl" class="rl" data-id="${esc(id)}"><div class="tg2">${t('whyLoad')}</div></div><button class="btn go" style="margin-top:18px;min-height:52px" data-m="x">${t('close')}</button></div>`;
+  m.firstElementChild.focus(); loadReasons(id);
+}
+async function loadReasons(id) {
+  const box = () => { const b = $('#rl'); return b && b.dataset.id === id ? b : null; };
+  try { await dbP; if (!db) throw 0;
+    const snap = (await get(query(ref(db, `songReasons/${year}/${id}`), limitToFirst(40)))).val() || {}, rows = [];
+    Object.values(snap).forEach(r => Object.entries(r?.c || {}).forEach(([cid, tx]) => { const c = cats.find(x => x.id === cid); rows.push({ n: r.n, c: c ? nm(c) : '', tx: String(tx) }); }));
+    if (box()) box().innerHTML = rows.length ? rows.map(r => `<div class="rr"><div class="rm">${esc(r.c)}${r.c ? ' · ' : ''}${esc(r.n || t('guest'))}</div><div class="rx">${esc(r.tx)}</div></div>`).join('') : `<div class="tg2">${t('whyNone')}</div>`;
+  } catch { if (box()) box().innerHTML = `<div class="tg2">${t('whyFail')}</div>`; }
 }
 function endModal(v) { const m = $('#modal'); m.hidden = true; m.className = 'ov'; m.innerHTML = ''; if (pend) { const p = pend; pend = null; p(v); } }
 const consent = onlyG => new Promise(res => { pend = res; const m = $('#modal'); m.className = 'ov'; m.hidden = false;
@@ -512,8 +533,9 @@ async function upgrade() {
 async function delData(acct) {
   if (!confirm(t(acct ? 'delAcctQ' : 'delVoteQ'))) return;
   try { const u = auth.currentUser;
-    if (hasVoted) { try { await update(ref(db), { [`votes/${year}/${u.uid}`]: null, [`stats/${year}/count`]: increment(-1) }); if (count) count--; } catch { await update(ref(db), { [`votes/${year}/${u.uid}`]: null }); } }
-    hasVoted = false; sel = {}; localStorage.removeItem('hv_draft_' + year);
+    if (hasVoted) { const gone = shareCode ? { [`shares/${year}/${shareCode}`]: null, ...Object.fromEntries(pubIds.map(i => [`songReasons/${year}/${i}/${shareCode}`, null])) } : {};
+      try { await update(ref(db), { ...gone, [`votes/${year}/${u.uid}`]: null, [`stats/${year}/count`]: increment(-1) }); if (count) count--; } catch { await update(ref(db), { ...gone, [`votes/${year}/${u.uid}`]: null }); } }
+    hasVoted = false; sel = {}; resetShare(); localStorage.removeItem('hv_draft_' + year);
     if (acct) { try { await deleteUser(u); } catch (e) { if (e.code === 'auth/requires-recent-login') { await reauthenticateWithPopup(u, new GoogleAuthProvider()); await deleteUser(auth.currentUser); } else throw e; } }
     toast(t('deleted')); render(); } catch (e) { console.error(e); toast(t('fail')); }
 }
@@ -523,13 +545,37 @@ async function submit() {
   if (!picked().length) return toast(t('none')); if (closed()) return toast(t('closed')); if (!user) return toast(t('conn'));
   if (localStorage.getItem('hv_consent') !== '1' || (user.isAnonymous && !hasVoted)) { const r = await consent(); if (!r) return; if (r === 'google' && !(await upgrade())) return; }
   const choices = Object.fromEntries(picked().map(c => [c.id, sel[c.id]]));
-  const base = { [`votes/${year}/${user.uid}`]: { choices, via: user.isAnonymous ? 'anonymous' : 'google', updatedAt: serverTimestamp() } };
+  const base = { [`votes/${year}/${user.uid}`]: { choices, via: user.isAnonymous ? 'anonymous' : 'google', updatedAt: serverTimestamp(), ...(shareCode ? { share: shareCode } : {}) } };
   try { const first = !hasVoted;
     try { await update(ref(db), first ? { ...base, [`stats/${year}/count`]: increment(1) } : base); if (first && count != null) count++; }
     catch (e) { if (!first) throw e; await update(ref(db), base); } // 計數器寫入失敗時，不影響投票本身
-    hasVoted = true; localStorage.removeItem('hv_draft_' + year); render(); doneModal(); } catch (e) { console.error(e); toast(t('fail')); }
+    hasVoted = true; localStorage.removeItem('hv_draft_' + year); render(); doneModal(); if (shareCode) publish(); } catch (e) { console.error(e); toast(t('fail')); }
 }
-const link = () => encodeShare(location.origin + location.pathname, year, cats, sel, nick);
+const link = () => shareCode && pubOk ? location.origin + location.pathname + '#s=' + shareCode : encodeShare(location.origin + location.pathname, year, cats, sel, nick);
+// ---- 公開分享與推薦理由 ----
+const genCode = () => { const a = 'abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789', r = new Uint8Array(8); (self.crypto || {}).getRandomValues ? crypto.getRandomValues(r) : r.forEach((_, i) => r[i] = Math.random() * 256); return [...r].map(x => a[x % a.length]).join(''); };
+const badWhy = s => /https?:|www\.|:\/\//i.test(s);
+const whyOf = (c, id) => why[c]?.[id] || '';
+const saveWhy = () => { try { localStorage.setItem('hv_why_' + year, JSON.stringify(why)); } catch {} };
+function resetShare() { shareCode = ''; pubOk = false; pubIds = []; why = {}; whyOpen.clear(); try { localStorage.removeItem('hv_why_' + year); } catch {} }
+async function publish() {
+  if (!user || !hasVoted || !db) return false; clearTimeout(whyT);
+  try {
+    const code = shareCode || genCode();
+    if (!shareCode) { await update(ref(db), { [`votes/${year}/${user.uid}/share`]: code }); shareCode = code; }
+    const picks = Object.fromEntries(picked().map(c => [c.id, sel[c.id]])), rs = {}, byId = {}, n = (nick || '').slice(0, 20);
+    picked().forEach(c => sel[c.id].forEach(id => { const x = whyOf(c.id, id).trim().slice(0, 60); if (x && !badWhy(x)) { (rs[c.id] ||= {})[id] = x; (byId[id] ||= {})[c.id] = x; } }));
+    const up = { [`shares/${year}/${code}`]: { picks, ...(n ? { nick: n } : {}), ...(Object.keys(rs).length ? { reasons: rs } : {}), t: serverTimestamp() } };
+    Object.entries(byId).forEach(([id, c]) => { up[`songReasons/${year}/${id}/${code}`] = { ...(n ? { n } : {}), c }; });
+    pubIds.forEach(id => { if (!byId[id]) up[`songReasons/${year}/${id}/${code}`] = null; });
+    await update(ref(db), up); pubIds = Object.keys(byId); pubOk = true; whyDirty = false; return true;
+  } catch (e) { console.error(e); return false; }
+}
+const queuePublish = () => { clearTimeout(whyT); whyT = setTimeout(publish, 1500); };
+async function flushShare() { clearTimeout(whyT); if (hasVoted) await publish(); }
+const whyRow = (c, id) => { const k = c.id + '|' + id, tx = whyOf(c.id, id), open = whyOpen.has(k);
+  return `<div class="wr" data-k="${esc(k)}"><div class="wt"><span>${esc(ttlOf(id))}</span><button class="pen${tx ? ' has' : ''}" data-why="${esc(k)}" aria-label="${t('whyBtn')}" title="${t('whyBtn')}">${ic('<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/>', { s: 18 })}</button></div>`
+    + (open ? `<textarea class="field whyf" data-wf="${esc(k)}" maxlength="60" rows="2" placeholder="${esc(t('whyPh'))}">${esc(tx)}</textarea><div class="wc"><span id="wc">${[...tx].length}</span>/60</div>` : tx ? `<div class="wq">${esc(tx)}</div>` : '') + `</div>`; };
 const names = c => sel[c.id].map(ttlOf).join('、');
 const text = () => { const ps = picked(); return `${t('ttl')} ${year}${nick ? ' ' + nick + t('nickSuf') : ''} #日向坂46歌曲總選舉\n` + ps.slice(0, 3).map(c => `【${nm(c)}】${names(c)}`).join('\n') + (ps.length > 3 ? '\n' + t('more')(ps.length - 3) : '') + '\n' + link(); };
 const copy = async s => { try { await navigator.clipboard.writeText(s); toast(t('copied')); } catch { prompt('', s); } };
@@ -537,7 +583,7 @@ function doneModal() {
   const m = $('#modal'); m.className = 'ov'; m.hidden = false; const ps = picked();
   m.innerHTML = `<div class="mdl" role="dialog" aria-modal="true" aria-label="${t('ok')}" tabindex="-1"><div class="hero">${SPK('#1F7FBF', 24, 'left:34px;top:18px')}${SPK('#F5E050', 26, 'right:38px;top:30px')}${SPK('#D9456B', 16, 'right:84px;top:6px')}${SUN_H}</div>
     <div class="dt"><span class="hl">${t('ok')}</span></div><div class="d1">${t('okLine')}</div><div class="d2">${t('okSub')}</div>
-    <div class="card pad"><div class="h">${t('myVotes')(ps.length)}</div>${ps.map(c => `<div class="pr"><b>【${esc(nm(c))}】</b>${esc(names(c))}</div>`).join('')}</div>
+    <div class="card pad"><div class="h">${t('myVotes')(ps.length)}</div><p class="tg2" style="margin:2px 0 8px">${t('whyPub')}</p>${ps.map(c => `<div class="pr"><b>【${esc(nm(c))}】</b></div>${sel[c.id].map(id => whyRow(c, id)).join('')}`).join('')}</div>
     <div class="card pad"><label class="lbl" for="nick">${t('nickLbl')}</label><input id="nick" class="field" maxlength="20" value="${esc(nick)}" placeholder="${esc(t('nickPh'))}"></div>
     <div class="card pad"><div class="h" style="margin-bottom:8px">${t('pv')}</div><div id="pv" class="pvbox"></div></div>
     <button class="btn go" data-m="share">${ic('<path d="M12 15V4M8 8l4-4 4 4M5 12v7h14v-7"/>', { s: 22, w: 2.6 })}${t('shareI')}</button>
@@ -596,13 +642,22 @@ async function shareImg(dl) {
 }
 
 // ---------- 分享連結（唯讀）與歷年結果 ----------
-function shared(h) {
-  const d = decodeShare(h, cats, items), ps = cats.filter(c => d.picks[c.id]), no = c => tabs.findIndex(x => x.cats.includes(c)) + 1;
+function renderShared(d) {
+  const ps = cats.filter(c => d.picks[c.id]), no = c => tabs.findIndex(x => x.cats.includes(c)) + 1;
   head(); $('#bar').innerHTML = ''; document.title = t('shNick')(d.year, d.nick);
   $('#app').innerHTML = `<div class="card banner"><span class="tag" style="margin:0">${t('shared')}</span><div class="nm"><span class="hl">${esc(d.nick || t('guest'))}</span> <small>${t('nickSuf')}</small></div><div class="tg2" style="margin-top:6px">${esc(d.year || year)} ${t('ttl')}</div></div>`
-    + (ps.length ? ps.map(c => `<div class="sec" style="margin-top:22px"><span class="num">${pad(no(c))}</span><h2><span class="hl">${esc(nm(c))}</span></h2></div><div class="${gridCls(c)}">${d.picks[c.id].map(id => itemHTML(items[id], c, true)).join('')}</div>`).join('') : `<div class="card empty">${t('empty')}</div>`)
+    + (ps.length ? ps.map(c => `<div class="sec" style="margin-top:22px"><span class="num">${pad(no(c))}</span><h2><span class="hl">${esc(nm(c))}</span></h2></div><div class="${gridCls(c)}">${d.picks[c.id].map(id => { const w = d.reasons?.[c.id]?.[id]; return `<div class="itw">${itemHTML(items[id], c, true)}${w ? `<div class="why"><b>${t('whyTag')}</b>${esc(w)}</div>` : ''}</div>`; }).join('')}</div>`).join('') : `<div class="card empty">${t('empty')}</div>`)
     + `<div class="card cta"><div style="font-size:20px;font-weight:900"><span class="hl">${t('ask')}</span></div><div class="tg2">${esc(t('askSub')(deadline ? fmtDeadline(deadline) : ''))}</div><a class="btn go" href="${esc(location.pathname)}">${t('me')}</a></div>`;
   bindCars();
+}
+const shared = h => renderShared(decodeShare(h, cats, items));
+async function sharedS(code) {
+  head(); $('#bar').innerHTML = ''; $('#app').innerHTML = `<div class="card pad">${t('whyLoad')}</div>`;
+  let r = null; if (/^[A-Za-z0-9]{8}$/.test(code)) { try { await dbP; r = (await get(ref(db, `shares/${year}/${code}`))).val(); } catch {} }
+  if (location.hash !== '#s=' + code) return;
+  if (!r) { renderShared({ year, nick: '', picks: {}, reasons: {} }); $('#app').firstElementChild.insertAdjacentHTML('afterend', `<div class="card empty">${t('shareMiss')}</div>`); return; }
+  const picks = {}; cats.forEach(c => { const v = r.picks?.[c.id]; if (v) { const ids = Object.values(v).filter(i => items[i] && !items[i].hidden).slice(0, MAX); if (ids.length) picks[c.id] = ids; } });
+  renderShared({ year, nick: String(r.nick || '').slice(0, 20), picks, reasons: r.reasons || {} });
 }
 async function results(y) {
   head(); $('#bar').innerHTML = ''; y = y || year; let d = null;
@@ -624,11 +679,13 @@ async function results(y) {
 // ---------- 事件 ----------
 document.addEventListener('click', async e => {
   if (menuOpen && !e.target.closest('#menu,[data-act="acct"]')) { menuOpen = false; head(); }
-  const b = e.target.closest('[data-tab],[data-sub],[data-pick],[data-play],[data-era],[data-act],[data-note],[data-slide],[data-car],#sub'); if (!b) return;
+  const b = e.target.closest('[data-tab],[data-sub],[data-pick],[data-play],[data-era],[data-act],[data-note],[data-slide],[data-car],[data-why],#sub'); if (!b) return;
   if (b.id === 'sub') { if (b.getAttribute('aria-disabled') === 'true' && !closed()) return toast(t('none')); return submit(); }
   const d = b.dataset;
   if (d.tab != null) { cur = +d.tab; q = fS = fE = fC = ''; stopAudio(); fade = true; render(); }
   else if (d.sub) { subOf[curTab().id] = d.sub; q = fS = fE = fC = ''; stopAudio(); fade = true; render(); }
+  else if (d.why) { const k = d.why; whyOpen.has(k) ? whyOpen.delete(k) : whyOpen.add(k); const [cid, id] = k.split('|'), c = cats.find(x => x.id === cid), row = b.closest('.wr');
+    if (c && row) { row.outerHTML = whyRow(c, id); [...$('#modal').querySelectorAll('.wr')].find(x => x.dataset.k === k)?.querySelector('textarea')?.focus(); } }
   else if (d.pick) toggle(d.pick);
   else if (d.play != null && b.hasAttribute('data-play')) play(b, d.play);
   else if (d.era != null) { fE = d.era; render(); }
@@ -641,19 +698,21 @@ document.addEventListener('click', async e => {
     else if (a === 'lang') { lang = lang === 'ja' ? 'zh' : 'ja'; localStorage.setItem('hv_lang', lang); route(); }
     else if (a === 'acct') { menuOpen = !menuOpen; head(); }
     else if (a === 'login' || a === 'upgrade') { menuOpen = false; try { if (await consent(true) && await upgrade()) { head(); if (hasVoted) bar(); } else head(); } catch { toast(t('fail')); } }
-    else if (a === 'logout') { menuOpen = false; try { await signOut(auth); sel = {}; hasVoted = false; localStorage.removeItem('hv_draft_' + year); } catch { toast(t('fail')); } }
+    else if (a === 'logout') { menuOpen = false; try { await signOut(auth); sel = {}; hasVoted = false; resetShare(); localStorage.removeItem('hv_draft_' + year); } catch { toast(t('fail')); } }
     else if (a === 'delv' || a === 'dela') { menuOpen = false; head(); delData(a === 'dela'); }
   }
 });
 document.addEventListener('input', e => { const id = e.target.id;
   if (id === 'q') { q = e.target.value; renderList(); }
+  else if (e.target.dataset?.wf) { const [cid, sid] = e.target.dataset.wf.split('|'); let v = e.target.value.replace(/\s+/g, ' ').slice(0, 60); (why[cid] ||= {})[sid] = v; if (!v.trim()) delete why[cid][sid]; saveWhy(); whyDirty = true; const wc = $('#wc'); if (wc) wc.textContent = [...v].length; if (badWhy(v)) toast(t('whyBad')); else queuePublish(); }
   else if (id === 'nick') { nick = e.target.value.trim(); try { localStorage.setItem('hv_nick', nick); } catch {} queuePreview(); } });
 document.addEventListener('change', e => { const id = e.target.id; if (id === 'fS') { fS = e.target.value; renderList(); } else if (id === 'fC') { fC = e.target.value; renderList(); } });
 document.addEventListener('keydown', e => { if (e.key !== 'Escape') return; if (!$('#modal').hidden) endModal(pend ? null : undefined); else if (menuOpen) { menuOpen = false; head(); } });
-$('#modal').addEventListener('click', e => { const k = e.target.closest('[data-m]')?.dataset.m;
+$('#modal').addEventListener('click', async e => { const k = e.target.closest('[data-m]')?.dataset.m;
   if (pend) { if (k === 'cg' || k === 'ca') { if (!$('#cchk').checked) return toast(t('cNeed')); localStorage.setItem('hv_consent', '1'); return endModal(k === 'cg' ? 'google' : 'anon'); }
     if (k === 'cx' || e.target.id === 'modal') return endModal(null); return; }
-  if (e.target.id === 'modal' || k === 'x') endModal(); else if (k === 'ct') copy(text()); else if (k === 'cl') copy(link()); else if (k === 'share' || k === 'dl') shareImg(k === 'dl'); });
+  if (e.target.id === 'modal' || k === 'x') { if (whyDirty) publish(); endModal(); }
+  else if (k === 'ct') { await flushShare(); copy(text()); } else if (k === 'cl') { await flushShare(); copy(link()); } else if (k === 'share' || k === 'dl') { await flushShare(); shareImg(k === 'dl'); } });
 
 // ---------- 啟動 ----------
 function fatal() { $('#bar').innerHTML = ''; head(); $('#app').innerHTML = `<div class="card fatal"><b style="font-size:18px">${t('fatalT')}</b><span>${t('fatalB')}</span><button class="btn go" onclick="location.reload()">${t('retry')}</button></div>`; }
@@ -666,7 +725,7 @@ async function loadSheets(src) {
 }
 async function route() {
   stopAudio(); menuOpen = false; const h = location.hash;
-  if (h.startsWith('#r=') || h.startsWith('#v=') || h.startsWith('#w=')) shared(h); else if (h.startsWith('#results')) results(h.split('/')[1]);
+  if (h.startsWith('#s=')) sharedS(h.slice(3)); else if (h.startsWith('#r=') || h.startsWith('#v=') || h.startsWith('#w=')) shared(h); else if (h.startsWith('#results')) results(h.split('/')[1]);
   else if (h === '#admin') { head(); $('#bar').innerHTML = '';
     try { if (!window.tailwind) await new Promise((ok, no) => { const s = document.createElement('script'); s.src = 'https://cdn.tailwindcss.com'; s.onload = ok; s.onerror = no; document.head.append(s); });
       const m = await import('./js/vote-admin.js'); m.mountAdmin($('#app'), { songs: items, cats, year }); } catch { toast(t('fail')); } }
@@ -678,16 +737,19 @@ async function route() {
   year = E.current; ed = E.editions[year]; cats = ed.categories; tabs = buildTabs(cats, ed.groups);
   try { ({ items, list: all } = await loadSheets(ed.sources)); } catch (e) { console.error(e); return fatal(); }
   try { sel = JSON.parse(localStorage.getItem('hv_draft_' + year) || '{}'); } catch {}
+  try { why = JSON.parse(localStorage.getItem('hv_why_' + year) || '{}'); } catch {}
   route(); addEventListener('hashchange', route);
-  try { const app = initializeApp(FB); auth = getAuth(app); db = getDatabase(app);
+  try { const app = initializeApp(FB); auth = getAuth(app); db = getDatabase(app); dbReady();
     try { deadline = (await get(ref(db, `config/${year}/deadline`))).val() || 0; } catch (e) { console.warn('讀取 config/' + year + '/deadline 失敗：請檢查 Rules 是否已「發布」，以及 databaseURL 是否正確', e); }
     try { const n = (await get(ref(db, `stats/${year}/count`))).val(); if (typeof n === 'number') count = n; } catch {}
     onAuthStateChanged(auth, async u => { if (!u) { try { await signInAnonymously(auth); } catch { toast(t('conn')); } return; } user = u;
       const v = (await get(ref(db, `votes/${year}/${u.uid}`))).val();
+      shareCode = v?.share || ''; pubOk = false; pubIds = [];
+      if (shareCode) { try { const sh = (await get(ref(db, `shares/${year}/${shareCode}`))).val(); if (sh) { pubOk = true; if (sh.reasons) { why = Object.fromEntries(Object.entries(sh.reasons).map(([cc, o]) => [cc, { ...o }])); pubIds = [...new Set(Object.values(sh.reasons).flatMap(o => Object.keys(o)))]; } } } catch {} }
       if (v) { hasVoted = true; sel = Object.fromEntries(Object.entries(v.choices || {}).map(([k, a]) => [k, Object.values(a).filter(i => items[i])])); } else hasVoted = false;
       if (!location.hash || location.hash === '#') render(); else head(); });
     if (!location.hash || location.hash === '#') render(); else head();
-  } catch (e) { console.error(e); toast(t('conn')); }
+  } catch (e) { console.error(e); dbReady(); toast(t('conn')); }
 })();
 function head0() { $('#top').innerHTML = ''; }
 </script>
