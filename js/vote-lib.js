@@ -81,7 +81,7 @@ export function normalizeMV(o, items, base) {
   if (!title) return null;
   const sub = song && o.title && o.title !== song.title ? o.title : '';
   const img = resolveImg(o.thumbUrl, base) || ytThumb(y) || song?.img || '';
-  return { kind: 'mv', id: o.id, songId: o.songId || '', title, sub, ytId: y, img, fallback: song?.img || '', single: song?.single || '',
+  return { kind: 'mv', id: o.id, songId: o.songId || '', title, sub, subJa: o.titleJa ? (o.titleJa !== song?.title ? o.titleJa : '') : (ytId(o.ytIdJa) ? '' : sub), ytId: y, ytJa: ytId(o.ytIdJa), img, fallback: song?.img || '', single: song?.single || '',
     era: song?.era || '', tags: [], note: o.note || '', hidden: !!song?.hidden };
 }
 
