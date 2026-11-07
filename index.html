@@ -2377,9 +2377,8 @@
                         const idx = row * perRow + i;
                         const cx = startX + cellW * i + cellW / 2;
                         const cy = y + oshiR * 1.12 + 10;
-                        const tilt = n === 1 ? 0 : (idx % 2 === 0 ? -0.05 : 0.05);
+                        const tilt = 0;
                         cardAvatar(ctx, oshiImgs[idx], m, cx, cy, oshiR, CARD_C.pink, tilt);
-                        cardHeart(ctx, cx + oshiR * 0.8, cy - oshiR * 0.8, oshiR * 0.17, CARD_C.pink);
                         const nameY = cy + oshiR * 1.12 + 50 * oshiScale;
                         cardText(ctx, m.name, cx, nameY, 50 * oshiScale, CARD_C.ink, 'center', cellW - 30);
                         const days = daysSinceOshi(oshiState.map[m.id]);
@@ -2392,9 +2391,10 @@
             // ---- 分隔線 ----
             y += 10;
             ctx.save(); ctx.fillStyle = '#d3ecfb';
-            for (let x = panelX + 90; x < panelX + panelW - 90; x += 26) {
-                if (Math.abs(x - W / 2) < 40) continue;
-                ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI * 2); ctx.fill();
+            // 從中間的愛心往左右對稱排點點，兩邊間距一致
+            for (let d = 52; W / 2 + d <= panelX + panelW - 80; d += 26) {
+                ctx.beginPath(); ctx.arc(W / 2 - d, y, 5, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.arc(W / 2 + d, y, 5, 0, Math.PI * 2); ctx.fill();
             }
             ctx.restore();
             cardHeart(ctx, W / 2, y, 18, CARD_C.pink);
@@ -2413,8 +2413,7 @@
                         const idx = row * wPerRow + i;
                         const cx = startX + wCellW * i + wCellW / 2;
                         const cy = y + wR + 14;
-                        cardAvatar(ctx, watchImgs[idx], m, cx, cy, wR, CARD_C.sky, idx % 2 === 0 ? -0.06 : 0.06);
-                        cardSun(ctx, cx + wR * 0.78, cy - wR * 0.78, 14, false);
+                        cardAvatar(ctx, watchImgs[idx], m, cx, cy, wR, CARD_C.sky, 0);
                         cardText(ctx, m.name, cx, cy + wR + 44, 30, CARD_C.ink, 'center', wCellW - 10);
                     });
                     y += wCellH;
