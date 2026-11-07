@@ -259,6 +259,7 @@ input,select{font:inherit}
 .whygo{min-height:40px;font-size:14px;padding:0 18px;margin-top:6px;border-radius:12px}
 .acts{position:sticky;bottom:-18px;margin:0 -16px -18px;padding:10px 16px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(#EAF4FB00,#EAF4FB 14px);display:flex;flex-direction:column;gap:10px;z-index:2}
 .mvth[data-yt]{cursor:pointer}.pbig{position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:rgba(255,255,255,.88);border:2px solid #1F3552;display:flex;align-items:center;justify-content:center;pointer-events:none}.pbig svg{width:20px;height:20px;margin-left:3px}.ytw{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#000}.ytw iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.ft .poka{display:block;margin:0 auto 6px}.ft .fcp{font-size:11px;font-weight:600;max-width:420px;margin:6px auto 0;padding:0 16px;line-height:1.7}
 </style>
 <!-- GA4：把首頁那段 gtag 程式碼原封不動貼在這裡（同一個 G-XXXX） -->
 </head>
@@ -303,7 +304,7 @@ const I = {
     cTitle: '投票前請確認', cList: ['本次投票會記錄你選擇的項目、投票時間，以及一組識別碼（匿名或 Google 帳號）。', '若使用 Google 登入，管理員在後台可以看到你的 Google 帳號名稱與 Email；匿名投票則看不到。', '個別投票內容只有管理員能看，公開的只有彙整後的結果。資料僅用於統計票數與公布結果，不會用於其他用途或提供給第三方。', '資料儲存在 Google Firebase，傳輸皆採 HTTPS 加密。原始投票資料於結果公布後 3 個月刪除。', '你可以隨時在右上角的帳號選單刪除自己的投票或帳號。', '本站使用 Google Analytics 進行匿名流量統計。', '你按下分享或寫下推薦理由後，你的暱稱、選擇與理由會公開，任何人都能看到；刪除我的投票時會一併刪除。請不要在理由裡寫入個人資料。'],
     cAgree: '我已閱讀並同意', cGoogle: 'Google 登入並投票', cLogin: 'Google 登入', cAnon: '匿名投票', cAnonNote: '匿名投票：換裝置或清除瀏覽器資料後，將無法找回或修改。', cPriv: '隱私說明', cCancel: '取消', cNeed: '請先勾選同意',
     delVote: '刪除我的投票', delAcct: '刪除我的帳號與投票', delVoteQ: '確定刪除這一屆你的投票？', delAcctQ: '確定刪除帳號與投票？此操作無法復原。', deleted: '已刪除', existing: '這個 Google 帳號已有投票紀錄，已為你載入，請確認後再提交。',
-    footer: 'おひさま自製的非官方調查・結果僅供參考', resT: '歷年結果', resNone: '結果尚未公布', resAll: '全部票', resG: '僅 Google 登入', ppl: n => `${n} 人參與`,
+    footer: 'おひさま自製的非官方調查・結果僅供參考', copy: '歌曲資訊、封面與 MV 縮圖等著作權屬於各權利人（Seed & Flower LLC 等）；30 秒試聽來自 iTunes。本站與日向坂46官方及上述公司無關。', resT: '歷年結果', resNone: '結果尚未公布', resAll: '全部票', resG: '僅 Google 登入', ppl: n => `${n} 人參與`,
     fatalT: '資料載入失敗', fatalB: '請檢查網路連線後再試一次。', retry: '重新整理' },
   ja: { ttl: '日向坂46 楽曲総選挙', en: 'HINATAZAKA46 SONG ELECTION', badge: y => `${y} 投票受付中`, badgeEnd: '投票は締め切られました',
     tag1: 'みんなで選ぼう、心を動かす一曲を！',
@@ -325,7 +326,7 @@ const I = {
     cTitle: '投票前にご確認ください', cList: ['投票内容（選んだ項目）、投票日時、識別コード（匿名またはGoogleアカウント）を記録します。', 'Googleログインの場合、管理者は管理画面でGoogleアカウント名とメールアドレスを確認できます。匿名投票では確認できません。', '個別の投票内容は管理者のみが閲覧でき、公開されるのは集計結果のみです。集計と結果発表以外の目的には使用せず、第三者に提供しません。', 'データはGoogle Firebaseに保存され、通信はHTTPSで暗号化されます。個別の投票データは結果発表の3か月後に削除します。', '右上のアカウントメニューからいつでも自分の投票やアカウントを削除できます。', '本サイトはGoogleアナリティクスで匿名のアクセス解析を行っています。', '共有ボタンを押すかおすすめ理由を書くと、ニックネーム・選んだ曲・理由が公開され、誰でも見られるようになります。投票を削除すると一緒に削除されます。理由に個人情報は書かないでください。'],
     cAgree: '内容を確認し、同意します', cGoogle: 'Googleでログインして投票', cLogin: 'Googleでログイン', cAnon: '匿名で投票', cAnonNote: '匿名投票は、端末の変更やブラウザデータの削除後に投票の確認・修正ができなくなります。', cPriv: 'プライバシーについて', cCancel: 'キャンセル', cNeed: '同意にチェックしてください',
     delVote: '自分の投票を削除', delAcct: 'アカウントと投票を削除', delVoteQ: '今回の投票を削除しますか？', delAcctQ: 'アカウントと投票を削除しますか？元に戻せません。', deleted: '削除しました', existing: 'このGoogleアカウントには投票履歴があります。読み込みました。内容を確認して再度送信してください。',
-    footer: 'おひさまによる非公式調査・結果は参考値です', resT: '過去の結果', resNone: '結果は未公開です', resAll: 'すべての票', resG: 'Googleログインのみ', ppl: n => `${n}人が参加`,
+    footer: 'おひさまによる非公式調査・結果は参考値です', copy: '楽曲情報・ジャケット・MVサムネイル等の著作権は各権利者（Seed & Flower LLC 等）に帰属します。30秒試聴はiTunesの提供です。本サイトは日向坂46公式および上記各社とは無関係です。', resT: '過去の結果', resNone: '結果は未公開です', resAll: 'すべての票', resG: 'Googleログインのみ', ppl: n => `${n}人が参加`,
     fatalT: 'データを読み込めませんでした', fatalB: 'ネットワークを確認して、もう一度お試しください。', retry: '再読み込み' }
 };
 
@@ -405,7 +406,7 @@ function head() {
     <h1 class="ttl"><span class="hl"><span class="bl">${esc(t('ttl').split(' ')[0])}</span> ${esc(t('ttl').split(' ').slice(1).join(' '))}</span></h1>
     <div class="tg1">${t('tag1')}</div>
     <div class="chips2">${count != null && count >= minC ? `<span class="stk cnt" style="background:#fff">${SUN_SM}${esc(cnt)}</span>` : ''}${dl == null || cl ? '' : `<span class="days">${SUN_SM}${dl <= 1 ? t('dayLast') : t('days')(dl)}</span>`}</div></div>`;
-  $('#ft').innerHTML = `<div class="ft">${t('footer')}　<a href="privacy.html">${t('cPriv')}</a></div>`;
+  $('#ft').innerHTML = `<div class="ft"><img class="poka" src="img/icons/favicon-192.png" width="44" height="44" alt=""><div>${t('footer')}</div><div class="fcp">${t('copy')}</div><div><a href="privacy.html">${t('cPriv')}</a></div></div>`;
 }
 
 // ---------- 畫面：項目 ----------
