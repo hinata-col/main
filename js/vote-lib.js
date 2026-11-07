@@ -86,8 +86,9 @@ export function normalizeMV(o, items, base) {
     era: song?.era || '', tags: [], note: o.note || '', hidden: !!song?.hidden };
 }
 
-export const SLIDES = [['jacketA', 'Type A', 'A'], ['jacketB', 'Type B', 'B'], ['jacketC', 'Type C', 'C'], ['jacketD', 'Type D', 'D'], ['jacketN', '通常盤', '通常'], ['jacketX', '其他', '其他'],
-  ['backA', 'Type A 封底', 'A底'], ['backB', 'Type B 封底', 'B底'], ['backC', 'Type C 封底', 'C底'], ['backD', 'Type D 封底', 'D底'], ['backN', '通常盤 封底', '通常底']];
+export const SLIDES = [['jacketA', 'A(Front)', 'A(Front)'], ['backA', 'A(Back)', 'A(Back)'], ['jacketB', 'B(Front)', 'B(Front)'], ['backB', 'B(Back)', 'B(Back)'],
+  ['jacketC', 'C(Front)', 'C(Front)'], ['backC', 'C(Back)', 'C(Back)'], ['jacketD', 'D(Front)', 'D(Front)'], ['backD', 'D(Back)', 'D(Back)'],
+  ['jacketN', '通常盤(Front)', '通常(Front)'], ['backN', '通常盤(Back)', '通常(Back)'], ['jacketX', '其他', '其他']];
 
 export function normalizeRelease(o, items, base) {
   if (!o.id || !o.title) return null;
