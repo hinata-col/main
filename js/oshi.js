@@ -12,7 +12,7 @@ export const OSHI_MEMBERS = [
   { id: 'takase_mana', name: '高瀬愛奈', gen: 1, graduated: true, avatar: 'https://pub-ce81db85078f428e84825b9267b26b5c.r2.dev/%E6%88%90%E5%93%A1%E9%A0%AD%E5%83%8F/manafi2.jpg' },
   { id: 'iguchi_mao', name: '井口眞緒', gen: 1, graduated: true, avatar: 'https://pbs.twimg.com/media/HLk8uLJWQAAKiNg?format=webp&name=large' },
   { id: 'nagahama_neru', name: '長濱ねる', gen: 1, graduated: true, avatar: 'https://pbs.twimg.com/media/Gxjxgb3bsAAVsio?format=png&name=900x900' },
-  { id: 'kakizaki_memi', name: '柿崎芽実', gen: 1, graduated: true, avatar: 'https://lh3.googleusercontent.com/7WirMW-jUMrL8lSQSuXka3IwP_jAj2ss4eCOJpHKccytZNpm57oczKSgO9WbA5BTy91kmNERU8JnCxYvYUkX4pSh=s0' },
+  { id: 'kakizaki_memi', name: '柿崎芽実', gen: 1, graduated: true, avatar: 'https://cdn.hinatazaka46.com/images/14/3b3/774d0334ec1fc84ab60426408d706.jpg' },
   // 二期生（金村、小坂現役，其餘畢業）
   { id: 'nibu_akari', name: '丹生明里', gen: 2, graduated: true, avatar: 'https://akarinibu.com/images/14/631/aa26978eabf303ccc494ee07276ca.jpg' },
   { id: 'kanamura_miku', name: '金村美玖', gen: 2, graduated: false, avatar: 'https://cdn.hinatazaka46.com/images/14/ce8/27d3cdf85a9b6c4cf7550f02268b0/800_800_102400.jpg' },
