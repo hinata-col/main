@@ -2280,8 +2280,7 @@
             const watchList = Object.keys(oshiState.watch).map(id => pool.find(m => m.id === id)).filter(Boolean);
 
             try { await document.fonts.load(`40px "VoteRound"`, '我的日向坂已經陪伴了天'); } catch (e) {}
-            const [clouds, oshiImgs, watchImgs] = await Promise.all([
-                Promise.all(['cloud1', 'cloud2', 'cloud3'].map(n => loadCardImage(`img/clouds/${n}.png`))),
+            const [oshiImgs, watchImgs] = await Promise.all([
                 Promise.all(oshiList.map(m => loadCardImage(m.avatar))),
                 Promise.all(watchList.map(m => loadCardImage(m.avatar)))
             ]);
@@ -2317,14 +2316,6 @@
             for (let yy = 30; yy < H; yy += 60) for (let xx = (yy / 60) % 2 ? 30 : 60; xx < W; xx += 60) {
                 ctx.beginPath(); ctx.arc(xx, yy, 5, 0, Math.PI * 2); ctx.fill();
             }
-
-            // 雲朵
-            const drawCloud = (img, x, y, w, alpha) => { if (!img) return; ctx.globalAlpha = alpha; ctx.drawImage(img, x, y, w, w * img.height / img.width); ctx.globalAlpha = 1; };
-            drawCloud(clouds[0], -40, 40, 230, 0.95);
-            drawCloud(clouds[2], 770, 245, 145, 0.85);
-            drawCloud(clouds[1], 170, 175, 110, 0.7);
-            drawCloud(clouds[2], -30, H - 230, 200, 0.9);
-            drawCloud(clouds[0], W - 210, H - 260, 230, 0.9);
 
             // 閃亮亮
             [[250, 70, 16], [700, 60, 12], [120, 280, 11], [980, 300, 14], [560, 270, 9], [60, H - 300, 12], [1020, H - 330, 10]]
