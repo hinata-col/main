@@ -257,6 +257,7 @@ input,select{font:inherit}
 .whyf{width:100%;resize:none;margin-top:4px;font-size:15px}.wc{text-align:right;font-size:12px;color:var(--mut);font-weight:700}
 .wq{background:#FFF8CC;border-radius:12px;padding:6px 11px;font-size:14px;font-weight:700;overflow-wrap:anywhere}
 .rl{display:flex;flex-direction:column;gap:8px;margin-top:6px;max-height:42vh;overflow-y:auto}.rr{background:#FFF8CC;border-radius:12px;padding:8px 12px}.rm{font-size:12px;font-weight:800;color:var(--bl)}.rx{font-size:14px;font-weight:700;overflow-wrap:anywhere}
+.whygo{min-height:40px;font-size:14px;padding:0 18px;margin-top:6px;border-radius:12px}
 </style>
 <!-- GA4：把首頁那段 gtag 程式碼原封不動貼在這裡（同一個 G-XXXX） -->
 </head>
@@ -292,7 +293,7 @@ const I = {
     done: (a, b) => `已選 ${a} / ${b} 個獎項`, play: '試聽', pause: '暫停', err: '此片段無法播放', composer: '作曲', lyricist: '作詞', allCr: '全部',
     cnt: (n, u) => `共 ${n} ${u}`, empty: '沒有符合的項目', yt: '在 YouTube 開啟', noteT: '備註', noteBtn: '看備註', close: '關閉', remove: '移除',
     single: '單曲', album: '專輯', navP: '上一張', navN: '下一張', cover: '封面',
-    whyBtn: '寫推薦理由', whyPh: '為什麼選它？一句話就好（選填，會公開顯示）', whyBad: '理由不能包含網址', whyPub: '推薦理由與暱稱會公開顯示，請不要寫入個人資料。', whyTitle: '大家的推薦理由', whyNone: '還沒有人留下推薦理由，你也來寫一句吧！', whyLoad: '讀取中…', whyFail: '暫時讀不到推薦理由', shareMiss: '找不到這份分享，可能已被刪除。', whySave: '已儲存', whyTag: '推薦理由',
+    whyBtn: '寫推薦理由', whyPh: '為什麼選它？一句話就好（選填，會公開顯示）', whyBad: '理由不能包含網址', whyPub: '推薦理由與暱稱會公開顯示，請不要寫入個人資料。', whyTitle: '大家的推薦理由', whyNone: '等你寫第一筆～', whyLoad: '讀取中…', whyFail: '等你寫第一筆～', whyGo: '送出理由', whyDone: '已送出，大家都看得到囉', whyErr: '送出失敗，請確認網路後再試', shareMiss: '找不到這份分享，可能已被刪除。', whySave: '已儲存', whyTag: '推薦理由',
     ok: '投票完成！', okLine: '謝謝你的參與！一生一緒日向坂♪', okSub: '截止前隨時可以回來修改', myVotes: n => `我的投票・共 ${n} 個獎項`, pv: '分享圖卡預覽',
     copyT: '複製文字', copyL: '複製連結', shareI: '分享圖卡', dl: '下載圖片', copied: '已複製', fail: '失敗，請稍後再試',
     shared: '分享的投票結果', guest: '網友', nickLbl: '暱稱（選填，會顯示在分享連結與圖卡上）', nickPh: '例如：おひさま小花', nickSuf: '的投票結果',
@@ -314,7 +315,7 @@ const I = {
     done: (a, b) => `${a} / ${b} 部門に投票済み`, play: '試聴', pause: '停止', err: '再生できません', composer: '作曲', lyricist: '作詞', allCr: 'すべて',
     cnt: (n, u) => `全${n}${u}`, empty: '該当する項目がありません', yt: 'YouTubeで開く', noteT: '備考', noteBtn: '備考を見る', close: '閉じる', remove: '削除',
     single: 'シングル', album: 'アルバム', navP: '前へ', navN: '次へ', cover: 'ジャケット',
-    whyBtn: 'おすすめ理由を書く', whyPh: 'どうして選んだ？一言でOK（任意・公開されます）', whyBad: '理由にURLは入れられません', whyPub: 'おすすめ理由とニックネームは公開されます。個人情報は書かないでください。', whyTitle: 'みんなのおすすめ理由', whyNone: 'まだ理由がありません。あなたも一言どうぞ！', whyLoad: '読み込み中…', whyFail: 'おすすめ理由を読み込めません', shareMiss: 'この共有は見つかりません。削除された可能性があります。', whySave: '保存しました', whyTag: 'おすすめ理由',
+    whyBtn: 'おすすめ理由を書く', whyPh: 'どうして選んだ？一言でOK（任意・公開されます）', whyBad: '理由にURLは入れられません', whyPub: 'おすすめ理由とニックネームは公開されます。個人情報は書かないでください。', whyTitle: 'みんなのおすすめ理由', whyNone: '最初の一言をお待ちしています～', whyLoad: '読み込み中…', whyFail: '最初の一言をお待ちしています～', whyGo: '理由を送信', whyDone: '送信しました。みんなに公開されます', whyErr: '送信に失敗しました。もう一度お試しください', shareMiss: 'この共有は見つかりません。削除された可能性があります。', whySave: '保存しました', whyTag: 'おすすめ理由',
     ok: '投票完了！', okLine: 'ご参加ありがとうございます！一生一緒日向坂♪', okSub: '締切前ならいつでも修正できます', myVotes: n => `私の投票・${n}部門`, pv: '共有画像のプレビュー',
     copyT: 'テキストをコピー', copyL: 'リンクをコピー', shareI: '画像を共有', dl: '画像を保存', copied: 'コピーしました', fail: '失敗しました',
     shared: '共有された投票結果', guest: 'ファン', nickLbl: 'ニックネーム（任意・共有リンクと画像に表示されます）', nickPh: '例：おひさま花子', nickSuf: 'さんの投票結果',
@@ -571,11 +572,11 @@ async function publish() {
     await update(ref(db), up); pubIds = Object.keys(byId); pubOk = true; whyDirty = false; return true;
   } catch (e) { console.error(e); return false; }
 }
-const queuePublish = () => { clearTimeout(whyT); whyT = setTimeout(publish, 1500); };
+const queuePublish = () => { clearTimeout(whyT); whyT = setTimeout(() => publish().then(ok => ok || toast(t('whyErr'))), 1500); };
 async function flushShare() { clearTimeout(whyT); if (hasVoted) await publish(); }
 const whyRow = (c, id) => { const k = c.id + '|' + id, tx = whyOf(c.id, id), open = whyOpen.has(k);
   return `<div class="wr" data-k="${esc(k)}"><div class="wt"><span>${esc(ttlOf(id))}</span><button class="pen${tx ? ' has' : ''}" data-why="${esc(k)}" aria-label="${t('whyBtn')}" title="${t('whyBtn')}">${ic('<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/>', { s: 18 })}</button></div>`
-    + (open ? `<textarea class="field whyf" data-wf="${esc(k)}" maxlength="60" rows="2" placeholder="${esc(t('whyPh'))}">${esc(tx)}</textarea><div class="wc"><span id="wc">${[...tx].length}</span>/60</div>` : tx ? `<div class="wq">${esc(tx)}</div>` : '') + `</div>`; };
+    + (open ? `<textarea class="field whyf" data-wf="${esc(k)}" maxlength="60" rows="2" placeholder="${esc(t('whyPh'))}">${esc(tx)}</textarea><div class="wc"><span id="wc">${[...tx].length}</span>/60</div><button class="btn go whygo" data-whygo="${esc(k)}">${t('whyGo')}</button>` : tx ? `<div class="wq">${esc(tx)}</div>` : '') + `</div>`; };
 const names = c => sel[c.id].map(ttlOf).join('、');
 const text = () => { const ps = picked(); return `${t('ttl')} ${year}${nick ? ' ' + nick + t('nickSuf') : ''} #日向坂46歌曲總選舉\n` + ps.slice(0, 3).map(c => `【${nm(c)}】${names(c)}`).join('\n') + (ps.length > 3 ? '\n' + t('more')(ps.length - 3) : '') + '\n' + link(); };
 const copy = async s => { try { await navigator.clipboard.writeText(s); toast(t('copied')); } catch { prompt('', s); } };
@@ -679,12 +680,16 @@ async function results(y) {
 // ---------- 事件 ----------
 document.addEventListener('click', async e => {
   if (menuOpen && !e.target.closest('#menu,[data-act="acct"]')) { menuOpen = false; head(); }
-  const b = e.target.closest('[data-tab],[data-sub],[data-pick],[data-play],[data-era],[data-act],[data-note],[data-slide],[data-car],[data-why],#sub'); if (!b) return;
+  const b = e.target.closest('[data-tab],[data-sub],[data-pick],[data-play],[data-era],[data-act],[data-note],[data-slide],[data-car],[data-why],[data-whygo],#sub'); if (!b) return;
   if (b.id === 'sub') { if (b.getAttribute('aria-disabled') === 'true' && !closed()) return toast(t('none')); return submit(); }
   const d = b.dataset;
   if (d.tab != null) { cur = +d.tab; q = fS = fE = fC = ''; stopAudio(); fade = true; render(); }
   else if (d.sub) { subOf[curTab().id] = d.sub; q = fS = fE = fC = ''; stopAudio(); fade = true; render(); }
-  else if (d.why) { const k = d.why; whyOpen.has(k) ? whyOpen.delete(k) : whyOpen.add(k); const [cid, id] = k.split('|'), c = cats.find(x => x.id === cid), row = b.closest('.wr');
+  else if (d.whygo) { const k = d.whygo, [cid, id] = k.split('|'), c = cats.find(x => x.id === cid);
+    if (badWhy(whyOf(cid, id))) return toast(t('whyBad'));
+    whyOpen.delete(k); const row = b.closest('.wr'); if (c && row) row.outerHTML = whyRow(c, id);
+    toast((await publish()) ? t('whyDone') : t('whyErr')); }
+  else if (d.why) { const k = d.why; if (whyOpen.has(k)) { whyOpen.delete(k); if (whyDirty) publish().then(ok => ok || toast(t('whyErr'))); } else whyOpen.add(k); const [cid, id] = k.split('|'), c = cats.find(x => x.id === cid), row = b.closest('.wr');
     if (c && row) { row.outerHTML = whyRow(c, id); [...$('#modal').querySelectorAll('.wr')].find(x => x.dataset.k === k)?.querySelector('textarea')?.focus(); } }
   else if (d.pick) toggle(d.pick);
   else if (d.play != null && b.hasAttribute('data-play')) play(b, d.play);
