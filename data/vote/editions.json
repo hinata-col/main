@@ -11,6 +11,13 @@
    },
    "groups": [
     {
+     "id": "cw",
+     "name": {
+      "zh": "C/W曲賞",
+      "ja": "C/W曲賞"
+     }
+    },
+    {
      "id": "gen",
      "name": {
       "zh": "期別曲賞",
@@ -34,17 +41,41 @@
      }
     },
     {
-     "id": "cw",
+     "id": "cwc",
+     "group": "cw",
+     "short": {
+      "zh": "共通C/W",
+      "ja": "共通C/W"
+     },
      "name": {
-      "zh": "C/W曲賞",
-      "ja": "C/W曲賞"
+      "zh": "共通C/W曲賞",
+      "ja": "共通C/W曲賞"
      },
      "unit": {
       "zh": "首",
       "ja": "曲"
      },
      "filter": {
-      "tag": "cw"
+      "tag": "cwc"
+     }
+    },
+    {
+     "id": "cwn",
+     "group": "cw",
+     "short": {
+      "zh": "通常盤C/W",
+      "ja": "通常盤C/W"
+     },
+     "name": {
+      "zh": "通常盤C/W曲賞",
+      "ja": "通常盤C/W曲賞"
+     },
+     "unit": {
+      "zh": "首",
+      "ja": "曲"
+     },
+     "filter": {
+      "tag": "cwn"
      }
     },
     {
@@ -228,6 +259,20 @@
      },
      "filter": {
       "tag": "unit"
+     }
+    },
+    {
+     "id": "live",
+     "name": {
+      "zh": "LIVE定番曲賞",
+      "ja": "LIVE定番曲賞"
+     },
+     "unit": {
+      "zh": "首",
+      "ja": "曲"
+     },
+     "filter": {
+      "tag": "live"
      }
     }
    ]
