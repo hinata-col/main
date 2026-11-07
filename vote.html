@@ -514,7 +514,7 @@ async function loadReasons(id) {
   const box = () => { const b = $('#rl'); return b && b.dataset.id === id ? b : null; };
   try { await dbP; if (!db) throw 0;
     const snap = (await get(query(ref(db, `songReasons/${year}/${id}`), limitToFirst(40)))).val() || {}, rows = [];
-    Object.values(snap).forEach(r => Object.entries(r?.c || {}).forEach(([cid, tx]) => { const c = cats.find(x => x.id === cid); const tx2 = String(tx); if ((/[\u3040-\u30ff]/.test(tx2) ? 'ja' : 'zh') === lang) rows.push({ n: r.n, tx: tx2 }); }));
+    Object.values(snap).forEach(r => Object.entries(r?.c || {}).forEach(([cid, tx]) => { const c = cats.find(x => x.id === cid); const tx2 = String(tx); if ((/[\u3040-\u30ff]/.test(tx2) ? 'ja' : 'zh') === lang && !rows.some(q => q.n === r.n && q.tx === tx2)) rows.push({ n: r.n, tx: tx2 }); }));
     if (box()) box().innerHTML = rows.length ? rows.map(r => `<div class="rr"><b class="rn">${esc(r.n || t('guest'))}</b>📢 <span class="rx">${esc(r.tx)}</span></div>`).join('') : `<div class="tg2">${t('whyNone')}</div>`;
   } catch { if (box()) box().innerHTML = `<div class="tg2">${t('whyFail')}</div>`; }
 }
@@ -555,7 +555,8 @@ async function submit() {
   if (!picked().length) return toast(t('none')); if (closed()) return toast(t('closed')); if (!user) return toast(t('conn'));
   if (localStorage.getItem('hv_consent') !== '1' || (user.isAnonymous && !hasVoted)) { const r = await consent(); if (!r) return; if (r === 'google' && !(await upgrade())) return; }
   const choices = Object.fromEntries(picked().map(c => [c.id, sel[c.id]]));
-  const base = { [`votes/${year}/${user.uid}`]: { choices, via: user.isAnonymous ? 'anonymous' : 'google', updatedAt: serverTimestamp(), ...(shareCode ? { share: shareCode } : {}) } };
+  const vp = `votes/${year}/${user.uid}`; // 分欄位寫入，不會蓋掉既有的 share 代碼
+  const base = { [`${vp}/choices`]: choices, [`${vp}/via`]: user.isAnonymous ? 'anonymous' : 'google', [`${vp}/updatedAt`]: serverTimestamp() };
   try { const first = !hasVoted;
     try { await update(ref(db), first ? { ...base, [`stats/${year}/count`]: increment(1) } : base); if (first && count != null) count++; }
     catch (e) { if (!first) throw e; await update(ref(db), base); } // 計數器寫入失敗時，不影響投票本身
