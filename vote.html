@@ -301,6 +301,29 @@ input,select{font:inherit}
 .sl img,.th img{opacity:0;transition:opacity .5s ease}
 .im-ok>img{opacity:1}
 @media (prefers-reduced-motion:reduce){.ldr,.sl,.th{animation:none!important}.sl img,.th img{transition:none}}
+
+/* 使用導覽 */
+.gq{width:44px;padding:0;font-size:19px;font-weight:900}
+.mdl.gd{background:#fff;gap:12px}
+.mdl.gd>*{flex-shrink:0}
+.gdh{display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:13px;color:var(--mut)}
+.gdx{width:36px;height:36px;border-radius:50%;background:#EEF5FA;font-weight:900;font-size:15px}
+.gdi{height:min(44vh,340px);border-radius:18px;padding:10px;display:flex;align-items:center;justify-content:center;background:#EAF4FB}
+.gdi:not(.im-ok){background:linear-gradient(100deg,rgba(255,255,255,0) 30%,rgba(255,255,255,.85) 50%,rgba(255,255,255,0) 70%) 0 0/200% 100% no-repeat,#E2EEF7;animation:shim 1.4s linear infinite}
+.gdi img{max-width:100%;max-height:100%;object-fit:contain;border-radius:12px;box-shadow:0 4px 14px rgba(31,53,82,.14);opacity:0;transition:opacity .35s ease}
+.gdi.im-ok img{opacity:1}
+.gdt{font-weight:900;font-size:21px;margin-top:2px}
+.gdd{margin:0;font-size:15px;line-height:1.7}
+.gdots{display:flex;gap:6px;justify-content:center}
+.gdots i{width:8px;height:8px;border-radius:99px;background:#BFD9EA;transition:width .2s}
+.gdots i.on{width:22px;background:#7EC2E8}
+.gdb{display:grid;grid-template-columns:1fr 1.7fr;gap:10px;align-items:stretch}
+.gdb .b3{min-height:56px;font-size:15px;font-weight:800}
+.gdb .go{min-height:56px}
+@media (prefers-reduced-motion:reduce){.gdi{animation:none!important}}
+/* 頂部按鈕：多了「?」後，窄螢幕也不換行 */
+.hd1 .stk,.lang,.login{white-space:nowrap}
+@media (max-width:380px){.hr{gap:6px}.lang,.login{padding:0 11px;font-size:13px}.gq{width:40px;font-size:17px}.lang svg{display:none}.hd1 .stk{font-size:12px}}
 </style>
 <!-- GA4：把首頁那段 gtag 程式碼原封不動貼在這裡（同一個 G-XXXX） -->
 </head>
@@ -336,8 +359,8 @@ input,select{font:inherit}
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getAuth, onAuthStateChanged, signInAnonymously, GoogleAuthProvider, signOut, linkWithPopup, signInWithCredential, deleteUser, reauthenticateWithPopup } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { getDatabase, ref, get, update, increment, serverTimestamp, query, limitToFirst } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
-import { OSHI_MEMBERS, OS_T, oshiHTML, makeOshiCard, cleanState, today } from './js/oshi.js?v=20261108d';
-import { MAX, buildData, match, buildTabs, esc, linkify, encodeShare, decodeShare, daysLeft, fmtDeadline, ytUrl, reasonLang } from './js/vote-lib.js?v=20261108d';
+import { OSHI_MEMBERS, OS_T, oshiHTML, makeOshiCard, cleanState, today } from './js/oshi.js?v=20261108e';
+import { MAX, buildData, match, buildTabs, esc, linkify, encodeShare, decodeShare, daysLeft, fmtDeadline, ytUrl, reasonLang } from './js/vote-lib.js?v=20261108e';
 
 // 投票專用 Firebase 專案（hinata-vote）
 const FB = { apiKey: "AIzaSyDhhCVZY7kby_i3Ktf2G2FsJce1uXbrU0o", authDomain: "hinata-vote.firebaseapp.com",
@@ -349,7 +372,7 @@ const I = {
   zh: { ttl: '日向坂46 歌曲總選舉', en: 'HINATAZAKA46 SONG ELECTION', badge: y => `${y} 投票進行中`, badgeEnd: '投票已截止',
     tag1: '一起選出，觸動內心的那首歌！',
     cntOn: n => `已有 ${n} 位おひさま參加`, cntLow: '一起來投票吧！', days: n => `距離投票截止還有 ${n} 天`, dayLast: '今天是最後一天！',
-    login: '登入', logout: '登出', upgrade: '升級為 Google 帳號', acctMenu: '帳號選單', googleIn: '已用 Google 登入', anonNow: '匿名投票中', anonCh: '匿', lang: '切換語言', top: '回到最上方',
+    login: '登入', logout: '登出', upgrade: '升級為 Google 帳號', acctMenu: '帳號選單', googleIn: '已用 Google 登入', anonNow: '匿名投票中', anonCh: '匿', lang: '切換語言', top: '回到最上方', gT: '使用導覽', gPrev: '上一步', gNext: '下一步', gSkip: '略過', gStart: '開始投票',
     search: '搜尋歌名、作曲者、作詞者', searchMv: '搜尋歌名', allS: '全部單曲／專輯', allC: '全部', eraA: '全部', eraH: '平假名櫸坂', eraN: '日向坂',
     hint: u => `每個獎項最多可選 3 ${u}，等值不排名，沒想法也可跳過。`, voted: '你已投過票，截止前可修改。',
     foot: d => `不必每個獎項都投，隨時可以送出；截止前（${d}）都能回來修改。`, footNoD: '不必每個獎項都投，隨時可以送出；截止前都能回來修改。',
@@ -371,7 +394,7 @@ const I = {
   ja: { ttl: '日向坂46 楽曲総選挙', en: 'HINATAZAKA46 SONG ELECTION', badge: y => `${y} 投票受付中`, badgeEnd: '投票は締め切られました',
     tag1: 'みんなで選ぼう、心を動かす一曲を！',
     cntOn: n => `${n}人のおひさまが参加中`, cntLow: 'みんなで投票しよう！', days: n => `締切まであと${n}日`, dayLast: '本日が最終日です！',
-    login: 'ログイン', logout: 'ログアウト', upgrade: 'Googleアカウントにアップグレード', acctMenu: 'アカウントメニュー', googleIn: 'Googleでログイン中', anonNow: '匿名で投票中', anonCh: '匿', lang: '言語切替', top: '一番上へ戻る',
+    login: 'ログイン', logout: 'ログアウト', upgrade: 'Googleアカウントにアップグレード', acctMenu: 'アカウントメニュー', googleIn: 'Googleでログイン中', anonNow: '匿名で投票中', anonCh: '匿', lang: '言語切替', top: '一番上へ戻る', gT: '使い方', gPrev: '戻る', gNext: '次へ', gSkip: 'スキップ', gStart: '投票をはじめる',
     search: '曲名・作曲者・作詞者で検索', searchMv: '曲名で検索', allS: 'すべてのシングル／アルバム', allC: 'すべて', eraA: 'すべて', eraH: 'ひらがなけやき', eraN: '日向坂',
     hint: u => `各賞、最大3${u}まで選べます。順位はなく、どれも同じ1票です。思いつかなければスキップもOK。`, voted: '投票済みです。締切前なら修正できます。',
     foot: d => `すべての賞に投票する必要はありません。いつでも送信でき、締切前（${d}）なら修正もできます。`, footNoD: 'すべての賞に投票する必要はありません。いつでも送信でき、締切前なら修正もできます。',
@@ -464,7 +487,7 @@ function head() {
   document.documentElement.lang = lang === 'ja' ? 'ja' : 'zh-Hant'; document.title = t('ttl');
   const cl = closed(), minC = ed?.minCount ?? 10, dl = deadline ? daysLeft(deadline) : null;
   const cnt = count != null && count >= minC ? t('cntOn')(count) : t('cntLow');
-  $('#top').innerHTML = `<div class="hd"><div class="hd1"><span class="stk">${cl ? t('badgeEnd') : t('badge')(year ?? '')}</span><div class="hr"><button class="btn lang" data-act="lang" aria-label="${t('lang')}">${GLOBE}${lang === 'ja' ? '中文' : '日本語'}</button>${acctHTML()}</div></div>${menuHTML()}
+  $('#top').innerHTML = `<div class="hd"><div class="hd1"><span class="stk">${cl ? t('badgeEnd') : t('badge')(year ?? '')}</span><div class="hr"><button class="btn lang gq" data-act="guide" aria-label="${t('gT')}" title="${t('gT')}">?</button><button class="btn lang" data-act="lang" aria-label="${t('lang')}">${GLOBE}${lang === 'ja' ? '中文' : '日本語'}</button>${acctHTML()}</div></div>${menuHTML()}
     <div class="en">${t('en')} ${year ?? ''}</div>
     <h1 class="ttl"><span class="hl"><span class="bl">${esc(t('ttl').split(' ')[0])}</span> ${esc(t('ttl').split(' ').slice(1).join(' '))}</span></h1>
     <div class="tg1">${t('tag1')}</div>
@@ -567,6 +590,36 @@ function toggle(id) {
   else { const had = curTab().cats.some(nOf); a.push(id); lastPick = id; try { navigator.vibrate?.(8); } catch {} if (a.length === MAX) fullCat = c.id; if (!had) popTab = cur; }
   save(); const sc = scrollY; render(); scrollTo(0, sc);
 }
+// ---- 使用導覽：第一次進站自動顯示一次，之後可從頂部「?」再打開。圖片是實際畫面截圖（img/guide/語言/1~6.webp）
+const GUIDE = {
+  zh: [['選一個獎項', '上方有 10 個獎項，點一下就能切換。每個獎項最多選 3 個，不分名次，沒想法的可以直接跳過。'],
+    ['選歌、試聽', '按 ♡ 選歌，按 ▶ 可以試聽 30 秒。也能用歌名、作曲者、作詞者搜尋，或依單曲篩選。'],
+    ['看看大家怎麼說', '按歌名旁的「i」，可以看這首歌的備註，還有大家寫的推薦理由。'],
+    ['送出投票', '選好後按下方的「確認投票」。不用每個獎項都投，隨時都能送出，截止前也能回來修改。'],
+    ['匿名或 Google 登入', '匿名投票最快；用 Google 登入的話，換手機也能回來改票，還能在帳號選單設定自己的「本命」。'],
+    ['寫理由、分享', '投完可以替選的歌寫一句推薦理由（會公開顯示），也能下載分享圖卡、複製連結傳給朋友。']],
+  ja: [['賞を選ぶ', '上の10の賞からタップで切り替え。各賞最大3つまで、順位はありません。思いつかない賞はスキップOK。'],
+    ['曲を選ぶ・試聴する', '♡で選択、▶で30秒試聴。曲名・作曲者・作詞者で検索したり、シングルで絞り込んだりもできます。'],
+    ['みんなの声をチェック', '曲名の横の「i」をタップすると、備考やみんなのおすすめ理由が読めます。'],
+    ['投票する', '選び終わったら下の「投票を確定」をタップ。全部の賞に投票しなくてもOK。締切前なら何度でも修正できます。'],
+    ['匿名でもGoogleでも', '匿名ならすぐ投票できます。Googleログインなら別の端末からも修正でき、アカウントメニューで「推しメン」も設定できます。'],
+    ['理由を書いてシェア', '投票後、選んだ曲におすすめ理由を書けます（公開されます）。シェア画像の保存やリンクのコピーもできます。']]
+};
+const GIMG = n => `img/guide/${lang}/${n}.webp?v=20261108`;
+function guideModal(i = 0) {
+  try { localStorage.setItem('hv_guide', '1'); } catch {}
+  const G = GUIDE[lang], n = G.length, [tt, dd] = G[i], m = $('#modal'); m.className = 'ov'; m.hidden = false; m.dataset.gi = i;
+  m.innerHTML = `<div class="mdl gd" role="dialog" aria-modal="true" aria-label="${t('gT')}" tabindex="-1">
+    <div class="gdh"><span>${t('gT')}　${i + 1} / ${n}</span><button class="gdx" data-m="x" aria-label="${t('close')}">✕</button></div>
+    <div class="gdi"><img src="${GIMG(i + 1)}" alt="${esc(tt)}" onload="this.parentNode.classList.add('im-ok')" onerror="this.parentNode.classList.add('im-ok');this.remove()"></div>
+    <div class="gdt"><span class="hl">${esc(tt)}</span></div><p class="gdd">${esc(dd)}</p>
+    <div class="gdots" aria-hidden="true">${G.map((_, k) => `<i${k === i ? ' class="on"' : ''}></i>`).join('')}</div>
+    <div class="gdb">${i ? `<button class="btn b3" data-m="gp">${t('gPrev')}</button>` : `<button class="btn b3" data-m="x">${t('gSkip')}</button>`}<button class="btn go" data-m="${i < n - 1 ? 'gn' : 'x'}">${i < n - 1 ? t('gNext') : t('gStart')}</button></div></div>`;
+  m.firstElementChild.focus(); if (i < n - 1) new Image().src = GIMG(i + 2);
+}
+const guideGo = d => { const i = +($('#modal').dataset.gi || 0) + d; if (i >= 0 && i < GUIDE[lang].length) guideModal(i); };
+// 沒看過導覽、也不像是回訪者（沒同意過、沒有草稿）才自動顯示
+const guideAuto = () => { try { if (localStorage.getItem('hv_guide') || localStorage.getItem('hv_consent') || localStorage.getItem('hv_draft_' + year)) return; } catch { return; } if ($('#modal').hidden) guideModal(0); };
 function noteSheet(id) {
   const s = items[id]; if (!s) return; const m = $('#modal');
   m.className = 'ov sheetmode'; m.hidden = false;
@@ -776,6 +829,7 @@ document.addEventListener('click', async e => {
   else if (d.act) {
     const a = d.act;
     if (a === 'top') scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth' });
+    else if (a === 'guide') guideModal(0);
     else if (a === 'lang') { lang = lang === 'ja' ? 'zh' : 'ja'; localStorage.setItem('hv_lang', lang); route(); }
     else if (a === 'acct') { menuOpen = !menuOpen; head(); }
     else if (a === 'login' || a === 'upgrade') { menuOpen = false; try { if (await consent(true) && await upgrade()) { head(); if (hasVoted) bar(); } else head(); } catch { toast(t('fail')); } }
@@ -828,9 +882,13 @@ $('#modal').addEventListener('click', e => { const b = e.target.closest('[data-o
   osDraw(); });
 $('#modal').addEventListener('change', e => { const id = e.target.dataset?.osd; if (!id || !os) return; const v = e.target.value;
   if (/^\d{4}-\d{2}-\d{2}$/.test(v)) { os.map[id] = v > today() ? today() : v; osSave(); } osDraw(); });
+{ let sx = null; const md = $('#modal'); // 導覽可左右滑動換頁
+  md.addEventListener('touchstart', e => { sx = e.target.closest('.mdl.gd') ? e.touches[0].clientX : null; }, { passive: true });
+  md.addEventListener('touchend', e => { if (sx == null) return; const dx = e.changedTouches[0].clientX - sx; sx = null; if (Math.abs(dx) > 50) guideGo(dx < 0 ? 1 : -1); }, { passive: true }); }
 $('#modal').addEventListener('click', async e => { const k = e.target.closest('[data-m]')?.dataset.m;
   if (pend) { if (k === 'cg' || k === 'ca') { if (!$('#cchk').checked) return toast(t('cNeed')); localStorage.setItem('hv_consent', '1'); return endModal(k === 'cg' ? 'google' : 'anon'); }
     if (k === 'cx' || e.target.id === 'modal') return endModal(null); return; }
+  if (k === 'gn' || k === 'gp') return guideGo(k === 'gn' ? 1 : -1);
   if (e.target.id === 'modal' || k === 'x') { if (whyDirty) publish(); endModal(); }
   else if (k === 'ct') { await flushShare(); copy(text()); } else if (k === 'cl') { await flushShare(); copy(link()); } else if (k === 'share' || k === 'dl') { await flushShare(); shareImg(k === 'dl'); } });
 
@@ -861,8 +919,8 @@ async function route() {
   if (h.startsWith('#s=')) sharedS(h.slice(3)); else if (h.startsWith('#r=') || h.startsWith('#v=') || h.startsWith('#w=')) shared(h); else if (h.startsWith('#results')) results(h.split('/')[1]);
   else if (h === '#admin') { head(); $('#bar').innerHTML = '';
     try { if (!window.tailwind) await new Promise((ok, no) => { const s = document.createElement('script'); s.src = 'https://cdn.tailwindcss.com'; s.onload = ok; s.onerror = no; document.head.append(s); });
-      const m = await import('./js/vote-admin.js?v=20261108d'); m.mountAdmin($('#app'), { songs: items, cats: dcats(), year }); } catch { toast(t('fail')); } }
-  else render();
+      const m = await import('./js/vote-admin.js?v=20261108e'); m.mountAdmin($('#app'), { songs: items, cats: dcats(), year }); } catch { toast(t('fail')); } }
+  else { render(); guideAuto(); }
 }
 (async () => {
   window.__ld?.(30, 44);
