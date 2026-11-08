@@ -77,7 +77,7 @@ async function reasonsPanel(root, { db, songs, cats, year }) {
     let lastCat = '', lastSong = '', blk;
     v.forEach(r => { if (r.cat !== lastCat) { list.append(el('h4', 'font-black text-sky-700 mt-4', cname[r.cat] || r.cat)); lastCat = r.cat; lastSong = ''; }
       if (r.song !== lastSong) { blk = el('div', 'bg-white rounded-xl p-3 shadow-sm'); blk.append(el('div', 'font-bold mb-1', songs[r.song]?.title || r.song)); list.append(blk); lastSong = r.song; }
-      const line = el('div', 'flex items-start gap-2 text-sm py-1 border-t border-slate-100'), t = el('div', 'flex-1'); t.append(el('b', 'text-sky-700', (r.nick || '匿名') + ' '), document.createTextNode('📢 ' + r.text));
+      const line = el('div', 'flex items-start gap-2 text-sm py-1 border-t border-slate-100'), t = el('div', 'flex-1'); t.append(el('b', 'text-sky-700', (r.nick || '匿名') + ' '), document.createTextNode('☀️ ' + r.text));
       const x = el('button', 'text-xs text-rose-600 px-2 py-1', '刪除'); x.onclick = () => del(r); line.append(t, x); blk.append(line); }); };
   sel.onchange = show; q.oninput = show; show();
 }
