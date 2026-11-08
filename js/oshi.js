@@ -100,8 +100,8 @@ const asset = n => (assetCache[n] ||= once(new URL(`../img/oshi/${n}.png`, impor
 const ASSETS = ['cloud-big', 'cloud-light', 'cloud-sm', 'cloud-mass', 'cloud-r', 'cloud-sm2', 'brush-y', 'heart-l', 'heart-s', 'star-y', 'star-b', 'spark-1', 'spark-3', 'swoosh', 'qr'];
 export async function makeOshiCard(o) {
   const { lang, st, nick, host } = o, T = OS_T[lang], W = 1080, H = 1350;
-  try { await document.fonts.load('900 40px VoteRound'); } catch {}
   const F = '"VoteRound","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif', cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
+  try { await document.fonts.load('900 40px VoteRound', Object.values(T).filter(v => typeof v === 'string').join('') + (nick || '') + OSHI_MEMBERS.map(m => m.name).join('') + '0123456789#：'); } catch {} // 罕用字在補字包，先載好再畫
   const sortIds = ids => ids.sort((a, b) => OSHI_MEMBERS.indexOf(byId[a]) - OSHI_MEMBERS.indexOf(byId[b]));
   const oIds = sortIds(Object.keys(st.map)), wIds = sortIds(Object.keys(st.watch));
   const TOP = 250, LIMIT = 1146, OC = 10, oShow = oIds.slice(0, OC), hero = oShow.length === 1;
