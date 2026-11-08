@@ -58,10 +58,10 @@ export const GEN_LABELS = { zh: { 1: '一期生', 2: '二期生', 3: '三期生'
 export const OS_T = {
   zh: { title: '本命設定', mOshi: '♥ 本命', mWatch: '☀ 在意成員', hOshi: '點成員頭像加入／移除本命，可複選，各自記錄陪伴起始日', hWatch: '點成員頭像加入／移除在意名單，可複選',
     tEdit: '編輯', tCard: '分享卡', none: '尚未選擇本命，在下方名單點選成員吧', days: n => `陪伴 ${n} 天`, picked: n => `已選 ${n}`, rm: '移除', since: '陪伴起始日', close: '關閉',
-    cardTtl: '我的日向坂本命', cardSub: '的本命', cOshi: '本命', cWatch: '在意成員', cNone: '尚未選擇本命', cNoneW: '尚未選擇', more: n => `還有 ${n} 位`, gen: '期生', making: '圖卡產生中…', save: '儲存／分享圖卡', saved: '已儲存', fail: '儲存失敗，請稍後再試', saveErr: '儲存本命設定失敗，請確認網路後再試', nick: '我', tag: '#日向坂46　#本命' },
+    cardTtl: '我的日向坂', since2: '加推日', cOshi: '本命', cWatch: '在意成員', cNone: '尚未選擇本命', cNoneW: '尚未選擇', more: n => `還有 ${n} 位`, gen: '期生', making: '圖卡產生中…', save: '儲存／分享圖卡', saved: '已儲存', fail: '儲存失敗，請稍後再試', saveErr: '儲存本命設定失敗，請確認網路後再試', nick: '我', tag: '#日向坂46　#本命' },
   ja: { title: '推しメン設定', mOshi: '♥ 推し', mWatch: '☀ 気になる', hOshi: 'メンバーをタップして推しを追加／解除（複数可）。推し始めた日も記録できます', hWatch: 'メンバーをタップして気になるメンバーを追加／解除（複数可）',
     tEdit: '編集', tCard: 'シェアカード', none: 'まだ推しがいません。下の一覧から選んでください', days: n => `推して ${n} 日`, picked: n => `${n}人`, rm: '削除', since: '推し始めた日', close: '閉じる',
-    cardTtl: 'わたしの日向坂46推し', cardSub: 'さんの推し', cOshi: '推し', cWatch: '気になるメンバー', cNone: 'まだ推しがいません', cNoneW: 'まだいません', more: n => `ほか ${n} 人`, gen: '期生', making: 'カード作成中…', save: 'カードを保存／シェア', saved: '保存しました', fail: '保存に失敗しました', saveErr: '保存に失敗しました。通信を確認してもう一度お試しください', nick: '私', tag: '#日向坂46　#推し' }
+    cardTtl: 'わたしの日向坂', since2: '推し始め', cOshi: '推し', cWatch: '気になるメンバー', cNone: 'まだ推しがいません', cNoneW: 'まだいません', more: n => `ほか ${n} 人`, gen: '期生', making: 'カード作成中…', save: 'カードを保存／シェア', saved: '保存しました', fail: '保存に失敗しました', saveErr: '保存に失敗しました。通信を確認してもう一度お試しください', nick: '私', tag: '#日向坂46　#推し' }
 };
 export const daysSince = s => { if (!s) return 0; const d = Math.floor((Date.now() - new Date(s).getTime()) / 864e5); return d > 0 ? d : 0; };
 export const today = () => { const d = new Date(), p = n => String(n).padStart(2, '0'); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`; };
@@ -93,56 +93,85 @@ export function oshiHTML(st, ui, lang, esc) {
     <button class="btn cls" data-m="x" style="margin-top:12px">${T.close}</button>`;
 }
 
-// ---------- 分享卡（投票站風格：天空藍底、白色圓角卡片、底部雲朵） ----------
+// ---------- 分享卡（天空藍底、黃色筆刷標題、白色圓角面板、底部雲朵＋QR code） ----------
+const NAVY = '#1F3552', RING = '#9FD0F0';
+const assetCache = {};
+const asset = n => (assetCache[n] ||= once(new URL(`../img/oshi/${n}.png`, import.meta.url).href, false));
+const ASSETS = ['cloud-big', 'cloud-light', 'cloud-sm', 'cloud-mass', 'cloud-r', 'cloud-sm2', 'brush-y', 'heart-l', 'heart-s', 'star-y', 'star-b', 'spark-1', 'spark-3', 'swoosh', 'qr'];
 export async function makeOshiCard(o) {
-  const { lang, st, nick, skyBg, faces, poka, host } = o, T = OS_T[lang], W = 1080, H = 1350;
+  const { lang, st, nick, host } = o, T = OS_T[lang], W = 1080, H = 1350;
   try { await document.fonts.load('900 40px VoteRound'); } catch {}
   const F = '"VoteRound","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif', cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
   const sortIds = ids => ids.sort((a, b) => OSHI_MEMBERS.indexOf(byId[a]) - OSHI_MEMBERS.indexOf(byId[b]));
   const oIds = sortIds(Object.keys(st.map)), wIds = sortIds(Object.keys(st.watch));
-  const OC = 10, oShow = oIds.slice(0, OC);
+  const TOP = 250, LIMIT = 1146, OC = 10, oShow = oIds.slice(0, OC), hero = oShow.length === 1;
   const L = n => n <= 1 ? [1, 170] : n === 2 ? [2, 140] : n === 3 ? [3, 108] : n === 4 ? [4, 84] : n <= 6 ? [3, 84] : n <= 8 ? [4, 72] : [5, 62];
   const [per, rBase] = L(oShow.length), rows = Math.max(1, Math.ceil(oShow.length / per)), wn0 = wIds.length;
   const wrBase = wn0 <= 4 ? 78 : wn0 <= 12 ? 62 : 52, wPer = wn0 <= 4 ? 4 : wn0 <= 12 ? 6 : 7, wMax = Math.min(wn0, 21), wNeed = Math.max(1, Math.ceil(wMax / wPer));
   let r, cellH, p1, wr, wCell, p2, wRows;
-  for (const s of [1, .92, .84, .76, .68, .6, .5]) { // 內容多時整體縮小，確保放得進畫面
-    r = Math.round(rBase * s); cellH = Math.round(r * 2.63 + 118); p1 = 76 + (oShow.length ? rows * cellH : 70) + 14;
-    wr = Math.round(wrBase * s); wCell = Math.round(wr * 2.2 + 62); p2 = 76 + (wn0 ? wNeed * wCell : 56) + 12;
-    wRows = wNeed; if (206 + p1 + 22 + p2 <= 1190) break; }
-  const wShow = wIds.slice(0, wRows * wPer), wRowsN = Math.max(1, Math.ceil(wShow.length / wPer));
-  const [oi, wi] = await Promise.all([Promise.all(oShow.map(id => loadAvatar(byId[id].avatar))), Promise.all(wShow.map(id => loadAvatar(byId[id].avatar)))]);
-  skyBg(g, W, H, faces, ['#D3EBFA', '#E6F4FC']);
-  g.fillStyle = '#A9D8F2'; g.fillRect(0, 0, W, 176);
-  g.fillStyle = '#1F3552'; g.textBaseline = 'alphabetic'; g.textAlign = 'left'; g.font = `900 58px ${F}`; g.fillText(T.cardTtl, 50, 86);
-  g.font = `700 32px ${F}`; g.fillText(nick ? nick + T.cardSub : String(new Date().getFullYear()), 50, 138);
-  if (poka) g.drawImage(poka, W - 170, 22, 132, 132 * poka.height / poka.width);
-  const panel = (y, h) => { g.save(); g.shadowColor = 'rgba(31,53,82,.14)'; g.shadowBlur = 20; g.shadowOffsetY = 6; g.fillStyle = '#fff'; g.beginPath(); g.roundRect(40, y, 1000, h, 36); g.fill(); g.restore(); };
-  const label = (txt, y) => { g.font = `900 44px ${F}`; const w = g.measureText(txt).width; g.fillStyle = 'rgba(245,224,80,.85)'; g.fillRect(74, y + 56, w + 12, 20); g.fillStyle = '#1F3552'; g.fillText(txt, 80, y + 70); };
-  const fitTxt = (s, w, size, weight) => { let z = size; g.font = `${weight} ${z}px ${F}`; while (z > 14 && g.measureText(s).width > w) { z -= 2; g.font = `${weight} ${z}px ${F}`; } return s; };
-  const face = (img, m, cx, cy, rad, ring, tilt) => { g.save(); g.translate(cx, cy); g.rotate(tilt);
+  for (const s of [1, .92, .84, .76, .68, .6, .52, .46, .4]) { // 內容多時整體縮小，確保放得進畫面
+    r = Math.round(rBase * s); cellH = Math.round(r * 2.63 + 118 + 40 * Math.min(1, s + .1)); p1 = hero ? 76 + 300 : 76 + (oShow.length ? rows * cellH : 70) + 14;
+    wr = Math.round(wrBase * s); wCell = Math.round(wr * 2.2 + 62); p2 = 76 + (wn0 ? wNeed * wCell : 56) + 12; wRows = wNeed;
+    if (TOP + p1 + 22 + p2 <= LIMIT) break; }
+  while (TOP + p1 + 22 + p2 > LIMIT && wRows > 1) { wRows--; p2 = 76 + wRows * wCell + 12; }
+  const lo = Math.max(0, LIMIT - (TOP + p1 + 22 + p2)), sh = lo * .28, gap = 22 + lo * .3; // 還有空間就把面板稍微撐開
+  const wShow = wIds.slice(0, wRows * wPer);
+  const [oi, wi, ...as] = await Promise.all([Promise.all(oShow.map(id => loadAvatar(byId[id].avatar))), Promise.all(wShow.map(id => loadAvatar(byId[id].avatar))), ...ASSETS.map(asset)]);
+  const A = Object.fromEntries(ASSETS.map((n, i) => [n, as[i]]));
+  const put = (k, cx, cy, w, rot = 0, al = 1, sy = 1) => { const im = A[k]; if (!im) return; const h = w * im.height / im.width; g.save(); g.globalAlpha = al; g.translate(cx, cy); g.rotate(rot * Math.PI / 180); g.scale(1, sy); g.drawImage(im, -w / 2, -h / 2, w, h); g.restore(); };
+  const fit = (s, w, size, weight) => { let z = size; g.font = `${weight} ${z}px ${F}`; while (z > 14 && g.measureText(s).width > w) { z -= 2; g.font = `${weight} ${z}px ${F}`; } return z; };
+  const ctext = (s, cx, y, w, size, weight, color) => { g.fillStyle = color; const z = fit(s, w, size, weight); g.textAlign = 'center';
+    if (z >= 30) { g.save(); g.lineJoin = 'round'; g.lineWidth = z * .04; g.strokeStyle = color; g.strokeText(s, cx, y); g.restore(); } // 粉圓字型偏細，大字補一圈描邊加粗
+    g.fillText(s, cx, y); g.textAlign = 'left'; };
+  const pill = (txt, cx, cy, size) => { g.font = `900 ${size}px ${F}`; const w = g.measureText(txt).width + size * 1.4, h = size * 1.7; g.fillStyle = '#F5E050'; g.beginPath(); g.roundRect(cx - w / 2, cy - h / 2, w, h, h / 2); g.fill();
+    g.fillStyle = NAVY; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(txt, cx, cy + 1); g.textAlign = 'left'; g.textBaseline = 'alphabetic'; };
+  const face = (img, m, cx, cy, rad, tilt) => { g.save(); g.translate(cx, cy); g.rotate(tilt);
     g.shadowColor = 'rgba(31,53,82,.2)'; g.shadowBlur = rad * .16; g.shadowOffsetY = rad * .05; g.fillStyle = '#fff'; g.beginPath(); g.arc(0, 0, rad * 1.1, 0, 7); g.fill(); g.shadowColor = 'transparent';
-    g.lineWidth = Math.max(3, rad * .06); g.strokeStyle = ring; g.beginPath(); g.arc(0, 0, rad * 1.1, 0, 7); g.stroke();
+    g.lineWidth = Math.max(3, rad * .07); g.strokeStyle = RING; g.beginPath(); g.arc(0, 0, rad * 1.1, 0, 7); g.stroke();
     g.save(); g.beginPath(); g.arc(0, 0, rad, 0, 7); g.clip();
     if (img) { const s = Math.max(rad * 2 / img.width, rad * 2 / img.height), w = img.width * s, h = img.height * s; g.drawImage(img, -w / 2, -rad - (h - rad * 2) * .2, w, h); }
     else { g.fillStyle = '#BFE3F5'; g.fillRect(-rad, -rad, rad * 2, rad * 2); g.fillStyle = '#1F7FBF'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.font = `900 ${rad * .8}px ${F}`; g.fillText(m.name.slice(0, 1), 0, 2); }
     g.restore(); g.restore(); g.textAlign = 'left'; g.textBaseline = 'alphabetic'; };
-  const pill = (txt, cx, cy, size) => { g.font = `900 ${size}px ${F}`; const w = g.measureText(txt).width + size * 1.4, h = size * 1.7; g.fillStyle = '#F5E050'; g.beginPath(); g.roundRect(cx - w / 2, cy - h / 2, w, h, h / 2); g.fill();
-    g.fillStyle = '#1F3552'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(txt, cx, cy + 1); g.textAlign = 'left'; g.textBaseline = 'alphabetic'; };
-  const ctext = (s, cx, y, w, size, weight, color) => { g.fillStyle = color; fitTxt(s, w, size, weight); g.textAlign = 'center'; g.fillText(s, cx, y); g.textAlign = 'left'; };
+  // ---- 背景與標題
+  const gr = g.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, '#CFE8F9'); gr.addColorStop(1, '#EAF6FD'); g.fillStyle = gr; g.fillRect(0, 0, W, H);
+  put('cloud-big', 150, 74, 260, 0, .95); put('cloud-light', 930, 200, 170, 0, .9); put('cloud-sm', 70, 215, 110, 0, .8);
+  put('star-b', 56, 150, 34, -10); put('star-y', 860, 36, 40, 8); put('spark-1', 940, 70, 30); put('spark-3', 90, 190, 54, 0, .9);
+  put('brush-y', 540, 90, 640, 4.5, .95, .62); ctext(T.cardTtl, 540, 118, 560, 92, 900, NAVY); put('heart-l', 888, 62, 56, 10); put('star-b', 190, 150, 28, -8);
+  if (nick) ctext(nick, 540, 196, 720, 50, 900, NAVY);
+  // ---- 面板
+  const panel = (y, h) => { g.save(); g.shadowColor = 'rgba(31,53,82,.14)'; g.shadowBlur = 20; g.shadowOffsetY = 6; g.fillStyle = '#fff'; g.beginPath(); g.roundRect(40, y, 1000, h, 36); g.fill(); g.restore(); };
+  const label = (txt, y, fill) => { g.font = `900 42px ${F}`; const w = g.measureText(txt).width; g.fillStyle = fill; g.beginPath(); g.roundRect(60, y + 16, w + 48, 62, 31); g.fill(); g.fillStyle = NAVY; g.fillText(txt, 84, y + 62); };
+  const more = (n, y) => { g.fillStyle = '#1F7FBF'; g.font = `800 28px ${F}`; g.textAlign = 'right'; g.fillText(T.more(n), 1000, y + 70); g.textAlign = 'left'; };
+  const since = id => `${T.since2}：${st.map[id].replace(/-/g, '.')}`;
   // 本命
-  panel(206, p1); label('♥ ' + T.cOshi, 206);
-  if (!oShow.length) { g.fillStyle = '#7C93A8'; g.textAlign = 'center'; g.font = `800 34px ${F}`; g.fillText(T.cNone, W / 2, 206 + 76 + 52); g.textAlign = 'left'; }
-  oShow.forEach((id, k) => { const m = byId[id], row = Math.floor(k / per), inRow = Math.min(per, oShow.length - row * per), cw = 1000 / per, x0 = 40 + (1000 - inRow * cw) / 2, cx = x0 + (k % per) * cw + cw / 2, cy = 206 + 76 + row * cellH + r * 1.1 + 6;
-    face(oi[k], m, cx, cy, r, '#FF8FA3', ((k % 3) - 1) * .035);
-    ctext(m.name, cx, cy + r * 1.1 + 68, cw - 24, Math.round(r * .3 + 10), 900, '#1F3552');
-    pill(T.days(daysSince(st.map[id])), cx, cy + r * 1.1 + 68 + Math.round(r * .26 + 22), Math.round(r * .2 + 12)); });
-  if (oIds.length > OC) { g.fillStyle = '#1F7FBF'; g.font = `800 28px ${F}`; g.textAlign = 'right'; g.fillText(T.more(oIds.length - OC), 1000, 206 + 70); g.textAlign = 'left'; }
+  const y1 = TOP + sh; panel(y1, p1); label('♥ ' + T.cOshi, y1, '#FBE45A');
+  if (!oShow.length) { g.fillStyle = '#7C93A8'; g.textAlign = 'center'; g.font = `800 34px ${F}`; g.fillText(T.cNone, W / 2, y1 + 76 + 52); g.textAlign = 'left'; put('star-b', 150, y1 + 150, 30); put('heart-s', 930, y1 + 130, 44, 10); }
+  if (hero) { // 只有一位本命：大頭像在左，名字與陪伴天數在右
+    const id = oShow[0], m = byId[id], rad = 128, cx = 40 + 70 + rad * 1.1 + 8, cy = y1 + 76 + 150;
+    face(oi[0], m, cx, cy, rad, 0);
+    const tx = cx + rad * 1.1 + 70, tw = 1040 - tx - 30; g.fillStyle = NAVY; fit(m.name, tw, 84, 900); g.fillText(m.name, tx, cy - 22);
+    put('swoosh', tx + Math.min(tw, g.measureText(m.name).width) / 2, cy - 4, Math.min(tw, g.measureText(m.name).width) + 30, 0, .9, .6);
+    pill(T.days(daysSince(st.map[id])), tx + 150, cy + 56, 38);
+    g.fillStyle = '#4A6178'; g.font = `700 28px ${F}`; g.fillText(since(id), tx, cy + 128);
+    put('star-y', 975, y1 + 120, 36, 10); put('heart-s', 960, y1 + 300, 44, -8);
+  } else oShow.forEach((id, k) => { const m = byId[id], row = Math.floor(k / per), inRow = Math.min(per, oShow.length - row * per), cw = 1000 / per, x0 = 40 + (1000 - inRow * cw) / 2, cx = x0 + (k % per) * cw + cw / 2, cy = y1 + 76 + row * cellH + r * 1.1 + 6;
+    face(oi[k], m, cx, cy, r, ((k % 3) - 1) * .035);
+    ctext(m.name, cx, cy + r * 1.1 + 68, cw - 24, Math.round(r * .3 + 10), 900, NAVY);
+    const ps = Math.round(r * .2 + 12), py = cy + r * 1.1 + 68 + Math.round(r * .26 + 22); pill(T.days(daysSince(st.map[id])), cx, py, ps);
+    g.fillStyle = '#4A6178'; g.font = `700 ${Math.round(r * .12 + 14)}px ${F}`; g.textAlign = 'center'; g.fillText(since(id), cx, py + ps * .85 + 26); g.textAlign = 'left'; });
+  if (oIds.length > OC) more(oIds.length - OC, y1);
   // 在意成員
-  const y2 = 206 + p1 + 22; panel(y2, p2); label('☀ ' + T.cWatch, y2);
+  const y2 = y1 + p1 + gap; panel(y2, p2); label('☀ ' + T.cWatch, y2, '#BFE0F6');
   if (!wShow.length) { g.fillStyle = '#7C93A8'; g.textAlign = 'center'; g.font = `800 30px ${F}`; g.fillText(T.cNoneW, W / 2, y2 + 76 + 40); g.textAlign = 'left'; }
   wShow.forEach((id, k) => { const m = byId[id], row = Math.floor(k / wPer), inRow = Math.min(wPer, wShow.length - row * wPer), cw = 1000 / wPer, x0 = 40 + (1000 - inRow * cw) / 2, cx = x0 + (k % wPer) * cw + cw / 2, cy = y2 + 76 + row * wCell + wr * 1.1 + 14;
-    face(wi[k], m, cx, cy, wr, '#7EC2E8', 0); ctext(m.name, cx, cy + wr * 1.1 + 32, cw - 8, Math.round(wr * .4 + 4), 800, '#1F3552'); });
-  if (wIds.length > wShow.length) { g.fillStyle = '#1F7FBF'; g.font = `800 28px ${F}`; g.textAlign = 'right'; g.fillText(T.more(wIds.length - wShow.length), 1000, y2 + 70); g.textAlign = 'left'; }
-  g.fillStyle = '#4A6178'; g.font = `700 28px ${F}`; g.fillText(T.tag + '　' + host, 50, H - 30);
+    face(wi[k], m, cx, cy, wr, 0); ctext(m.name, cx, cy + wr * 1.1 + 32, cw - 8, Math.round(wr * .4 + 4), 800, NAVY); });
+  if (wIds.length > wShow.length) more(wIds.length - wShow.length, y2);
+  // ---- 頁尾：雲朵、QR code、標籤與網址
+  put('cloud-mass', 240, H - 30, 620); put('cloud-r', 930, H - 24, 330, 0, .95); put('cloud-sm2', 640, H - 4, 190, 0, .9); put('star-y', 1020, 1196, 34, 8); put('star-b', 40, 1208, 28);
+  const qs = 145, qy = H - qs - 24; // 29 格 × 5px，整數倍放大才不會糊
+  g.save(); g.shadowColor = 'rgba(31,53,82,.22)'; g.shadowBlur = 14; g.shadowOffsetY = 4; g.fillStyle = '#fff'; g.beginPath(); g.roundRect(50, qy - 10, qs + 20, qs + 20, 22); g.fill(); g.restore();
+  if (A.qr) { g.imageSmoothingEnabled = false; g.drawImage(A.qr, 60, qy, qs, qs); g.imageSmoothingEnabled = true; }
+  const outl = (txt, x, y, size, col) => { g.font = `800 ${size}px ${F}`; g.lineJoin = 'round'; g.lineWidth = 8; g.strokeStyle = 'rgba(255,255,255,.95)'; g.strokeText(txt, x, y); g.fillStyle = col; g.fillText(txt, x, y); };
+  outl('#日向坂46', 60 + qs + 40, qy + 62, 44, NAVY); outl(host, 60 + qs + 40, qy + 116, 28, '#35516F');
   return cv;
 }
