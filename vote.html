@@ -386,7 +386,7 @@ const I = {
     shared: '我的推薦', guest: '網友', nickLbl: '暱稱（選填，會顯示在分享連結與圖卡上）', nickPh: '例如：おひさま小花', nickSuf: '的投票結果',
     shNick: (y, n) => `${y}日向坂46 歌曲總選舉，${n || '網友'}的投票結果`, me: '我也要投票', ask: '哪首是你的必推神曲？', askSub: d => d ? `你也來投一票吧！截止：${d}` : '你也來投一票吧！',
     mine: '我的', more: n => `另有 ${n} 個獎項，點連結看完整結果`, etc: n => `…等 ${n} 個`, conn: '連線失敗，請重新整理',
-    cTitle: '投票前請確認', cList: ['本次投票會記錄你選擇的項目、投票時間，以及一組識別碼（匿名或 Google 帳號）。', '若使用 Google 登入，管理員在後台可以看到你的 Google 帳號名稱與 Email；匿名投票則看不到。', '個別投票內容只有管理員能看，公開的只有彙整後的結果。資料僅用於統計票數與公布結果，不會用於其他用途或提供給第三方。', '資料儲存在 Google Firebase，傳輸皆採 HTTPS 加密。原始投票資料於結果公布後 3 個月刪除。', '你可以隨時在右上角的帳號選單刪除自己的投票或帳號。', '本站使用 Google Analytics 進行匿名流量統計。', '你按下分享或寫下推薦理由後，你的暱稱、選擇與理由會公開，任何人都能看到；刪除我的投票時會一併刪除。請不要在理由裡寫入個人資料。'],
+    cTitle: '投票前請確認', cList: ['本次投票會記錄你選擇的項目、投票時間，以及一組識別碼（匿名或 Google 帳號）。', '若使用 Google 登入，管理員在後台可以看到你的 Google 帳號名稱與 Email；匿名投票則看不到。', '個別投票內容只有管理員能看，公開的只有彙整後的結果。資料僅用於統計票數與公布結果，不會用於其他用途或提供給第三方。', '資料儲存在 Google Firebase，傳輸皆採 HTTPS 加密。匿名投票（含分享頁與推薦理由）於結果公布後 3 個月刪除，分享連結也會失效；在那之前升級為 Google 帳號即可保留。Google 登入的投票會保留到你自行刪除，下一屆可以帶入。', '你可以隨時在右上角的帳號選單刪除自己的投票或帳號。', '本站使用 Google Analytics 進行匿名流量統計。', '你按下分享或寫下推薦理由後，你的暱稱、選擇與理由會公開，任何人都能看到；刪除我的投票時會一併刪除。請不要在理由裡寫入個人資料。'],
     cAgree: '我已閱讀並同意', cGoogle: 'Google 登入並投票', cLogin: 'Google 登入', cAnon: '匿名投票', cAnonNote: '匿名投票：換裝置或清除瀏覽器資料後，將無法找回或修改。', cPriv: '隱私說明', cCancel: '取消', cNeed: '請先勾選同意',
     delVote: '刪除我的投票', delAcct: '刪除我的帳號與投票', delVoteQ: '確定刪除這一屆你的投票？', delAcctQ: '確定刪除帳號與投票？此操作無法復原。', deleted: '已刪除', existing: '這個 Google 帳號已有投票紀錄，已為你載入，請確認後再提交。',
     footer: 'おひさま自製的非官方調查・結果僅供參考', contact: '聯絡我（Instagram）', contactMsg: '資料若有誤請洽詢', copy: '歌曲資訊、封面與 MV 縮圖等著作權屬於各權利人（Seed & Flower LLC 等）；30 秒試聽來自 iTunes。本站與日向坂46官方及上述公司無關。', resT: '歷年結果', resNone: '結果尚未公布', resAll: '全部票', resG: '僅 Google 登入', ppl: n => `${n} 人參與`,
@@ -408,7 +408,7 @@ const I = {
     shared: 'わたしのおすすめ', guest: 'ファン', nickLbl: 'ニックネーム（任意・共有リンクと画像に表示されます）', nickPh: '例：おひさま花子', nickSuf: 'さんの投票結果',
     shNick: (y, n) => `${y}日向坂46 楽曲総選挙、${n ? n + 'さん' : 'ファン'}の投票結果`, me: '私も投票する', ask: 'あなたの推し曲はどれ？', askSub: d => d ? `あなたもぜひ一票を！締切：${d}` : 'あなたもぜひ一票を！',
     mine: '私の', more: n => `他${n}部門はリンクから`, etc: n => `…ほか${n}件`, conn: '接続に失敗しました',
-    cTitle: '投票前にご確認ください', cList: ['投票内容（選んだ項目）、投票日時、識別コード（匿名またはGoogleアカウント）を記録します。', 'Googleログインの場合、管理者は管理画面でGoogleアカウント名とメールアドレスを確認できます。匿名投票では確認できません。', '個別の投票内容は管理者のみが閲覧でき、公開されるのは集計結果のみです。集計と結果発表以外の目的には使用せず、第三者に提供しません。', 'データはGoogle Firebaseに保存され、通信はHTTPSで暗号化されます。個別の投票データは結果発表の3か月後に削除します。', '右上のアカウントメニューからいつでも自分の投票やアカウントを削除できます。', '本サイトはGoogleアナリティクスで匿名のアクセス解析を行っています。', '共有ボタンを押すかおすすめ理由を書くと、ニックネーム・選んだ曲・理由が公開され、誰でも見られるようになります。投票を削除すると一緒に削除されます。理由に個人情報は書かないでください。'],
+    cTitle: '投票前にご確認ください', cList: ['投票内容（選んだ項目）、投票日時、識別コード（匿名またはGoogleアカウント）を記録します。', 'Googleログインの場合、管理者は管理画面でGoogleアカウント名とメールアドレスを確認できます。匿名投票では確認できません。', '個別の投票内容は管理者のみが閲覧でき、公開されるのは集計結果のみです。集計と結果発表以外の目的には使用せず、第三者に提供しません。', 'データはGoogle Firebaseに保存され、通信はHTTPSで暗号化されます。匿名投票（共有ページ・おすすめ理由を含む）は結果発表の3か月後に削除され、共有リンクも無効になります。それまでにGoogleアカウントへアップグレードすれば保持されます。Googleログインの投票はご自身で削除するまで保存され、次回に引き継げます。', '右上のアカウントメニューからいつでも自分の投票やアカウントを削除できます。', '本サイトはGoogleアナリティクスで匿名のアクセス解析を行っています。', '共有ボタンを押すかおすすめ理由を書くと、ニックネーム・選んだ曲・理由が公開され、誰でも見られるようになります。投票を削除すると一緒に削除されます。理由に個人情報は書かないでください。'],
     cAgree: '内容を確認し、同意します', cGoogle: 'Googleでログインして投票', cLogin: 'Googleでログイン', cAnon: '匿名で投票', cAnonNote: '匿名投票は、端末の変更やブラウザデータの削除後に投票の確認・修正ができなくなります。', cPriv: 'プライバシーについて', cCancel: 'キャンセル', cNeed: '同意にチェックしてください',
     delVote: '自分の投票を削除', delAcct: 'アカウントと投票を削除', delVoteQ: '今回の投票を削除しますか？', delAcctQ: 'アカウントと投票を削除しますか？元に戻せません。', deleted: '削除しました', existing: 'このGoogleアカウントには投票履歴があります。読み込みました。内容を確認して再度送信してください。',
     footer: 'おひさまによる非公式調査・結果は参考値です', contact: 'お問い合わせ（Instagram）', contactMsg: '情報に誤りがある場合は', copy: '楽曲情報・ジャケット・MVサムネイル等の著作権は各権利者（Seed & Flower LLC 等）に帰属します。30秒試聴はiTunesの提供です。本サイトは日向坂46公式および上記各社とは無関係です。', resT: '過去の結果', resNone: '結果は未公開です', resAll: 'すべての票', resG: 'Googleログインのみ', ppl: n => `${n}人が参加`,
@@ -654,7 +654,9 @@ const consent = onlyG => new Promise(res => { pend = res; const m = $('#modal');
   m.firstElementChild.focus(); });
 async function upgrade() {
   const p = new GoogleAuthProvider();
-  try { if (auth.currentUser.isAnonymous) { await linkWithPopup(auth.currentUser, p); await auth.currentUser.getIdToken(true); user = auth.currentUser; } return true; }
+  try { if (auth.currentUser.isAnonymous) { await linkWithPopup(auth.currentUser, p); await auth.currentUser.getIdToken(true); user = auth.currentUser;
+      // 已投過票就立刻把標記改成 google：匿名票會在結果公布 3 個月後清除，升級後的票要保留
+      if (hasVoted) { const vp = `votes/${year}/${user.uid}`; try { await update(ref(db), { [`${vp}/via`]: 'google', [`${vp}/updatedAt`]: serverTimestamp() }); } catch (e) { console.warn('via 更新失敗，下次送出時會再更新', e); } } } return true; }
   catch (e) { if (e.code === 'auth/credential-already-in-use') { try { await signInWithCredential(auth, GoogleAuthProvider.credentialFromError(e)); } catch {} toast(t('existing')); }
     else if (e.code !== 'auth/popup-closed-by-user') toast(t('fail')); return false; }
 }
@@ -680,7 +682,7 @@ async function submit() {
     catch (e) { if (!first) throw e; await update(ref(db), base); } // 計數器寫入失敗時，不影響投票本身
     hasVoted = true; localStorage.removeItem('hv_draft_' + year); render(); doneModal(); if (shareCode) publish(); } catch (e) { console.error(e); toast(t('fail')); }
 }
-const link = () => shareCode && pubOk ? location.origin + location.pathname + '#s=' + shareCode : encodeShare(location.origin + location.pathname, year, cats, sel, nick);
+const link = () => shareCode && pubOk ? location.origin + location.pathname + '#s=' + year + '-' + shareCode : encodeShare(location.origin + location.pathname, year, cats, sel, nick);
 // ---- 公開分享與推薦理由 ----
 const genCode = () => { const a = 'abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789', r = new Uint8Array(8); (self.crypto || {}).getRandomValues ? crypto.getRandomValues(r) : r.forEach((_, i) => r[i] = Math.random() * 256); return [...r].map(x => a[x % a.length]).join(''); };
 const badWhy = s => /https?:|www\.|:\/\//i.test(s);
@@ -780,13 +782,16 @@ function renderShared(d) {
   bindCars();
 }
 const shared = h => renderShared(decodeShare(h, cats, items));
-async function sharedS(code) {
+// 分享連結：#s=年份-代碼（例：#s=2026-AbCd1234），之後每屆開跑，舊連結仍會到對應年份找資料
+// 不帶年份的舊格式（#s=AbCd1234）都是 2026 年產生的
+async function sharedS(raw) {
   head(); $('#bar').innerHTML = ''; $('#app').innerHTML = `<div class="card pad">${t('whyLoad')}</div>`;
-  let r = null; if (/^[A-Za-z0-9]{8}$/.test(code)) { try { await dbP; r = (await get(ref(db, `shares/${year}/${code}`))).val(); } catch {} }
-  if (location.hash !== '#s=' + code) return;
-  if (!r) { renderShared({ year, nick: '', picks: {}, reasons: {} }); $('#app').firstElementChild.insertAdjacentHTML('afterend', `<div class="card empty">${t('shareMiss')}</div>`); return; }
+  const m = /^(?:(\d{4})-)?([A-Za-z0-9]{8})$/.exec(raw || ''), sy = m ? (m[1] ? (E?.editions?.[m[1]] ? m[1] : null) : '2026') : null;
+  let r = null; if (sy) { try { await dbP; r = (await get(ref(db, `shares/${sy}/${m[2]}`))).val(); } catch {} }
+  if (location.hash !== '#s=' + raw) return;
+  if (!r) { renderShared({ year: sy || year, nick: '', picks: {}, reasons: {} }); $('#app').firstElementChild.insertAdjacentHTML('afterend', `<div class="card empty">${t('shareMiss')}</div>`); return; }
   const picks = {}; cats.forEach(c => { const v = r.picks?.[c.id]; if (v) { const ids = Object.values(v).filter(i => items[i] && !items[i].hidden).slice(0, MAX); if (ids.length) picks[c.id] = ids; } });
-  renderShared({ year, nick: String(r.nick || '').slice(0, 20), picks, reasons: r.reasons || {} });
+  renderShared({ year: sy, nick: String(r.nick || '').slice(0, 20), picks, reasons: r.reasons || {} });
 }
 async function results(y) {
   head(); $('#bar').innerHTML = ''; y = y || year; let d = null;
