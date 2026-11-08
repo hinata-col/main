@@ -294,7 +294,7 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getAuth, onAuthStateChanged, signInAnonymously, GoogleAuthProvider, signOut, linkWithPopup, signInWithCredential, deleteUser, reauthenticateWithPopup } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { getDatabase, ref, get, update, increment, serverTimestamp, query, limitToFirst } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
 import { OSHI_MEMBERS, OS_T, oshiHTML, makeOshiCard, cleanState, today } from './js/oshi.js';
-import { MAX, buildData, match, buildTabs, esc, linkify, encodeShare, decodeShare, daysLeft, fmtDeadline, ytUrl } from './js/vote-lib.js';
+import { MAX, buildData, match, buildTabs, esc, linkify, encodeShare, decodeShare, daysLeft, fmtDeadline, ytUrl, reasonLang } from './js/vote-lib.js';
 
 // 投票專用 Firebase 專案（hinata-vote）
 const FB = { apiKey: "AIzaSyDhhCVZY7kby_i3Ktf2G2FsJce1uXbrU0o", authDomain: "hinata-vote.firebaseapp.com",
@@ -536,7 +536,7 @@ async function loadReasons(id) {
   const box = () => { const b = $('#rl'); return b && b.dataset.id === id ? b : null; };
   try { await dbP; if (!db) throw 0;
     const snap = (await get(query(ref(db, `songReasons/${year}/${id}`), limitToFirst(40)))).val() || {}, rows = [];
-    Object.values(snap).forEach(r => Object.entries(r?.c || {}).forEach(([cid, tx]) => { const c = cats.find(x => x.id === cid); const tx2 = String(tx); if ((/[\u3040-\u30ff]/.test(tx2) ? 'ja' : 'zh') === lang && !rows.some(q => q.n === r.n && q.tx === tx2)) rows.push({ n: r.n, tx: tx2 }); }));
+    Object.values(snap).forEach(r => Object.entries(r?.c || {}).forEach(([cid, tx]) => { const c = cats.find(x => x.id === cid); const tx2 = String(tx); if (['any', lang].includes(reasonLang(tx2)) && !rows.some(q => q.n === r.n && q.tx === tx2)) rows.push({ n: r.n, tx: tx2 }); }));
     if (box()) box().innerHTML = rows.length ? rows.map(r => `<div class="rr"><b class="rn">${esc(r.n || t('guest'))}</b>📢 <span class="rx">${esc(r.tx)}</span></div>`).join('') : `<div class="tg2">${t('whyNone')}</div>`;
   } catch { if (box()) box().innerHTML = `<div class="tg2">${t('whyFail')}</div>`; }
 }

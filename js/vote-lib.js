@@ -229,3 +229,15 @@ export function fmtDeadline(ts) {
     .formatToParts(new Date(ts)).map(x => [x.type, x.value]));
   return `${p.year}/${p.month}/${p.day} ${p.hour}:${p.minute}`;
 }
+
+// 留言語言判斷：'zh' / 'ja' / 'any'（不確定，兩種介面都顯示）。
+// 中文留言常夾日文人名歌名（なおみほ、ナスカ桑），所以不能「有假名就算日文」：
+// 有中文專用字（聽、對、這、是…）且假名不多 → 中文；沒有中文專用字且平假名≥2 → 日文；其餘（純漢字、只有英數）→ any。
+const ZH_ONLY = new Set('這們沒麼說聽讓嗎呢吧啊很與對歡於還雖聯關彈这们没么说听让吗很与对欢于还虽联关是了我你就也為會');
+export function reasonLang(text) {
+  const s = String(text || ''); let z = 0, h = 0;
+  for (const ch of s) { if (ZH_ONLY.has(ch)) z++; else if (ch >= '぀' && ch <= 'ゟ') h++; }
+  if (z >= 1 && z * 5 >= h) return 'zh';
+  if (z === 0 && h >= 2) return 'ja';
+  return 'any';
+}
