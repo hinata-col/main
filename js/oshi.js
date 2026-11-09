@@ -97,6 +97,7 @@ export function oshiHTML(st, ui, lang, esc) {
 const NAVY = '#1F3552', RING = '#9FD0F0';
 const assetCache = {};
 const asset = n => (assetCache[n] ||= once(new URL(`../img/oshi/${n}.png`, import.meta.url).href, false));
+export const decoImgs = names => Promise.all(names.map(asset)); // 投票分享圖卡也用同一套素材
 const ASSETS = ['cloud-big', 'cloud-light', 'cloud-sm', 'cloud-mass', 'cloud-r', 'cloud-sm2', 'brush-y', 'heart-l', 'heart-s', 'star-y', 'star-b', 'spark-1', 'spark-3', 'swoosh', 'qr'];
 export async function makeOshiCard(o) {
   const { lang, st, nick, host } = o, T = OS_T[lang], W = 1080, H = 1350;

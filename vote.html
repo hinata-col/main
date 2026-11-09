@@ -373,8 +373,8 @@ input,select{font:inherit}
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getAuth, onAuthStateChanged, signInAnonymously, GoogleAuthProvider, signOut, linkWithPopup, signInWithCredential, deleteUser, reauthenticateWithPopup } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { getDatabase, ref, get, update, increment, serverTimestamp, query, limitToFirst } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
-import { OSHI_MEMBERS, OS_T, oshiHTML, makeOshiCard, cleanState, today } from './js/oshi.js?v=20261109b';
-import { MAX, buildData, match, buildTabs, esc, linkify, encodeShare, decodeShare, daysLeft, fmtDeadline, ytUrl, reasonLang } from './js/vote-lib.js?v=20261109b';
+import { OSHI_MEMBERS, OS_T, oshiHTML, makeOshiCard, cleanState, today, decoImgs } from './js/oshi.js?v=20261109c';
+import { MAX, buildData, match, buildTabs, esc, linkify, encodeShare, decodeShare, daysLeft, fmtDeadline, ytUrl, reasonLang } from './js/vote-lib.js?v=20261109c';
 
 // 投票專用 Firebase 專案（hinata-vote）
 const FB = { apiKey: "AIzaSyDhhCVZY7kby_i3Ktf2G2FsJce1uXbrU0o", authDomain: "hinata-vote.firebaseapp.com",
@@ -401,7 +401,7 @@ const I = {
     copyT: '複製文字', copyL: '複製連結', shareI: '分享圖卡', dl: '下載圖片', copied: '已複製', fail: '失敗，請稍後再試',
     shared: '我的推薦', guest: '網友', nickLbl: '暱稱（選填，會顯示在分享連結與圖卡上）', nickPh: '例如：おひさま小花', nickSuf: '的投票結果',
     shNick: (y, n) => `${y}日向坂46 歌曲總選舉，${n || '網友'}的投票結果`, me: '我也要投票', ask: '哪首是你的必推神曲？', askSub: d => d ? `你也來投一票吧！截止：${d}` : '你也來投一票吧！',
-    mine: '我的', more: n => `另有 ${n} 個獎項，點連結看完整結果`, etc: n => `…等 ${n} 個`, conn: '連線失敗，請重新整理',
+    mine: '我的', csSky: 'Type A', csSmile: 'Type B', cardTag: y => `#日向坂46　#日向坂46歌曲總選舉${y}`, more: n => `另有 ${n} 個獎項，點連結看完整結果`, etc: n => `…等 ${n} 個`, conn: '連線失敗，請重新整理',
     cTitle: '投票前請確認', cList: ['本次投票會記錄你選擇的項目、投票時間，以及一組識別碼（匿名或 Google 帳號）。', '若使用 Google 登入，管理員在後台可以看到你的 Google 帳號名稱與 Email；匿名投票則看不到。', '個別投票內容只有管理員能看，公開的只有彙整後的結果。資料僅用於統計票數與公布結果，不會用於其他用途或提供給第三方。', '資料儲存在 Google Firebase，傳輸皆採 HTTPS 加密。匿名投票（含分享頁與推薦理由）於結果公布後 3 個月刪除，分享連結也會失效；在那之前升級為 Google 帳號即可保留。Google 登入的投票會保留到你自行刪除，下一屆可以帶入。', '你可以隨時在右上角的帳號選單刪除自己的投票或帳號。', '本站使用 Google Analytics 進行匿名流量統計。', '你按下分享或寫下推薦理由後，你的暱稱、選擇與理由會公開，任何人都能看到；刪除我的投票時會一併刪除。請不要在理由裡寫入個人資料。'],
     cAgree: '我已閱讀並同意', cGoogle: 'Google 登入並投票', cLogin: 'Google 登入', cAnon: '匿名投票', cAnonNote: '匿名投票：換裝置或清除瀏覽器資料後，將無法找回或修改。', cPriv: '隱私說明', cCancel: '取消', cNeed: '請先勾選同意',
     delVote: '刪除我的投票', delAcct: '刪除我的帳號與投票', delVoteQ: '確定刪除這一屆你的投票？', delAcctQ: '確定刪除帳號與投票？此操作無法復原。', deleted: '已刪除', existing: '這個 Google 帳號已有投票紀錄，已為你載入，請確認後再提交。',
@@ -425,7 +425,7 @@ const I = {
     copyT: 'テキストをコピー', copyL: 'リンクをコピー', shareI: '画像を共有', dl: '画像を保存', copied: 'コピーしました', fail: '失敗しました',
     shared: 'わたしのおすすめ', guest: 'ファン', nickLbl: 'ニックネーム（任意・共有リンクと画像に表示されます）', nickPh: '例：おひさま花子', nickSuf: 'さんの投票結果',
     shNick: (y, n) => `${y}日向坂46 楽曲総選挙、${n ? n + 'さん' : 'ファン'}の投票結果`, me: '私も投票する', ask: 'あなたの推し曲はどれ？', askSub: d => d ? `あなたもぜひ一票を！締切：${d}` : 'あなたもぜひ一票を！',
-    mine: '私の', more: n => `他${n}部門はリンクから`, etc: n => `…ほか${n}件`, conn: '接続に失敗しました',
+    mine: '私の', csSky: 'Type A', csSmile: 'Type B', cardTag: y => `#日向坂46　#日向坂46楽曲総選挙${y}`, more: n => `他${n}部門はリンクから`, etc: n => `…ほか${n}件`, conn: '接続に失敗しました',
     cTitle: '投票前にご確認ください', cList: ['投票内容（選んだ項目）、投票日時、識別コード（匿名またはGoogleアカウント）を記録します。', 'Googleログインの場合、管理者は管理画面でGoogleアカウント名とメールアドレスを確認できます。匿名投票では確認できません。', '個別の投票内容は管理者のみが閲覧でき、公開されるのは集計結果のみです。集計と結果発表以外の目的には使用せず、第三者に提供しません。', 'データはGoogle Firebaseに保存され、通信はHTTPSで暗号化されます。匿名投票（共有ページ・おすすめ理由を含む）は結果発表の3か月後に削除され、共有リンクも無効になります。それまでにGoogleアカウントへアップグレードすれば保持されます。Googleログインの投票はご自身で削除するまで保存され、次回に引き継げます。', '右上のアカウントメニューからいつでも自分の投票やアカウントを削除できます。', '本サイトはGoogleアナリティクスで匿名のアクセス解析を行っています。', '共有ボタンを押すかおすすめ理由を書くと、ニックネーム・選んだ曲・理由が公開され、誰でも見られるようになります。投票を削除すると一緒に削除されます。理由に個人情報は書かないでください。'],
     cAgree: '内容を確認し、同意します', cGoogle: 'Googleでログインして投票', cLogin: 'Googleでログイン', cAnon: '匿名で投票', cAnonNote: '匿名投票は、端末の変更やブラウザデータの削除後に投票の確認・修正ができなくなります。', cPriv: 'プライバシーについて', cCancel: 'キャンセル', cNeed: '同意にチェックしてください',
     delVote: '自分の投票を削除', delAcct: 'アカウントと投票を削除', delVoteQ: '今回の投票を削除しますか？', delAcctQ: 'アカウントと投票を削除しますか？元に戻せません。', deleted: '削除しました', existing: 'このGoogleアカウントには投票履歴があります。読み込みました。内容を確認して再度送信してください。',
@@ -753,7 +753,7 @@ function doneModal() {
     <div class="dt"><span class="hl">${t('ok')}</span></div><div class="d1">${t('okLine')}</div><div class="d2">${t('okSub')}</div>
     <div class="card pad"><div class="h">${t('myVotes')(ps.length)}</div><p class="tg2" style="margin:2px 0 8px">${t('whyPub')}</p>${ps.map(c => `<div class="pr"><b>【${esc(nm(c))}】</b></div>${sel[c.id].map(id => whyRow(c, id)).join('')}`).join('')}</div>
     <div class="card pad"><label class="lbl" for="nick">${t('nickLbl')}</label><input id="nick" class="field" maxlength="20" value="${esc(nick)}" placeholder="${esc(t('nickPh'))}"></div>
-    <div class="card pad"><div class="h" style="margin-bottom:8px">${t('pv')}</div><div id="pv" class="pvbox"></div></div>
+    <div class="card pad"><div class="h" style="margin-bottom:8px">${t('pv')}</div><div class="segs" role="group" style="margin:0 0 10px">${['sky', 'smile'].map(k => `<button class="btn sg${cardStyle === k ? ' on' : ''}" data-cs="${k}" aria-pressed="${cardStyle === k}">${t(k === 'sky' ? 'csSky' : 'csSmile')}</button>`).join('')}</div><div id="pv" class="pvbox"></div></div>
     <div class="acts"><button class="btn go" data-m="share">${ic('<path d="M12 15V4M8 8l4-4 4 4M5 12v7h14v-7"/>', { s: 22, w: 2.6 })}${t('shareI')}</button>
     <div class="g3"><button class="btn b3" data-m="dl">${ic('<path d="M12 4v11M7.5 11 12 15.5 16.5 11M5 19h14"/>')}<span>${t('dl')}</span></button><button class="btn b3" data-m="ct">${ic('<path d="M7 3h7l4 4v14H7zM14 3v4h4M10 12h5M10 16h5"/>')}<span>${t('copyT')}</span></button><button class="btn b3" data-m="cl">${ic('<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>')}<span>${t('copyL')}</span></button></div>
     <button class="btn cls" data-m="x">${t('close')}</button></div></div>`;
@@ -763,43 +763,65 @@ function drawPreview() { if (!$('#pv') || !picked().length) return; card(true).t
 let pvT; const queuePreview = () => { clearTimeout(pvT); pvT = setTimeout(drawPreview, 500); };
 
 const loadImg = u => new Promise(r => { if (!u) return r(null); const i = new Image(); i.crossOrigin = 'anonymous'; i.onload = () => r(i); i.onerror = () => r(null); i.src = u; setTimeout(() => r(null), 6000); });
-const sunC = (g, x, y, r) => { g.save(); g.strokeStyle = '#1F3552'; g.lineWidth = 6; g.lineCap = 'round'; for (let k = 0; k < 8; k++) { const a = k * Math.PI / 4; g.beginPath(); g.moveTo(x + Math.cos(a) * (r + 14), y + Math.sin(a) * (r + 14)); g.lineTo(x + Math.cos(a) * (r + 30), y + Math.sin(a) * (r + 30)); g.stroke(); } g.beginPath(); g.arc(x, y, r, 0, 7); g.fillStyle = '#F5E050'; g.fill(); g.stroke(); g.restore(); };
 const fit = (g, s, w) => { while (g.measureText(s).width > w && s.length > 3) s = s.slice(0, -2) + '…'; return s; };
-const CLOUD_D = 'M24 60a12 12 0 0 1-2-23a18 18 0 0 1 34-6a14 14 0 0 1 26 8a11 11 0 0 1 4 21z', HATCH_D = 'M34 56l12-16M44 56l14-20M54 56l14-22M64 56l14-20M74 56l8-12';
-const cloudImgs = ['cloud1', 'cloud2', 'cloud3'].map(n => new URL(`img/clouds/${n}.png`, location.href).href);
-// 底部一排雲：一般雲與笑臉雲交錯，大小接近、間距平均，不壓到任何文字
-function skyBg(g, W, H, faces, pal = ['#A9DAF3', '#C4E6F8']) {
-  const CLOUD = new Path2D(CLOUD_D), HATCH = new Path2D(HATCH_D), gr = g.createLinearGradient(0, 0, 0, H);
-  gr.addColorStop(0, pal[0]); gr.addColorStop(1, pal[1]); g.fillStyle = gr; g.fillRect(0, 0, W, H);
-  g.save(); g.strokeStyle = '#fff'; g.lineWidth = 3.2; g.lineJoin = g.lineCap = 'round'; g.globalAlpha = .9;
-  [[40, 1230, 1.4, 1], [310, 1236, 1.2, 0], [600, 1228, 1.4, 1], [860, 1234, 1.2, 0]].forEach(([x, y, s, h]) => {
-    g.save(); g.translate(x - 24 * s, y - 25 * s); g.scale(s, s); g.lineWidth = 3.2 / s; g.stroke(CLOUD); if (h) { g.lineWidth = 2 / s; g.stroke(HATCH); } g.restore(); });
-  g.restore();
-  g.save(); g.globalAlpha = .9;
-  [[faces[0], 170, 1200, 96], [faces[2], 440, 1210, 112], [faces[1], 740, 1198, 74], [faces[0], 960, 1204, 84]].forEach(([im, x, y, w]) => { if (im) g.drawImage(im, x, y, w, w * im.height / im.width); });
+// 貼紙風太陽（白邊＋光芒），おひさま的票選少不了太陽；face=true 加上小臉
+let cardStyle = (() => { try { return localStorage.getItem('hv_cardstyle') === 'smile' ? 'smile' : 'sky'; } catch { return 'sky'; } })(); // 圖卡背景：sky＝天空小物（預設）、smile＝笑臉雲
+const SMILE = [1, 2, 3].map(n => new URL(`img/clouds/cloud${n}.png`, location.href).href);
+function sticker(g, cx, cy, r, face) {
+  g.save(); g.translate(cx, cy); g.lineJoin = g.lineCap = 'round';
+  const rays = (ext, wid, col, lw) => { g.beginPath(); for (let k = 0; k < 10; k++) { const a = k * Math.PI / 5 - Math.PI / 2, a1 = a - wid, a2 = a + wid;
+      g.moveTo(Math.cos(a1) * r * 1.02, Math.sin(a1) * r * 1.02); g.lineTo(Math.cos(a) * r * ext, Math.sin(a) * r * ext); g.lineTo(Math.cos(a2) * r * 1.02, Math.sin(a2) * r * 1.02); g.closePath(); }
+    if (lw) { g.lineWidth = lw; g.strokeStyle = col; g.stroke(); } else { g.fillStyle = col; g.fill(); } };
+  g.shadowColor = 'rgba(31,53,82,.18)'; g.shadowBlur = r * .3; g.shadowOffsetY = r * .08;
+  rays(1.62, .2, '#fff', r * .32); g.beginPath(); g.arc(0, 0, r * 1.06, 0, 7); g.fillStyle = '#fff'; g.fill(); g.shadowColor = 'transparent';
+  rays(1.5, .17, '#F5C400'); const gr = g.createRadialGradient(-r * .3, -r * .35, r * .1, 0, 0, r); gr.addColorStop(0, '#FFE680'); gr.addColorStop(1, '#F5C400');
+  g.beginPath(); g.arc(0, 0, r * .9, 0, 7); g.fillStyle = gr; g.fill();
+  if (face) { g.fillStyle = '#1F3552'; [-1, 1].forEach(d => { g.beginPath(); g.ellipse(d * r * .3, -r * .1, r * .07, r * .11, 0, 0, 7); g.fill(); });
+    g.lineWidth = r * .08; g.strokeStyle = '#1F3552'; g.beginPath(); g.arc(0, r * .12, r * .22, .2 * Math.PI, .8 * Math.PI); g.stroke();
+    g.fillStyle = 'rgba(255,143,163,.55)'; [-1, 1].forEach(d => { g.beginPath(); g.ellipse(d * r * .52, r * .2, r * .13, r * .08, 0, 0, 7); g.fill(); }); }
   g.restore();
 }
+// 投票分享圖卡：天空藍底＋去背小圖案（與本命圖卡同一套），底部 QR code 與 hashtag
+const CARD_DECO = ['cloud-big', 'cloud-light', 'cloud-sm', 'cloud-mass', 'cloud-r', 'cloud-sm2', 'brush-y', 'star-y', 'star-b', 'spark-1', 'spark-3', 'heart-l', 'qr'];
 async function card(withImg) {
-  try { await document.fonts.load('900 40px VoteRound', (document.body.innerText || '') + Object.values(sel).flat().map(i => items[i]?.title || '').join('')); } catch {}
-  const F = '"VoteRound","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif', W = 1080, H = 1350, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
-  const ps = picked(), main = ps.find(c => c.id === 'title') || ps.find(c => c.view !== 'mv' && c.view !== 'cover') || ps[0], ids = sel[main.id].slice(0, 3);
-  const [ims, faces] = withImg ? await Promise.all([Promise.all(ids.map(i => loadImg(items[i]?.img))), Promise.all(cloudImgs.map(loadImg))]) : [ids.map(() => null), [null, null, null]];
-  skyBg(g, W, H, faces);
-  g.fillStyle = '#7EC2E8'; g.fillRect(0, 0, W, 176);
-  g.fillStyle = '#1F3552'; g.font = `900 58px ${F}`; g.fillText(t('ttl'), 50, 86); g.font = `700 32px ${F}`; g.fillText(String(year) + (nick ? '　' + nick + t('nickSuf') : ''), 50, 138); sunC(g, W - 110, 88, 30);
+  const ps = picked(), main = ps.find(c => c.id === 'title') || ps.find(c => c.view !== 'mv' && c.view !== 'cover') || ps[0], ids = sel[main.id].slice(0, 3), sub = String(year) + (nick ? '　' + nick + t('nickSuf') : '');
+  try { await document.fonts.load('900 40px VoteRound', t('ttl') + sub + t('mine') + t('cardTag')(year) + ps.map(c => nm(c)).join('') + Object.values(sel).flat().map(ttlOf).join('') + '0123456789…'); } catch {}
+  const F = '"VoteRound","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif', W = 1080, H = 1350, NAVY = '#1F3552', cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
+  const smile = cardStyle === 'smile', [ims, dz, sm] = await Promise.all([withImg ? Promise.all(ids.map(i => loadImg(items[i]?.img))) : ids.map(() => null), decoImgs(CARD_DECO), smile ? Promise.all(SMILE.map(loadImg)) : []]);
+  const A = Object.fromEntries(CARD_DECO.map((n, i) => [n, dz[i]]));
+  const put = (k, cx, cy, w, rot = 0, al = 1, sy = 1) => { const im = A[k]; if (!im) return; const h = w * im.height / im.width; g.save(); g.globalAlpha = al; g.translate(cx, cy); g.rotate(rot * Math.PI / 180); g.scale(1, sy); g.drawImage(im, -w / 2, -h / 2, w, h); g.restore(); };
+  const ctext = (str, cx, y, w, size, weight) => { let z = size; g.font = `${weight} ${z}px ${F}`; while (z > 14 && g.measureText(str).width > w) { z -= 2; g.font = `${weight} ${z}px ${F}`; }
+    g.fillStyle = NAVY; g.textAlign = 'center'; if (z >= 30) { g.save(); g.lineJoin = 'round'; g.lineWidth = z * .04; g.strokeStyle = NAVY; g.strokeText(str, cx, y); g.restore(); } g.fillText(str, cx, y); g.textAlign = 'left'; };
+  // 背景與標題
+  const sml = (k, cx, cy, w, rot = 0) => { const im = sm[k]; if (!im) return; const h = w * im.height / im.width; g.save(); g.globalAlpha = .95; g.translate(cx, cy); g.rotate(rot * Math.PI / 180); g.drawImage(im, -w / 2, -h / 2, w, h); g.restore(); };
+  const gr = g.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, smile ? '#A9DAF3' : '#CFE8F9'); gr.addColorStop(1, smile ? '#C9E8F9' : '#EAF6FD'); g.fillStyle = gr; g.fillRect(0, 0, W, H);
+  if (smile) { sml(0, 92, 82, 190, -6); sml(2, 1000, 200, 150, 6); put('star-y', 870, 36, 36, 8); put('spark-3', 40, 190, 44, 0, .9); }
+  else { put('cloud-big', 92, 58, 200, 0, .95); put('cloud-light', 965, 196, 150, 0, .9); put('cloud-sm', 62, 196, 96, 0, .8);
+    put('star-b', 40, 128, 30, -10); put('star-y', 870, 36, 36, 8); put('spark-3', 1030, 150, 40, 0, .9); }
+  put('brush-y', 540, 84, 720, 4.5, .95, .6); ctext(t('ttl'), 540, 110, 780, 72, 900); sticker(g, 990, 74, 44, !smile);
+  ctext(sub, 540, 170, 880, 34, 800);
   const card1 = (x, y, w, h, r) => { g.save(); g.shadowColor = 'rgba(31,53,82,.14)'; g.shadowBlur = 20; g.shadowOffsetY = 6; g.fillStyle = '#fff'; g.beginPath(); g.roundRect(x, y, w, h, r); g.fill(); g.restore(); };
   card1(40, 206, 1000, 470, 36);
-  g.font = `900 44px ${F}`; const lb = t('mine') + nm(main), lw = g.measureText(lb).width; g.fillStyle = 'rgba(245,224,80,.85)'; g.fillRect(74, 262, lw + 12, 20); g.fillStyle = '#1F3552'; g.fillText(lb, 80, 276);
+  g.font = `900 44px ${F}`; const lb = t('mine') + nm(main), lw = g.measureText(lb).width; g.fillStyle = 'rgba(245,224,80,.85)'; g.fillRect(74, 262, lw + 12, 20); g.fillStyle = NAVY; g.fillText(lb, 80, 276);
   const sz = ids.length === 1 ? 300 : ids.length === 2 ? 290 : 270, gap = 36, x0 = 40 + (1000 - (sz * ids.length + gap * (ids.length - 1))) / 2;
   ids.forEach((id, k) => { const x = x0 + k * (sz + gap), y = 306; g.save(); g.beginPath(); g.roundRect(x, y, sz, sz, 28); g.clip();
     if (ims[k]) g.drawImage(ims[k], x, y, sz, sz); else { g.fillStyle = '#BFE3F5'; g.fillRect(x, y, sz, sz); } g.restore();
-    g.fillStyle = '#1F3552'; g.font = `800 26px ${F}`; g.fillText(fit(g, ttlOf(id), sz), x, y + sz + 36); });
+    g.fillStyle = NAVY; g.font = `800 26px ${F}`; g.fillText(fit(g, ttlOf(id), sz), x, y + sz + 36); });
   const rest = ps.filter(c => c !== main), cap = 8;
-  rest.slice(0, cap).forEach((c, k) => { const x = 40 + (k % 2) * 510, y = 706 + Math.floor(k / 2) * 112; card1(x, y, 490, 98, 24);
+  rest.slice(0, cap).forEach((c, k) => { const x = 40 + (k % 2) * 510, y = 700 + Math.floor(k / 2) * 110; card1(x, y, 490, 96, 24);
     g.fillStyle = '#1F7FBF'; g.font = `900 25px ${F}`; g.fillText(fit(g, nm(c), 430), x + 24, y + 36);
-    g.fillStyle = '#1F3552'; g.font = `700 30px ${F}`; g.fillText(fit(g, ttlOf(sel[c.id][0]) + (sel[c.id].length > 1 ? t('etc')(sel[c.id].length) : ''), 440), x + 24, y + 78); });
-  if (rest.length > cap) { g.fillStyle = '#1F7FBF'; g.font = `800 28px ${F}`; g.fillText(t('more')(rest.length - cap), 50, 1182); }
-  g.fillStyle = '#4A6178'; g.font = `700 28px ${F}`; g.fillText('#日向坂46歌曲總選舉　' + location.host + location.pathname, 50, H - 30); return cv;
+    g.fillStyle = NAVY; g.font = `700 30px ${F}`; g.fillText(fit(g, ttlOf(sel[c.id][0]) + (sel[c.id].length > 1 ? t('etc')(sel[c.id].length) : ''), 440), x + 24, y + 76); });
+  // 頁尾：雲朵、QR code、hashtag 與網址
+  if (smile) { sml(2, 935, H - 52, 230, -4); sml(1, 1040, H - 175, 110, 8); put('star-y', 840, 1200, 28, 8); }
+  else { put('cloud-mass', 300, H - 26, 640); put('cloud-r', 950, H - 20, 320, 0, .95); put('cloud-sm2', 680, H - 2, 180, 0, .9); put('star-y', 1030, 1192, 30, 8); }
+  if (rest.length > cap) { g.fillStyle = '#1F7FBF'; g.font = `800 26px ${F}`; g.textAlign = 'right'; g.fillText(t('more')(rest.length - cap), 1036, 1166); g.textAlign = 'left'; }
+  const qs = 145, qy = H - qs - 24; // QR 29 格 × 5px，整數倍放大才不會糊
+  g.save(); g.shadowColor = 'rgba(31,53,82,.22)'; g.shadowBlur = 14; g.shadowOffsetY = 4; g.fillStyle = '#fff'; g.beginPath(); g.roundRect(50, qy - 10, qs + 20, qs + 20, 22); g.fill(); g.restore();
+  if (A.qr) { g.imageSmoothingEnabled = false; g.drawImage(A.qr, 60, qy, qs, qs); g.imageSmoothingEnabled = true; }
+  const outl = (txt, x, y, size, col, maxW) => { let z = size; g.font = `800 ${z}px ${F}`; while (z > 18 && g.measureText(txt).width > maxW) { z -= 2; g.font = `800 ${z}px ${F}`; }
+    g.lineJoin = 'round'; g.lineWidth = 8; g.strokeStyle = 'rgba(255,255,255,.95)'; g.strokeText(txt, x, y); g.fillStyle = col; g.fillText(txt, x, y); };
+  outl(t('cardTag')(year), 60 + qs + 40, qy + 62, 40, NAVY, W - (60 + qs + 40) - 40); outl(location.host + location.pathname, 60 + qs + 40, qy + 116, 28, '#35516F', W - (60 + qs + 40) - 40);
+  return cv;
 }
 async function shareImg(dl) {
   let blob; try { blob = await new Promise(async r => (await card(true)).toBlob(r)); } catch { blob = null; }
@@ -904,8 +926,7 @@ async function openOshi() {
 }
 async function osCard() {
   const my = osRid, T = OS_T[lang];
-  try { const [faces, poka] = await Promise.all([Promise.all(cloudImgs.map(loadImg)), loadImg(new URL('img/icons/favicon-192.png', location.href).href)]);
-    const cv = await makeOshiCard({ lang, st: os, nick, skyBg, faces, poka, host: location.host + location.pathname });
+  try { const cv = await makeOshiCard({ lang, st: os, nick, host: location.host + location.pathname });
     const blob = await new Promise(r => cv.toBlob(r)); if (!blob) throw new Error('blob'); if (my !== osRid || !$('#osimg')) return;
     osBlob = blob; $('#osimg').src = URL.createObjectURL(blob); $('#osimg').hidden = false; $('#osld').hidden = true; $('#ossv').disabled = false;
   } catch (e) { console.error(e); if (my === osRid && $('#osld')) $('#osld').textContent = T.fail; }
@@ -927,7 +948,8 @@ $('#modal').addEventListener('change', e => { const id = e.target.dataset?.osd; 
 { let sx = null; const md = $('#modal'); // 導覽可左右滑動換頁
   md.addEventListener('touchstart', e => { sx = e.target.closest('.mdl.gd') ? e.touches[0].clientX : null; }, { passive: true });
   md.addEventListener('touchend', e => { if (sx == null) return; const dx = e.changedTouches[0].clientX - sx; sx = null; if (Math.abs(dx) > 50) guideGo(dx < 0 ? 1 : -1); }, { passive: true }); }
-$('#modal').addEventListener('click', async e => { const k = e.target.closest('[data-m]')?.dataset.m;
+$('#modal').addEventListener('click', async e => { const k = e.target.closest('[data-m]')?.dataset.m, cs = e.target.closest('[data-cs]')?.dataset.cs;
+  if (cs) { cardStyle = cs; try { localStorage.setItem('hv_cardstyle', cs); } catch {} document.querySelectorAll('[data-cs]').forEach(b => { b.classList.toggle('on', b.dataset.cs === cs); b.setAttribute('aria-pressed', b.dataset.cs === cs); }); drawPreview(); return; }
   if (pend) { if (k === 'cg' || k === 'ca') { if (!$('#cchk').checked) return toast(t('cNeed')); localStorage.setItem('hv_consent', '1'); return endModal(k === 'cg' ? 'google' : 'anon'); }
     if (k === 'cx' || e.target.id === 'modal') return endModal(null); return; }
   if (k === 'gn' || k === 'gp') return guideGo(k === 'gn' ? 1 : -1);
@@ -961,7 +983,7 @@ async function route() {
   if (h.startsWith('#s=')) sharedS(h.slice(3)); else if (h.startsWith('#r=') || h.startsWith('#v=') || h.startsWith('#w=')) shared(h); else if (h.startsWith('#results')) results(h.split('/')[1]); else if (h === '#live') liveView();
   else if (h === '#admin') { head(); $('#bar').innerHTML = '';
     try { if (!window.tailwind) await new Promise((ok, no) => { const s = document.createElement('script'); s.src = 'https://cdn.tailwindcss.com'; s.onload = ok; s.onerror = no; document.head.append(s); });
-      const m = await import('./js/vote-admin.js?v=20261109b'); m.mountAdmin($('#app'), { songs: items, cats: dcats(), year }); } catch { toast(t('fail')); } }
+      const m = await import('./js/vote-admin.js?v=20261109c'); m.mountAdmin($('#app'), { songs: items, cats: dcats(), year }); } catch { toast(t('fail')); } }
   else { render(); guideAuto(); }
 }
 (async () => {
