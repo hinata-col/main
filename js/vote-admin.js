@@ -54,6 +54,7 @@ async function panel(root, { songs, cats, year }) {
         Object.entries(sr).forEach(([sid, m]) => Object.keys(m || {}).forEach(c => { if (codes.has(c)) up[`songReasons/${year}/${sid}/${c}`] = null; }));
         if (Object.keys(up).length) await update(ref(db), up); alert(`已刪除 ${anon.length} 筆匿名投票`); panel(root, { songs, cats, year }); } catch { alert('失敗'); } }));
   root.append(row, cv, el('p', 'text-xs text-slate-500 mt-4', '結算流程：截止 → 結算並公開 → 匯出 JSON 放到 data/results/' + year + '.json（歷年結果頁會優先讀這份）→ 結果公布 3 個月後按「刪除匿名投票」。Google 登入的投票依隱私說明保留到本人刪除。'));
+  await analyticsPanel(root, { db, cats, songs, year, votes });
   await livePanel(root, { db, cats, songs, year, all, refresh: () => panel(root, { songs, cats, year }) });
   draw();
   await reasonsPanel(root, { db, songs, cats, year });
@@ -108,4 +109,65 @@ async function livePanel(root, { db, cats, songs, year, all, refresh }) {
   const b2 = el('button', B + 'bg-white text-rose-700 border border-rose-200', '撤下速報');
   b2.onclick = async () => { if (!cur || !confirm('撤下後前台不再顯示速報。確定？')) return; try { await set(ref(db, `live/${year}`), null); alert('已撤下'); refresh(); } catch { alert('失敗'); } };
   row.append(b1, b2); box.append(pv, row); root.append(box);
+}
+
+// ---- 數據分析：每日新增、時段、獎項參與率、完整度、理由與分享、語言、可疑匿名票 ----
+// 舊票沒有 createdAt（2026/11/9 之前投的），用 updatedAt 代替，數字會標示「估計」
+const TZ = 'Asia/Taipei', dayOf = ts => new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit' }).format(ts),
+  hourOf = ts => +new Intl.DateTimeFormat('en-GB', { timeZone: TZ, hour: '2-digit', hourCycle: 'h23' }).format(ts), pct = (a, b) => b ? Math.round(a * 1000 / b) / 10 : 0;
+const AN_CSS = `.an{margin-top:32px;padding:18px;border-radius:20px;background:#F4F9FD;border:1px solid #D6E8F5;color:#1F3552;font-family:inherit}
+.an h3{font-size:20px;font-weight:900;margin:0 0 4px}.an .an-sub{font-size:13px;color:#4A6178;margin:0 0 14px}
+.an .an-kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:16px}
+.an .an-kpi{background:#fff;border-radius:14px;padding:12px 14px;box-shadow:0 2px 8px rgba(31,53,82,.08)}.an .an-kpi b{display:block;font-size:26px;font-weight:900;line-height:1.2}.an .an-kpi span{font-size:12px;color:#4A6178;font-weight:700}
+.an .an-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px}
+.an .an-card{background:#fff;border-radius:16px;padding:14px;box-shadow:0 2px 8px rgba(31,53,82,.08)}.an .an-card h4{margin:0 0 8px;font-size:15px;font-weight:900}.an .an-card p{margin:6px 0 0;font-size:12px;color:#4A6178}
+.an .an-cv{position:relative;height:240px}.an .an-cv.tall{height:auto}
+.an table{width:100%;border-collapse:collapse;font-size:13px}.an td,.an th{padding:6px 4px;border-top:1px solid #EEF3F8;text-align:left;vertical-align:top}.an th{font-size:12px;color:#4A6178}
+.an .an-tag{display:inline-block;background:#FFE3EA;color:#C2335A;border-radius:99px;padding:0 8px;font-size:12px;font-weight:800}`;
+async function analyticsPanel(root, { db, cats, songs, year, votes }) {
+  if (!document.getElementById('an-css')) { const st = el('style'); st.id = 'an-css'; st.textContent = AN_CSS; document.head.append(st); }
+  const V = Object.entries(votes).map(([uid, v]) => ({ uid, ...v, t0: v.createdAt || v.updatedAt || 0, est: !v.createdAt, ch: Object.fromEntries(Object.entries(v.choices || {}).map(([c, a]) => [c, Object.values(a || {})]).filter(([, a]) => a.length)) })).filter(v => v.t0);
+  const n = V.length, nG = V.filter(v => v.via === 'google').length, nEst = V.filter(v => v.est).length;
+  let sr = {}; try { sr = (await get(ref(db, `songReasons/${year}`))).val() || {}; } catch {}
+  const why = {}, whyCodes = new Set(); Object.values(sr).forEach(m => Object.entries(m || {}).forEach(([code, r]) => { whyCodes.add(code); Object.keys(r?.c || {}).forEach(c => { why[c] = (why[c] || 0) + 1; }); }));
+  const today = dayOf(Date.now()), days = [], byDay = {}, upDay = {};
+  V.forEach(v => { const d = dayOf(v.t0); byDay[d] = (byDay[d] || 0) + 1; if (!v.est && v.updatedAt && v.updatedAt - v.createdAt > 60000) { const u = dayOf(v.updatedAt); upDay[u] = (upDay[u] || 0) + 1; } });
+  if (n) { const start = Math.min(...V.map(v => v.t0)); for (let t = start; dayOf(t) <= today; t += 864e5) { const d = dayOf(t); if (days.at(-1) !== d) days.push(d); } if (days.at(-1) !== today) days.push(today); }
+  let acc = 0; const cum = days.map(d => (acc += byDay[d] || 0)), last7 = days.slice(-7).reduce((s, d) => s + (byDay[d] || 0), 0);
+  const hours = Array(24).fill(0); V.forEach(v => { hours[hourOf(v.t0)]++; });
+  const filled = V.map(v => Object.keys(v.ch).length), maxF = Math.max(1, ...filled), hist = Array.from({ length: maxF }, (_, i) => filled.filter(f => f === i + 1).length);
+  const withL = V.filter(v => v.l), nJa = withL.filter(v => v.l === 'ja').length, nShare = V.filter(v => v.share).length;
+  const box = el('section', 'an'); root.append(box);
+  box.append(el('h3', '', '數據分析'), el('p', 'an-sub', `時間以台灣時間計。${nEst ? `有 ${nEst} 張票是記錄「第一次投票時間」之前投的，以最後更新時間估計，每日數字僅供參考。` : ''}`));
+  const kpis = el('div', 'an-kpis'); box.append(kpis);
+  [[n, '投票人數'], [`${nG}／${n - nG}`, 'Google／匿名'], [byDay[today] || 0, '今天新增'], [last7, '近 7 天新增'],
+   [n ? (filled.reduce((s, f) => s + f, 0) / n).toFixed(1) : 0, '平均投了幾個獎項'], [`${pct(whyCodes.size, n)}%`, `寫推薦理由（${whyCodes.size} 人）`],
+   [`${pct(nShare, n)}%`, `公開分享頁（${nShare} 人）`], [withL.length ? `${pct(nJa, withL.length)}%` : '—', `日文介面（有紀錄的 ${withL.length} 人中）`]]
+    .forEach(([v, l]) => { const k = el('div', 'an-kpi'); k.append(el('b', '', String(v)), el('span', '', l)); kpis.append(k); });
+  const grid = el('div', 'an-grid'); box.append(grid);
+  const card = (title, note, tall) => { const c = el('div', 'an-card'), w = el('div', 'an-cv' + (tall ? ' tall' : '')), cv = el('canvas'); w.append(cv); c.append(el('h4', '', title), w); if (note) c.append(el('p', '', note)); grid.append(c); return [cv, w]; };
+  const charts = [];
+  const mk = (cv, cfg) => { if (window.Chart) charts.push(new Chart(cv, { ...cfg, options: { maintainAspectRatio: false, plugins: { legend: { display: !!cfg.legend } }, ...(cfg.options || {}) } })); };
+  const [c1] = card('每日新增投票人數與累計', '長條：當天新增（左軸）；折線：累計人數（右軸）');
+  mk(c1, { type: 'bar', legend: true, data: { labels: days.map(d => d.slice(5)), datasets: [{ type: 'bar', label: '當天新增', data: days.map(d => byDay[d] || 0), backgroundColor: '#7EC2E8', yAxisID: 'y' }, { type: 'line', label: '累計', data: cum, borderColor: '#1F3552', backgroundColor: '#1F3552', pointRadius: 2, tension: .25, yAxisID: 'y1' }] },
+    options: { scales: { y: { beginAtZero: true, ticks: { precision: 0 } }, y1: { beginAtZero: true, position: 'right', grid: { drawOnChartArea: false }, ticks: { precision: 0 } } } } });
+  const [c2] = card('每天有改票的人數', '投票後又回來修改的人，依「最後一次改票」的日期計；只算有記錄第一次投票時間的票');
+  mk(c2, { type: 'bar', data: { labels: days.map(d => d.slice(5)), datasets: [{ data: days.map(d => upDay[d] || 0), backgroundColor: '#F5E050' }] }, options: { scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } } });
+  const [c3] = card('投票時段（幾點投的）', '可以參考這個決定發社群文的時間');
+  mk(c3, { type: 'bar', data: { labels: hours.map((_, h) => `${h}`), datasets: [{ data: hours, backgroundColor: '#7EC2E8' }] }, options: { scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } } });
+  const [c4] = card('每人投了幾個獎項', '橫軸是投了幾個獎項，縱軸是人數');
+  mk(c4, { type: 'bar', data: { labels: hist.map((_, i) => `${i + 1}`), datasets: [{ data: hist, backgroundColor: '#1F3552' }] }, options: { scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } } });
+  const part = cats.map(c => { const vs = V.filter(v => v.ch[c.id]); return { c, rate: pct(vs.length, n), avg: vs.length ? (vs.reduce((s, v) => s + v.ch[c.id].length, 0) / vs.length).toFixed(1) : '0', why: why[c.id] || 0 }; });
+  const [c5, w5] = card('各獎項參與率', '有投這個獎項的人 ÷ 全部投票人數；括號是平均選幾首、寫了幾則理由', true); w5.style.height = (cats.length * 26 + 40) + 'px';
+  mk(c5, { type: 'bar', data: { labels: part.map(p => `${p.c.name.zh}（${p.avg} 首・${p.why} 則）`), datasets: [{ data: part.map(p => p.rate), backgroundColor: part.map(p => p.rate >= 50 ? '#7EC2E8' : '#F5B7C5') }] },
+    options: { indexAxis: 'y', scales: { x: { min: 0, max: 100, ticks: { callback: v => v + '%' } } } } });
+  // 可疑匿名票：內容完全一樣、且至少投了 3 個獎項的匿名票
+  const groups = {}; V.filter(v => v.via !== 'google' && Object.keys(v.ch).length >= 3).forEach(v => { const k = JSON.stringify(Object.keys(v.ch).sort().map(c => [c, [...v.ch[c]].sort()])); (groups[k] ||= []).push(v); });
+  const sus = Object.values(groups).filter(g => g.length >= 2).sort((a, b) => Object.keys(b[0].ch).length - Object.keys(a[0].ch).length || b.length - a.length);
+  const sc = el('div', 'an-card'); sc.style.marginTop = '12px'; sc.append(el('h4', '', `可疑匿名票（內容完全一樣、至少 3 個獎項）：${sus.length} 組`)); box.append(sc);
+  if (!sus.length) sc.append(el('p', '', '目前沒有發現。'));
+  else { const tb = el('table'); tb.innerHTML = '<tr><th>張數</th><th>獎項數</th><th>時間範圍</th><th>內容（前 3 個獎項）</th></tr>'; sus.slice(0, 30).forEach(g => { const tr = el('tr'), ts = g.map(v => v.t0), fmt = t => new Date(t).toLocaleString('zh-TW', { timeZone: TZ, hour12: false, month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+      const td = (x, cls) => { const e = el('td'); if (cls) { const s = el('span', cls, x); e.append(s); } else e.textContent = x; return e; };
+      tr.append(td(`${g.length} 張`, 'an-tag'), td(String(Object.keys(g[0].ch).length)), td(`${fmt(Math.min(...ts))} ～ ${fmt(Math.max(...ts))}`), td(Object.entries(g[0].ch).slice(0, 3).map(([c, a]) => `${cats.find(x => x.id === c)?.name.zh || c}：${a.map(i => songs[i]?.title || i).join('、')}`).join('／'))); tb.append(tr); });
+    sc.append(tb, el('p', '', '內容一模一樣只是線索：大家都選熱門歌時也會巧合撞票，填的獎項越多越可疑。網站看不到 IP，無法確定是同一人。')); }
 }
