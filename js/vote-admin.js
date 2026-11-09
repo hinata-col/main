@@ -43,9 +43,16 @@ async function panel(root, { songs, cats, year }) {
     btn('結算並公開', 'bg-sky-500 text-white', async () => { if (!confirm('把統計寫入 results/（截止後所有人可讀）？')) return;
       try { await set(ref(db, `results/${year}`), result); alert('已結算'); } catch { alert('寫入失敗'); } }),
     btn('匯出 JSON', 'bg-sky-100 text-sky-700', () => { const a = el('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(result, null, 2)], { type: 'application/json' })); a.download = `${year}.json`; a.click(); }),
-    btn('刪除本屆原始投票', 'bg-rose-50 text-rose-700', async () => { if (prompt('此操作無法復原。請先「匯出 JSON」並結算。確定請輸入 DELETE') !== 'DELETE') return;
-      try { await set(ref(db, `votes/${year}`), null); alert('已刪除'); panel(root, { songs, cats, year }); } catch { alert('失敗'); } }));
-  root.append(row, cv, el('p', 'text-xs text-slate-500 mt-4', '匯出的 JSON 請放到 data/results/' + year + '.json，歷年結果頁會優先讀這份靜態檔。Google 登入者的 Email 在 Firebase Authentication 頁面，需另外清理。'));
+    // 依隱私說明：匿名投票（含分享頁與推薦理由）在結果公布 3 個月後刪除；Google 登入的投票保留
+    btn('刪除匿名投票（含分享頁與理由）', 'bg-rose-50 text-rose-700', async () => {
+      const anon = Object.entries(votes).filter(([, v]) => v.via !== 'google'), codes = new Set(anon.map(([, v]) => v.share).filter(Boolean));
+      if (prompt(`將刪除 ${anon.length} 筆匿名投票與 ${codes.size} 個分享頁（含推薦理由），無法復原。請先「結算並公開」與「匯出 JSON」。確定請輸入 DELETE`) !== 'DELETE') return;
+      try { let sr = {}; try { sr = (await get(ref(db, `songReasons/${year}`))).val() || {}; } catch {}
+        const up = {}; anon.forEach(([u]) => { up[`votes/${year}/${u}`] = null; }); codes.forEach(c => { up[`shares/${year}/${c}`] = null; });
+        Object.entries(sr).forEach(([sid, m]) => Object.keys(m || {}).forEach(c => { if (codes.has(c)) up[`songReasons/${year}/${sid}/${c}`] = null; }));
+        if (Object.keys(up).length) await update(ref(db), up); alert(`已刪除 ${anon.length} 筆匿名投票`); panel(root, { songs, cats, year }); } catch { alert('失敗'); } }));
+  root.append(row, cv, el('p', 'text-xs text-slate-500 mt-4', '結算流程：截止 → 結算並公開 → 匯出 JSON 放到 data/results/' + year + '.json（歷年結果頁會優先讀這份）→ 結果公布 3 個月後按「刪除匿名投票」。Google 登入的投票依隱私說明保留到本人刪除。'));
+  await livePanel(root, { db, cats, songs, year, all });
   draw();
   await reasonsPanel(root, { db, songs, cats, year });
 }
@@ -80,4 +87,23 @@ async function reasonsPanel(root, { db, songs, cats, year }) {
       const line = el('div', 'flex items-start gap-2 text-sm py-1 border-t border-slate-100'), t = el('div', 'flex-1'); t.append(el('b', 'text-sky-700', (r.nick || '匿名') + ' '), document.createTextNode('☀️ ' + r.text));
       const x = el('button', 'text-xs text-rose-600 px-2 py-1', '刪除'); x.onclick = () => del(r); line.append(t, x); blk.append(line); }); };
   sel.onchange = show; q.oninput = show; show();
+}
+
+// ---- 速報：前台只顯示名次（不含票數）。同票同名次；每個獎項最多存 8 筆（前 5 名含同名次） ----
+async function livePanel(root, { db, cats, songs, year, all }) {
+  const rankOf = t => { const out = []; let prev = null, r = 0; Object.entries(t || {}).sort((a, b) => b[1] - a[1]).forEach(([id, n], k) => { if (n !== prev) { r = k + 1; prev = n; } if (r <= 5 && out.length < 8) out.push({ i: id, r, n }); }); return out; };
+  const top = cats.map(c => [c, rankOf(all[c.id])]).filter(([, v]) => v.length);
+  let cur = null; try { cur = (await get(ref(db, `live/${year}`))).val(); } catch {}
+  const box = el('div', 'mt-8 p-4 rounded-2xl bg-amber-50 border border-amber-200');
+  box.append(el('h3', 'text-lg font-black', '速報（前台只顯示名次）'),
+    el('p', 'text-sm text-slate-600 my-1', cur ? `目前公開：第 ${cur.round} 回（${new Date(cur.t).toLocaleString('zh-TW', { hour12: false })}）` : '目前沒有公開的速報'));
+  const pv = el('details', 'my-2'); pv.append(el('summary', 'cursor-pointer font-bold text-sm', '預覽這次要發布的內容（括號是票數，只有你看得到）'));
+  top.forEach(([c, v]) => { const d = el('div', 'text-sm mt-2'); d.append(el('b', '', c.name.zh + '：')); d.append(document.createTextNode(v.map(x => `${x.r}. ${songs[x.i]?.title || x.i}（${x.n}）`).join('　'))); pv.append(d); });
+  const row = el('div', 'flex flex-wrap gap-2');
+  const b1 = el('button', B + 'bg-amber-400 text-slate-900', `發布第 ${(cur?.round || 0) + 1} 回速報`);
+  b1.onclick = async () => { if (!top.length) return alert('還沒有票'); if (!confirm('以目前票數發布速報？前台會顯示各獎項前 5 名（只有名次）。')) return;
+    try { await set(ref(db, `live/${year}`), { round: (cur?.round || 0) + 1, t: Date.now(), cats: Object.fromEntries(top.map(([c, v]) => [c.id, v.map(({ i, r }) => ({ i, r }))])) }); alert('已發布'); location.reload(); } catch { alert('發布失敗：請確認資料庫規則已加入 live'); } };
+  const b2 = el('button', B + 'bg-white text-rose-700 border border-rose-200', '撤下速報');
+  b2.onclick = async () => { if (!cur || !confirm('撤下後前台不再顯示速報。確定？')) return; try { await set(ref(db, `live/${year}`), null); alert('已撤下'); location.reload(); } catch { alert('失敗'); } };
+  row.append(b1, b2); box.append(pv, row); root.append(box);
 }

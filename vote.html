@@ -324,6 +324,20 @@ input,select{font:inherit}
 /* 頂部按鈕：多了「?」後，窄螢幕也不換行 */
 .hd1 .stk,.lang,.login{white-space:nowrap}
 @media (max-width:380px){.hr{gap:6px}.lang,.login{padding:0 11px;font-size:13px}.gq{width:40px;font-size:17px}.lang svg{display:none}.hd1 .stk{font-size:12px}}
+
+/* 速報 */
+.days.lvc{background:var(--co);color:#fff;text-decoration:none}
+.lvl{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.lvr{display:flex;align-items:center;gap:12px;background:#fff;border-radius:16px;padding:8px 12px 8px 8px;box-shadow:var(--sh)}
+.lvn{flex:none;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;background:#EEF5FA;color:var(--ink)}
+.r1 .lvn{background:#F5C400;color:#fff;box-shadow:0 0 0 3px #FFF1A8}.r2 .lvn{background:#A9B8C6;color:#fff}.r3 .lvn{background:#D9955B;color:#fff}
+.r1{background:linear-gradient(100deg,#FFF8D6,#fff 60%)}
+.lvi{flex:none;width:52px;height:52px;border-radius:10px;overflow:hidden;background:linear-gradient(135deg,#BFE3F5,#FAF5C8)}
+.lvi.mv{width:80px;height:45px}
+.lvi img{width:100%;height:100%;object-fit:cover;display:block}
+.lvx{min-width:0;display:flex;flex-direction:column;gap:3px}
+.lvx b{font-size:15px;line-height:1.35;overflow-wrap:anywhere}
+.lvx .tag{align-self:flex-start;margin:0}
 </style>
 <!-- GA4：把首頁那段 gtag 程式碼原封不動貼在這裡（同一個 G-XXXX） -->
 </head>
@@ -359,8 +373,8 @@ input,select{font:inherit}
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getAuth, onAuthStateChanged, signInAnonymously, GoogleAuthProvider, signOut, linkWithPopup, signInWithCredential, deleteUser, reauthenticateWithPopup } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { getDatabase, ref, get, update, increment, serverTimestamp, query, limitToFirst } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
-import { OSHI_MEMBERS, OS_T, oshiHTML, makeOshiCard, cleanState, today } from './js/oshi.js?v=20261108e';
-import { MAX, buildData, match, buildTabs, esc, linkify, encodeShare, decodeShare, daysLeft, fmtDeadline, ytUrl, reasonLang } from './js/vote-lib.js?v=20261108e';
+import { OSHI_MEMBERS, OS_T, oshiHTML, makeOshiCard, cleanState, today } from './js/oshi.js?v=20261109a';
+import { MAX, buildData, match, buildTabs, esc, linkify, encodeShare, decodeShare, daysLeft, fmtDeadline, ytUrl, reasonLang } from './js/vote-lib.js?v=20261109a';
 
 // 投票專用 Firebase 專案（hinata-vote）
 const FB = { apiKey: "AIzaSyDhhCVZY7kby_i3Ktf2G2FsJce1uXbrU0o", authDomain: "hinata-vote.firebaseapp.com",
@@ -372,7 +386,7 @@ const I = {
   zh: { ttl: '日向坂46 歌曲總選舉', en: 'HINATAZAKA46 SONG ELECTION', badge: y => `${y} 投票進行中`, badgeEnd: '投票已截止',
     tag1: '一起選出，觸動內心的那首歌！',
     cntOn: n => `已有 ${n} 位おひさま參加`, cntLow: '一起來投票吧！', days: n => `距離投票截止還有 ${n} 天`, dayLast: '今天是最後一天！',
-    login: '登入', logout: '登出', upgrade: '升級為 Google 帳號', acctMenu: '帳號選單', googleIn: '已用 Google 登入', anonNow: '匿名投票中', anonCh: '匿', lang: '切換語言', top: '回到最上方', uTitle: '升級為 Google 帳號', iTitle: '用 Google 登入', uBtn: '升級並登入',
+    login: '登入', logout: '登出', upgrade: '升級為 Google 帳號', acctMenu: '帳號選單', googleIn: '已用 Google 登入', anonNow: '匿名投票中', anonCh: '匿', lang: '切換語言', top: '回到最上方', lvChip: '速報', cntDays: (n, d) => `${n} 人參加・剩 ${d} 天`, cntLast: n => `${n} 人參加・今天截止！`, lvBadge: n => `第 ${n} 回速報`, lvAt: d => `截至 ${d}`, lvGo: '看各獎項前 5 名', lvT: '目前戰況', lvNote: '只公布名次，不公布票數；最終結果在截止後公布。', lvNone: '目前還沒有速報，敬請期待！', lvBack: '回投票頁', lvAsk: '你的一票也能改變名次！', uTitle: '升級為 Google 帳號', iTitle: '用 Google 登入', uBtn: '升級並登入',
     uList: ['你目前的投票、推薦理由和分享頁會轉到這個 Google 帳號，不會在結果公布後被刪除，下一屆也能帶入。', '換手機或換電腦時，用同一個 Google 帳號登入就能回來修改。', '管理員在後台可以看到你的 Google 帳號名稱與 Email，只用來辨識投票，不會公開。', '如果這個 Google 帳號之前已經投過票，會改為載入那份投票，這台裝置上的匿名投票不會合併過去。', '你可以隨時在右上角的帳號選單刪除自己的投票或帳號。'],
     iList: ['登入後，投票會存在你的 Google 帳號，換手機或換電腦也能回來修改，下一屆也能帶入。', '管理員在後台可以看到你的 Google 帳號名稱與 Email；個別投票內容只有管理員能看，公開的只有彙整後的結果。', '你按下分享或寫下推薦理由後，暱稱、選擇與理由會公開，任何人都能看到；刪除投票時會一併刪除。', '如果這個 Google 帳號之前已經投過票，會載入那份投票。', '本站使用 Google Analytics 進行匿名流量統計。你可以隨時在右上角的帳號選單刪除自己的投票或帳號。'], gT: '使用導覽', gPrev: '上一步', gNext: '下一步', gSkip: '略過', gStart: '開始投票',
     search: '搜尋歌名、作曲者、作詞者', searchMv: '搜尋歌名', allS: '全部單曲／專輯', allC: '全部', eraA: '全部', eraH: '平假名櫸坂', eraN: '日向坂',
@@ -396,7 +410,7 @@ const I = {
   ja: { ttl: '日向坂46 楽曲総選挙', en: 'HINATAZAKA46 SONG ELECTION', badge: y => `${y} 投票受付中`, badgeEnd: '投票は締め切られました',
     tag1: 'みんなで選ぼう、心を動かす一曲を！',
     cntOn: n => `${n}人のおひさまが参加中`, cntLow: 'みんなで投票しよう！', days: n => `締切まであと${n}日`, dayLast: '本日が最終日です！',
-    login: 'ログイン', logout: 'ログアウト', upgrade: 'Googleアカウントにアップグレード', acctMenu: 'アカウントメニュー', googleIn: 'Googleでログイン中', anonNow: '匿名で投票中', anonCh: '匿', lang: '言語切替', top: '一番上へ戻る', uTitle: 'Googleアカウントにアップグレード', iTitle: 'Googleでログイン', uBtn: 'アップグレードしてログイン',
+    login: 'ログイン', logout: 'ログアウト', upgrade: 'Googleアカウントにアップグレード', acctMenu: 'アカウントメニュー', googleIn: 'Googleでログイン中', anonNow: '匿名で投票中', anonCh: '匿', lang: '言語切替', top: '一番上へ戻る', lvChip: '速報', cntDays: (n, d) => `${n}人参加・あと${d}日`, cntLast: n => `${n}人参加・本日締切！`, lvBadge: n => `第${n}回速報`, lvAt: d => `${d} 時点`, lvGo: '各賞のトップ5を見る', lvT: '現在の順位', lvNote: '順位のみ公開しています（票数は非公開）。最終結果は締切後に発表します。', lvNone: 'まだ速報はありません。お楽しみに！', lvBack: '投票ページへ戻る', lvAsk: 'あなたの1票で順位が変わるかも！', uTitle: 'Googleアカウントにアップグレード', iTitle: 'Googleでログイン', uBtn: 'アップグレードしてログイン',
     uList: ['現在の投票・おすすめ理由・共有ページがこのGoogleアカウントに引き継がれ、結果発表後に削除されることはありません。次回にも引き継げます。', '端末を変えても、同じGoogleアカウントでログインすれば修正できます。', '管理者は管理画面でGoogleアカウント名とメールアドレスを確認できます。投票の識別にのみ使用し、公開しません。', 'このGoogleアカウントで以前に投票している場合はその投票が読み込まれ、この端末の匿名投票は統合されません。', '右上のアカウントメニューからいつでも自分の投票やアカウントを削除できます。'],
     iList: ['ログインすると投票がGoogleアカウントに保存され、端末を変えても修正でき、次回にも引き継げます。', '管理者は管理画面でGoogleアカウント名とメールアドレスを確認できます。個別の投票内容は管理者のみが閲覧でき、公開されるのは集計結果のみです。', '共有ボタンを押すかおすすめ理由を書くと、ニックネーム・選んだ曲・理由が公開されます。投票を削除すると一緒に削除されます。', 'このGoogleアカウントで以前に投票している場合は、その投票が読み込まれます。', '本サイトはGoogleアナリティクスで匿名のアクセス解析を行っています。右上のアカウントメニューからいつでも自分の投票やアカウントを削除できます。'], gT: '使い方', gPrev: '戻る', gNext: '次へ', gSkip: 'スキップ', gStart: '投票をはじめる',
     search: '曲名・作曲者・作詞者で検索', searchMv: '曲名で検索', allS: 'すべてのシングル／アルバム', allC: 'すべて', eraA: 'すべて', eraH: 'ひらがなけやき', eraN: '日向坂',
@@ -445,6 +459,7 @@ const SPK = (c, s, sty) => `<svg class="sp tw" style="${sty}" width="${s}" heigh
 let E, ed, all = [], items = {}, cats = [], tabs = [], year, sel = {}, cur = 0, subOf = {}, q = '', fS = '', fE = '', fC = '';
 let user = null, deadline = 0, hasVoted = false, count = null, pend = null, db, auth, menuOpen = false, lastPick = '', fullCat = '', popTab = -1, fade = false;
 let nick = localStorage.getItem('hv_nick') || '';
+let live = null, liveR; const liveP = new Promise(r => liveR = r); // 速報（只有名次）：live/年份，管理員在後台發布
 let shareCode = '', pubOk = false, pubIds = [], why = {}, whyDirty = false, whyT, whyOpen = new Set(), dbReady; const dbP = new Promise(r => dbReady = r);
 const closed = () => deadline && Date.now() > deadline;
 const curTab = () => tabs[cur] || tabs[0];
@@ -487,6 +502,12 @@ function menuHTML() {
     + (hasVoted ? `<button class="mi" role="menuitem" data-act="delv">${t('delVote')}</button>` : '')
     + `<button class="mi dg" role="menuitem" data-act="dela">${t('delAcct')}</button></div>`;
 }
+// 標題下方一列：參加人數＋剩餘天數合成一顆；有速報時旁邊多一顆「速報 →」
+function chipsHTML(cl, minC, dl, cnt) {
+  const hasN = count != null && count >= minC, hasD = dl != null && !cl;
+  const info = hasN && hasD ? (dl <= 1 ? t('cntLast')(count) : t('cntDays')(count, dl)) : hasN ? cnt : hasD ? (dl <= 1 ? t('dayLast') : t('days')(dl)) : '';
+  return (info ? `<span class="days">${SUN_SM}${esc(info)}</span>` : '') + (live?.cats && location.hash !== '#live' ? `<a class="days lvc" href="#live">${t('lvChip')} →</a>` : '');
+}
 function head() {
   document.documentElement.lang = lang === 'ja' ? 'ja' : 'zh-Hant'; document.title = t('ttl');
   const cl = closed(), minC = ed?.minCount ?? 10, dl = deadline ? daysLeft(deadline) : null;
@@ -495,7 +516,7 @@ function head() {
     <div class="en">${t('en')} ${year ?? ''}</div>
     <h1 class="ttl"><span class="hl"><span class="bl">${esc(t('ttl').split(' ')[0])}</span> ${esc(t('ttl').split(' ').slice(1).join(' '))}</span></h1>
     <div class="tg1">${t('tag1')}</div>
-    <div class="chips2">${count != null && count >= minC ? `<span class="stk cnt" style="background:#fff">${SUN_SM}${esc(cnt)}</span>` : ''}${dl == null || cl ? '' : `<span class="days">${SUN_SM}${dl <= 1 ? t('dayLast') : t('days')(dl)}</span>`}</div></div>`;
+    <div class="chips2">${chipsHTML(cl, minC, dl, cnt)}</div></div>`;
   $('#ft').innerHTML = `<div class="ft"><img class="poka" src="img/icons/favicon-192.png" width="44" height="44" alt=""><div>${t('footer')}</div><div class="fcp">${t('copy')}</div><div class="fl"><span>${t('contactMsg')}</span><a class="igl" href="https://www.instagram.com/katoshi_twfc/" target="_blank" rel="noopener noreferrer" aria-label="${t('contact')}" title="${t('contact')}"><svg class="ig" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1" fill="currentColor" stroke="none"/></svg>@katoshi_twfc</a></div><div><a href="privacy.html">${t('cPriv')}</a></div></div>`;
 }
 
@@ -593,6 +614,16 @@ function toggle(id) {
   else if (a.length >= MAX) return toast(t('limit')(unitOf(c)));
   else { const had = curTab().cats.some(nOf); a.push(id); lastPick = id; try { navigator.vibrate?.(8); } catch {} if (a.length === MAX) fullCat = c.id; if (!had) popTab = cur; }
   save(); const sc = scrollY; render(); scrollTo(0, sc);
+}
+// ---- 速報 ----
+async function liveView() {
+  head(); $('#bar').innerHTML = ''; $('#app').innerHTML = `<div class="card pad">${t('whyLoad')}</div>`; await liveP; if (location.hash !== '#live') return;
+  const back = `<div class="card cta"><div style="font-size:20px;font-weight:900"><span class="hl">${t('lvAsk')}</span></div><a class="btn go" href="${esc(location.pathname)}">${t('lvBack')}</a></div>`;
+  if (!live?.cats) { $('#app').innerHTML = `<div class="card empty">${t('lvNone')}</div>` + back; return; }
+  const no = c => tabs.findIndex(x => x.cats.includes(c)) + 1, cs = dcats().filter(c => (live.cats[c.id] || []).some(x => items[x.i]));
+  $('#app').innerHTML = `<div class="card banner"><span class="tag" style="margin:0">${t('lvBadge')(live.round || 1)}</span><div class="nm"><span class="hl">${t('lvT')}</span></div><div class="tg2" style="margin-top:6px">${esc(t('lvAt')(fmtDeadline(live.t)))}<br>${t('lvNote')}</div></div>`
+    + cs.map(c => `<div class="sec" style="margin-top:22px"><span class="num">${pad(no(c))}</span><h2><span class="hl">${esc(nm(c))}</span></h2></div><ol class="lvl">${live.cats[c.id].filter(x => items[x.i]).map(x => { const s = items[x.i];
+      return `<li class="lvr r${Math.min(x.r, 4)}"><span class="lvn">${x.r}</span><span class="lvi${s.kind === 'mv' ? ' mv' : ''}">${imgTag(s.img)}</span><span class="lvx"><b>${esc(s.title)}</b>${s.single ? `<span class="tag">${esc(s.single)}</span>` : ''}</span></li>`; }).join('')}</ol>`).join('') + back;
 }
 // ---- 使用導覽：第一次進站自動顯示一次，之後可從頂部「?」再打開。圖片是實際畫面截圖（img/guide/語言/1~6.webp）
 const GUIDE = {
@@ -927,10 +958,10 @@ function freshData(r) {
 }
 async function route() {
   stopAudio(); menuOpen = false; const h = location.hash;
-  if (h.startsWith('#s=')) sharedS(h.slice(3)); else if (h.startsWith('#r=') || h.startsWith('#v=') || h.startsWith('#w=')) shared(h); else if (h.startsWith('#results')) results(h.split('/')[1]);
+  if (h.startsWith('#s=')) sharedS(h.slice(3)); else if (h.startsWith('#r=') || h.startsWith('#v=') || h.startsWith('#w=')) shared(h); else if (h.startsWith('#results')) results(h.split('/')[1]); else if (h === '#live') liveView();
   else if (h === '#admin') { head(); $('#bar').innerHTML = '';
     try { if (!window.tailwind) await new Promise((ok, no) => { const s = document.createElement('script'); s.src = 'https://cdn.tailwindcss.com'; s.onload = ok; s.onerror = no; document.head.append(s); });
-      const m = await import('./js/vote-admin.js?v=20261108e'); m.mountAdmin($('#app'), { songs: items, cats: dcats(), year }); } catch { toast(t('fail')); } }
+      const m = await import('./js/vote-admin.js?v=20261109a'); m.mountAdmin($('#app'), { songs: items, cats: dcats(), year }); } catch { toast(t('fail')); } }
   else { render(); guideAuto(); }
 }
 (async () => {
@@ -947,6 +978,8 @@ async function route() {
   try { const app = initializeApp(FB); auth = getAuth(app); db = getDatabase(app); dbReady();
     try { deadline = (await get(ref(db, `config/${year}/deadline`))).val() || 0; } catch (e) { console.warn('讀取 config/' + year + '/deadline 失敗：請檢查 Rules 是否已「發布」，以及 databaseURL 是否正確', e); }
     try { const n = (await get(ref(db, `stats/${year}/count`))).val(); if (typeof n === 'number') count = n; } catch {}
+    try { live = (await get(ref(db, `live/${year}`))).val(); } catch {} liveR();
+    if (live?.cats && $('#top .chips2')) $('#top .chips2').innerHTML = chipsHTML(closed(), ed?.minCount ?? 10, deadline ? daysLeft(deadline) : null, t('cntOn')(count));
     onAuthStateChanged(auth, async u => { if (!u) { try { await signInAnonymously(auth); } catch { toast(t('conn')); } return; } user = u;
       const v = (await get(ref(db, `votes/${year}/${u.uid}`))).val();
       shareCode = v?.share || ''; pubOk = false; pubIds = [];
@@ -954,7 +987,7 @@ async function route() {
       if (v) { hasVoted = true; sel = Object.fromEntries(Object.entries(v.choices || {}).map(([k, a]) => [k, Object.values(a).filter(i => items[i])])); } else hasVoted = false;
       if (!location.hash || location.hash === '#') render(); else head(); });
     if (!location.hash || location.hash === '#') render(); else head();
-  } catch (e) { console.error(e); dbReady(); toast(t('conn')); }
+  } catch (e) { console.error(e); dbReady(); liveR(); toast(t('conn')); }
 })();
 function head0() { $('#top').innerHTML = ''; }
 </script>
