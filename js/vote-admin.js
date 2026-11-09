@@ -56,7 +56,7 @@ async function panel(root, { songs, cats, year }) {
         Object.entries(sr).forEach(([sid, m]) => Object.keys(m || {}).forEach(c => { if (codes.has(c)) up[`songReasons/${year}/${sid}/${c}`] = null; }));
         if (Object.keys(up).length) await update(ref(db), up); alert(`已刪除 ${anon.length} 筆匿名投票`); panel(root, { songs, cats, year }); } catch { alert('失敗'); } }));
   root.append(row, cv, el('p', 'text-xs text-slate-500 mt-4', '結算流程：截止 → 結算並公開 → 匯出 JSON 放到 data/results/' + year + '.json（歷年結果頁會優先讀這份）→ 結果公布 3 個月後按「刪除匿名投票」。Google 登入的投票依隱私說明保留到本人刪除。'));
-  await analyticsPanel(root, { db, cats, songs, year, votes });
+  await analyticsPanel(root, { db, cats, songs, year, votes, all, goog });
   await livePanel(root, { db, cats, songs, year, all, refresh: () => panel(root, { songs, cats, year }) });
   draw();
   await reasonsPanel(root, { db, songs, cats, year });
@@ -118,7 +118,7 @@ async function livePanel(root, { db, cats, songs, year, all, refresh }) {
 const TZ = 'Asia/Taipei', dayOf = ts => new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit' }).format(ts),
   hourOf = ts => +new Intl.DateTimeFormat('en-GB', { timeZone: TZ, hour: '2-digit', hourCycle: 'h23' }).format(ts), pct = (a, b) => b ? Math.round(a * 1000 / b) / 10 : 0;
 const AN_CSS = `.an{margin-top:32px;padding:18px;border-radius:20px;background:#F4F9FD;border:1px solid #D6E8F5;color:#1F3552;font-family:inherit}
-.an h3{font-size:20px;font-weight:900;margin:0 0 4px}.an .an-sub{font-size:13px;color:#4A6178;margin:0 0 14px}
+.an h3{font-size:20px;font-weight:900;margin:0}.an .an-hd{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:4px}.an .an-xl{min-height:40px;border-radius:12px;padding:0 14px;font-weight:800;font-size:14px;background:#1F7FBF;color:#fff;border:0;cursor:pointer}.an .an-sub{font-size:13px;color:#4A6178;margin:0 0 14px}
 .an .an-kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:16px}
 .an .an-kpi{background:#fff;border-radius:14px;padding:12px 14px;box-shadow:0 2px 8px rgba(31,53,82,.08)}.an .an-kpi b{display:block;font-size:26px;font-weight:900;line-height:1.2}.an .an-kpi span{font-size:12px;color:#4A6178;font-weight:700}
 .an .an-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px}
@@ -126,7 +126,8 @@ const AN_CSS = `.an{margin-top:32px;padding:18px;border-radius:20px;background:#
 .an .an-cv{position:relative;height:240px}.an .an-cv.tall{height:auto}
 .an table{width:100%;border-collapse:collapse;font-size:13px}.an td,.an th{padding:6px 4px;border-top:1px solid #EEF3F8;text-align:left;vertical-align:top}.an th{font-size:12px;color:#4A6178}
 .an .an-tag{display:inline-block;background:#FFE3EA;color:#C2335A;border-radius:99px;padding:0 8px;font-size:12px;font-weight:800}`;
-async function analyticsPanel(root, { db, cats, songs, year, votes }) {
+const xlsxJs = () => window.XLSX ? Promise.resolve() : new Promise((ok, no) => { const s = el('script'); s.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js'; s.onload = ok; s.onerror = no; document.head.append(s); });
+async function analyticsPanel(root, { db, cats, songs, year, votes, all = {}, goog = {} }) {
   if (!document.getElementById('an-css')) { const st = el('style'); st.id = 'an-css'; st.textContent = AN_CSS; document.head.append(st); }
   const V = Object.entries(votes).map(([uid, v]) => ({ uid, ...v, t0: v.createdAt || v.updatedAt || 0, est: !v.createdAt, ch: Object.fromEntries(Object.entries(v.choices || {}).map(([c, a]) => [c, Object.values(a || {})]).filter(([, a]) => a.length)) })).filter(v => v.t0);
   const n = V.length, nG = V.filter(v => v.via === 'google').length, nEst = V.filter(v => v.est).length;
@@ -140,12 +141,14 @@ async function analyticsPanel(root, { db, cats, songs, year, votes }) {
   const filled = V.map(v => Object.keys(v.ch).length), maxF = Math.max(1, ...filled), hist = Array.from({ length: maxF }, (_, i) => filled.filter(f => f === i + 1).length);
   const withL = V.filter(v => v.l), nJa = withL.filter(v => v.l === 'ja').length, nShare = V.filter(v => v.share).length;
   const box = el('section', 'an'); root.append(box);
-  box.append(el('h3', '', '數據分析'), el('p', 'an-sub', `時間以台灣時間計。${nEst ? `有 ${nEst} 張票是記錄「第一次投票時間」之前投的，以最後更新時間估計，每日數字僅供參考。` : ''}`));
+  const xb = el('button', 'an-xl', '📥 下載 Excel'); xb.onclick = () => exportXlsx().catch(() => alert('下載失敗，請稍後再試'));
+  const hd = el('div', 'an-hd'); hd.append(el('h3', '', '數據分析'), xb);
+  box.append(hd, el('p', 'an-sub', `時間以台灣時間計。${nEst ? `有 ${nEst} 張票是記錄「第一次投票時間」之前投的，以最後更新時間估計，每日數字僅供參考。` : ''}`));
   const kpis = el('div', 'an-kpis'); box.append(kpis);
-  [[n, '投票人數'], [`${nG}／${n - nG}`, 'Google／匿名'], [byDay[today] || 0, '今天新增'], [last7, '近 7 天新增'],
+  const kpiRows = [[n, '投票人數'], [`${nG}／${n - nG}`, 'Google／匿名'], [byDay[today] || 0, '今天新增'], [last7, '近 7 天新增'],
    [n ? (filled.reduce((s, f) => s + f, 0) / n).toFixed(1) : 0, '平均投了幾個獎項'], [`${pct(whyCodes.size, n)}%`, `寫推薦理由（${whyCodes.size} 人）`],
-   [`${pct(nShare, n)}%`, `公開分享頁（${nShare} 人）`], [withL.length ? `${pct(nJa, withL.length)}%` : '—', `日文介面（有紀錄的 ${withL.length} 人中）`]]
-    .forEach(([v, l]) => { const k = el('div', 'an-kpi'); k.append(el('b', '', String(v)), el('span', '', l)); kpis.append(k); });
+   [`${pct(nShare, n)}%`, `公開分享頁（${nShare} 人）`], [withL.length ? `${pct(nJa, withL.length)}%` : '—', `日文介面（有紀錄的 ${withL.length} 人中）`]];
+  kpiRows.forEach(([v, l]) => { const k = el('div', 'an-kpi'); k.append(el('b', '', String(v)), el('span', '', l)); kpis.append(k); });
   const grid = el('div', 'an-grid'); box.append(grid);
   const card = (title, note, tall) => { const c = el('div', 'an-card'), w = el('div', 'an-cv' + (tall ? ' tall' : '')), cv = el('canvas'); w.append(cv); c.append(el('h4', '', title), w); if (note) c.append(el('p', '', note)); grid.append(c); return [cv, w]; };
   const charts = [];
@@ -172,4 +175,20 @@ async function analyticsPanel(root, { db, cats, songs, year, votes }) {
       const td = (x, cls) => { const e = el('td'); if (cls) { const s = el('span', cls, x); e.append(s); } else e.textContent = x; return e; };
       tr.append(td(`${g.length} 張`, 'an-tag'), td(String(Object.keys(g[0].ch).length)), td(`${fmt(Math.min(...ts))} ～ ${fmt(Math.max(...ts))}`), td(Object.entries(g[0].ch).slice(0, 3).map(([c, a]) => `${cats.find(x => x.id === c)?.name.zh || c}：${a.map(i => songs[i]?.title || i).join('、')}`).join('／'))); tb.append(tr); });
     sc.append(tb, el('p', '', '內容一模一樣只是線索：大家都選熱門歌時也會巧合撞票，填的獎項越多越可疑。網站看不到 IP，無法確定是同一人。')); }
+  // 下載 Excel：只有統計數字，不含帳號、Email、識別碼
+  async function exportXlsx() {
+    await xlsxJs(); const X = window.XLSX, wb = X.utils.book_new(), now = new Date(), stamp = new Intl.DateTimeFormat('sv-SE', { timeZone: TZ, dateStyle: 'short', timeStyle: 'short' }).format(now);
+    const add = (name, rows, widths) => { const ws = X.utils.aoa_to_sheet(rows); ws['!cols'] = widths.map(w => ({ wch: w })); X.utils.book_append_sheet(wb, ws, name); };
+    add('摘要', [['日向坂46 歌曲總選舉 ' + year, ''], ['匯出時間（台灣）', stamp], ['', ''], ['項目', '數值'], ...kpiRows.map(([v, l]) => [l, typeof v === 'number' ? v : String(v)]), ['', ''], ['說明', nEst ? `${nEst} 張票在記錄「第一次投票時間」之前投的，每日數字以最後更新時間估計` : '']], [34, 40]);
+    add('每日', [['日期', '當天新增', '累計', '當天有改票的人數'], ...days.map((d, i) => [d, byDay[d] || 0, cum[i], upDay[d] || 0])], [12, 10, 8, 16]);
+    add('時段', [['小時（台灣）', '人數'], ...hours.map((c, h) => [`${String(h).padStart(2, '0')}:00`, c])], [12, 8]);
+    add('每人投了幾個獎項', [['獎項數', '人數'], ...hist.map((c, i) => [i + 1, c])], [10, 8]);
+    add('獎項參與率', [['獎項', '參與人數', '參與率(%)', '平均選幾首', '推薦理由則數'], ...part.map(p => [p.c.name.zh, V.filter(v => v.ch[p.c.id]).length, p.rate, +p.avg, p.why])], [20, 10, 10, 10, 12]);
+    const det = [['獎項', '名次', '名稱', '得票（全部）', '得票（僅 Google）']];
+    cats.forEach(c => { let prev = null, r = 0; Object.entries(all[c.id] || {}).sort((x, y) => y[1] - x[1]).forEach(([id, cnt], k) => { if (cnt !== prev) { r = k + 1; prev = cnt; } det.push([c.name.zh, r, songs[id]?.title || id, cnt, goog[c.id]?.[id] || 0]); }); });
+    add('得票明細', det, [20, 6, 40, 12, 14]);
+    add('可疑匿名票', [['張數', '獎項數', '最早', '最晚', '內容'], ...sus.map(g => { const ts = g.map(v => v.t0), f = t => new Intl.DateTimeFormat('sv-SE', { timeZone: TZ, dateStyle: 'short', timeStyle: 'short' }).format(t);
+      return [g.length, Object.keys(g[0].ch).length, f(Math.min(...ts)), f(Math.max(...ts)), Object.entries(g[0].ch).map(([c, x]) => `${cats.find(k => k.id === c)?.name.zh || c}：${x.map(i => songs[i]?.title || i).join('、')}`).join('／')]; })], [6, 8, 16, 16, 80]);
+    X.writeFile(wb, `hinata46-song-election-${year}_data_${stamp.replace(/[-:]/g, '').replace(' ', '-')}.xlsx`);
+  }
 }

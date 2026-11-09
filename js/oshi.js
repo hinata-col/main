@@ -159,8 +159,9 @@ export async function makeOshiCard(o) {
   if (hero) { // 只有一位本命：大頭像在左，名字與陪伴天數在右
     const id = oShow[0], m = byId[id], rad = 128, cx = 40 + 70 + rad * 1.1 + 8, cy = y1 + 76 + 150;
     face(oi[0], m, cx, cy, rad, 0);
-    const tx = cx + rad * 1.1 + 70, tw = 1040 - tx - 30; g.fillStyle = NAVY; fit(m.name, tw, 84, 900); g.fillText(m.name, tx, cy - 22);
-    put('swoosh', tx + Math.min(tw, g.measureText(m.name).width) / 2, cy - 4, Math.min(tw, g.measureText(m.name).width) + 30, 0, .9, .6);
+    const tx = cx + rad * 1.1 + 70, tw = 1040 - tx - 30; fit(m.name, tw, 84, 900); const nw = Math.min(tw, g.measureText(m.name).width);
+    put('swoosh', tx + nw / 2, cy - 4, nw + 30, 0, .9, .6); // 彩帶先畫，名字蓋在上面
+    g.fillStyle = NAVY; fit(m.name, tw, 84, 900); g.fillText(m.name, tx, cy - 22);
     pill(T.days(daysSince(st.map[id])), tx + 150, cy + 56, 38);
     g.fillStyle = '#4A6178'; g.font = `700 28px ${F}`; g.fillText(since(id), tx, cy + 128);
     put('star-y', 975, y1 + 120, 36, 10); put('heart-s', 960, y1 + 300, 44, -8);
