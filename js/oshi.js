@@ -70,7 +70,7 @@ export const memberOf = id => byId[id];
 export const cleanState = s => { const map = {}, watch = {}; Object.entries(s?.map || {}).forEach(([k, v]) => { if (byId[k] && /^\d{4}-\d{2}-\d{2}$/.test(v)) map[k] = v; }); Object.keys(s?.watch || {}).forEach(k => { if (byId[k]) watch[k] = true; }); return { map, watch }; };
 
 // 成員照片分散在不同網站：先直接載入，被擋就透過 images.weserv.nl 轉一手，再不行就畫姓名首字
-const once = (src, cors) => new Promise(r => { const i = new Image(); if (cors) i.crossOrigin = 'anonymous'; const t = setTimeout(() => r(null), 8000); i.onload = () => { clearTimeout(t); r(i); }; i.onerror = () => { clearTimeout(t); r(null); }; i.src = src; });
+const once = (src, cors, ms = 8000) => new Promise(r => { const i = new Image(); if (cors) i.crossOrigin = 'anonymous'; const t = setTimeout(() => r(null), ms); i.onload = () => { clearTimeout(t); r(i); }; i.onerror = () => { clearTimeout(t); r(null); }; i.src = src; });
 const cache = {};
 export const loadAvatar = url => !url ? Promise.resolve(null) : (cache[url] ||= (async () => (await once(url, true)) || (await once('https://images.weserv.nl/?w=480&url=' + encodeURIComponent(url.replace(/^https?:\/\//, '')), true)))());
 
@@ -96,9 +96,18 @@ export function oshiHTML(st, ui, lang, esc) {
 // ---------- 分享卡（天空藍底、黃色筆刷標題、白色圓角面板、底部雲朵＋QR code） ----------
 const NAVY = '#1F3552', RING = '#9FD0F0';
 const assetCache = {};
-const asset = n => (assetCache[n] ||= once(new URL(`../img/oshi/${n}.png`, import.meta.url).href, false));
-export const decoImgs = names => Promise.all(names.map(asset)); // 投票分享圖卡也用同一套素材
-const ASSETS = ['cloud-big', 'cloud-light', 'cloud-sm', 'cloud-mass', 'cloud-r', 'cloud-sm2', 'brush-y', 'heart-l', 'heart-s', 'star-y', 'star-b', 'spark-1', 'spark-3', 'swoosh', 'qr'];
+// 圖卡用的小圖都在本站：網路忙時（例如頁面同時在載很多封面）也要等到載完，最多 30 秒；失敗不記住，下次再試
+const asset = n => (assetCache[n] ||= once(new URL(`../img/oshi/${n}.png`, import.meta.url).href, false, 30000).then(im => { if (!im) delete assetCache[n]; return im; }));
+export const decoImgs = names => Promise.all(names.map(asset));
+export const preloadOshi = () => Promise.all(ASSETS.map(asset)); // 打開本命設定時先在背景下載，切到分享卡時通常已經好了
+// 投票網址的 QR code（29×29，直接畫在圖卡上，不用另外下載圖片，避免被擋或載入失敗而變成空白）
+const QR_HEX = '1fcf2e7f,1052fa41,174b645d,1747475d,1755625d,104def41,1fd5557f,0007de00,15494b12,0c021949,17478cf7,013c19a2,085b3dcb,121681c9,047c594b,1e00d91a,08d27b4b,018850cd,114985b3,0d932f3a,11fb3bf0,001c9317,1fc54b5b,1041ed1b,17575df3,1744d137,17584a39,104bffa2,1fd0bb83'.split(',');
+export function drawQR(g, x, y, size, col = '#1F3552') {
+  const n = QR_HEX.length, s = size / n; g.save(); g.fillStyle = '#fff'; g.fillRect(x, y, size, size); g.fillStyle = col;
+  QR_HEX.forEach((h, r) => { const bits = parseInt(h, 16).toString(2).padStart(n, '0'); for (let c = 0; c < n; c++) if (bits[c] === '1') g.fillRect(x + c * s, y + r * s, Math.ceil(s), Math.ceil(s)); });
+  g.restore();
+} // 投票分享圖卡也用同一套素材
+const ASSETS = ['cloud-big', 'cloud-light', 'cloud-sm', 'cloud-mass', 'cloud-r', 'cloud-sm2', 'brush-y', 'heart-l', 'heart-s', 'star-y', 'star-b', 'spark-1', 'spark-3', 'swoosh'];
 export async function makeOshiCard(o) {
   const { lang, st, nick, host } = o, T = OS_T[lang], W = 1080, H = 1350;
   const F = '"VoteRound","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif', cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
@@ -171,7 +180,7 @@ export async function makeOshiCard(o) {
   put('cloud-mass', 240, H - 30, 620); put('cloud-r', 930, H - 24, 330, 0, .95); put('cloud-sm2', 640, H - 4, 190, 0, .9); put('star-y', 1020, 1196, 34, 8); put('star-b', 40, 1208, 28);
   const qs = 145, qy = H - qs - 24; // 29 格 × 5px，整數倍放大才不會糊
   g.save(); g.shadowColor = 'rgba(31,53,82,.22)'; g.shadowBlur = 14; g.shadowOffsetY = 4; g.fillStyle = '#fff'; g.beginPath(); g.roundRect(50, qy - 10, qs + 20, qs + 20, 22); g.fill(); g.restore();
-  if (A.qr) { g.imageSmoothingEnabled = false; g.drawImage(A.qr, 60, qy, qs, qs); g.imageSmoothingEnabled = true; }
+  drawQR(g, 60, qy, qs);
   const outl = (txt, x, y, size, col) => { g.font = `800 ${size}px ${F}`; g.lineJoin = 'round'; g.lineWidth = 8; g.strokeStyle = 'rgba(255,255,255,.95)'; g.strokeText(txt, x, y); g.fillStyle = col; g.fillText(txt, x, y); };
   outl('#日向坂46', 60 + qs + 40, qy + 62, 44, NAVY); outl(host, 60 + qs + 40, qy + 116, 28, '#35516F');
   return cv;

@@ -379,8 +379,8 @@ input,select{font:inherit}
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getAuth, onAuthStateChanged, signInAnonymously, GoogleAuthProvider, signOut, linkWithPopup, signInWithCredential, deleteUser, reauthenticateWithPopup } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { getDatabase, ref, get, update, increment, serverTimestamp, query, limitToFirst } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
-import { OSHI_MEMBERS, OS_T, oshiHTML, makeOshiCard, cleanState, today, decoImgs } from './js/oshi.js?v=20261109c';
-import { MAX, buildData, match, buildTabs, esc, linkify, encodeShare, decodeShare, daysLeft, fmtDeadline, ytUrl, reasonLang } from './js/vote-lib.js?v=20261109c';
+import { OSHI_MEMBERS, OS_T, oshiHTML, makeOshiCard, cleanState, today, decoImgs, drawQR, preloadOshi } from './js/oshi.js?v=20261109e';
+import { MAX, buildData, match, buildTabs, esc, linkify, encodeShare, decodeShare, daysLeft, fmtDeadline, ytUrl, reasonLang } from './js/vote-lib.js?v=20261109e';
 
 // 投票專用 Firebase 專案（hinata-vote）
 const FB = { apiKey: "AIzaSyDhhCVZY7kby_i3Ktf2G2FsJce1uXbrU0o", authDomain: "hinata-vote.firebaseapp.com",
@@ -754,6 +754,7 @@ const names = c => sel[c.id].map(ttlOf).join('、');
 const text = () => { const ps = picked(); return `${t('ttl')} ${year}${nick ? ' ' + nick + t('nickSuf') : ''} #日向坂46歌曲總選舉\n` + ps.slice(0, 3).map(c => `【${nm(c)}】${names(c)}`).join('\n') + (ps.length > 3 ? '\n' + t('more')(ps.length - 3) : '') + '\n' + link(); };
 const copy = async s => { try { await navigator.clipboard.writeText(s); toast(t('copied')); } catch { prompt('', s); } };
 function doneModal() {
+  decoImgs(CARD_DECO).catch(() => {});
   const m = $('#modal'); m.className = 'ov'; m.hidden = false; const ps = picked();
   m.innerHTML = `<div class="mdl" role="dialog" aria-modal="true" aria-label="${t('ok')}" tabindex="-1"><div class="hero">${SPK('#1F7FBF', 24, 'left:34px;top:18px')}${SPK('#F5E050', 26, 'right:38px;top:30px')}${SPK('#D9456B', 16, 'right:84px;top:6px')}${SUN_H}</div>
     <div class="dt"><span class="hl">${t('ok')}</span></div><div class="d1">${t('okLine')}</div><div class="d2">${t('okSub')}</div>
@@ -788,7 +789,7 @@ function sticker(g, cx, cy, r, face) {
   g.restore();
 }
 // 投票分享圖卡：天空藍底＋去背小圖案（與本命圖卡同一套），底部 QR code 與 hashtag
-const CARD_DECO = ['cloud-big', 'cloud-light', 'cloud-sm', 'cloud-mass', 'cloud-r', 'cloud-sm2', 'brush-y', 'star-y', 'star-b', 'spark-1', 'spark-3', 'heart-l', 'qr'];
+const CARD_DECO = ['cloud-big', 'cloud-light', 'cloud-sm', 'cloud-mass', 'cloud-r', 'cloud-sm2', 'brush-y', 'star-y', 'star-b', 'spark-1', 'spark-3', 'heart-l'];
 async function card(withImg) {
   const ps = picked(), main = ps.find(c => c.id === 'title') || ps.find(c => c.view !== 'mv' && c.view !== 'cover') || ps[0], ids = sel[main.id].slice(0, 3), sub = String(year) + (nick ? '　' + nick + t('nickSuf') : '');
   try { await document.fonts.load('900 40px VoteRound', t('ttl') + sub + t('mine') + t('cardTag')(year) + ps.map(c => nm(c)).join('') + Object.values(sel).flat().map(ttlOf).join('') + '0123456789…'); } catch {}
@@ -823,7 +824,7 @@ async function card(withImg) {
   if (rest.length > cap) { g.fillStyle = '#1F7FBF'; g.font = `800 26px ${F}`; g.textAlign = 'right'; g.fillText(t('more')(rest.length - cap), 1036, 1166); g.textAlign = 'left'; }
   const qs = 145, qy = H - qs - 24; // QR 29 格 × 5px，整數倍放大才不會糊
   g.save(); g.shadowColor = 'rgba(31,53,82,.22)'; g.shadowBlur = 14; g.shadowOffsetY = 4; g.fillStyle = '#fff'; g.beginPath(); g.roundRect(50, qy - 10, qs + 20, qs + 20, 22); g.fill(); g.restore();
-  if (A.qr) { g.imageSmoothingEnabled = false; g.drawImage(A.qr, 60, qy, qs, qs); g.imageSmoothingEnabled = true; }
+  drawQR(g, 60, qy, qs);
   const outl = (txt, x, y, size, col, maxW) => { let z = size; g.font = `800 ${z}px ${F}`; while (z > 18 && g.measureText(txt).width > maxW) { z -= 2; g.font = `800 ${z}px ${F}`; }
     g.lineJoin = 'round'; g.lineWidth = 8; g.strokeStyle = 'rgba(255,255,255,.95)'; g.strokeText(txt, x, y); g.fillStyle = col; g.fillText(txt, x, y); };
   outl(t('cardTag')(year), 60 + qs + 40, qy + 62, 40, NAVY, W - (60 + qs + 40) - 40); outl(location.host + location.pathname, 60 + qs + 40, qy + 116, 28, '#35516F', W - (60 + qs + 40) - 40);
@@ -924,6 +925,7 @@ const MAIN_DB = 'https://hinata-collection-default-rtdb.asia-southeast1.firebase
 const osPhotos = () => photosP ||= Promise.race([fetch(MAIN_DB + '/members.json').then(r => r.ok ? r.json() : null), new Promise(r => setTimeout(() => r(null), 4000))])
   .then(o => { if (o && typeof o === 'object') OSHI_MEMBERS.forEach(m => { const u = o[m.id]?.avatar; if (typeof u === 'string' && /^https:\/\//.test(u)) m.avatar = u; }); }).catch(() => {});
 async function openOshi() {
+  preloadOshi().catch(() => {});
   if (!user || user.isAnonymous) return; menuOpen = false; head();
   const m = $('#modal'); m.className = 'ov'; m.hidden = false; m.innerHTML = `<div class="mdl os" role="dialog" aria-modal="true" aria-label="${esc(OS_T[lang].title)}" tabindex="-1"><div class="tg2">${t('whyLoad')}</div></div>`; m.firstElementChild.focus();
   if (osUid !== user.uid) { try { os = cleanState((await get(ref(db, `users/${user.uid}/oshi`))).val()); osUid = user.uid; } catch (e) { console.error(e); os = null; osUid = ''; } }
@@ -989,7 +991,7 @@ async function route() {
   if (h.startsWith('#s=')) sharedS(h.slice(3)); else if (h.startsWith('#r=') || h.startsWith('#v=') || h.startsWith('#w=')) shared(h); else if (h.startsWith('#results')) results(h.split('/')[1]); else if (h === '#live') liveView();
   else if (h === '#admin') { head(); $('#bar').innerHTML = '';
     try { if (!window.tailwind) await new Promise((ok, no) => { const s = document.createElement('script'); s.src = 'https://cdn.tailwindcss.com'; s.onload = ok; s.onerror = no; document.head.append(s); });
-      const m = await import('./js/vote-admin.js?v=20261109c'); m.mountAdmin($('#app'), { songs: items, cats: dcats(), year }); } catch { toast(t('fail')); } }
+      const m = await import('./js/vote-admin.js?v=20261109e'); m.mountAdmin($('#app'), { songs: items, cats: dcats(), year }); } catch { toast(t('fail')); } }
   else { render(); guideAuto(); }
 }
 (async () => {
