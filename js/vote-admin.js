@@ -1,20 +1,22 @@
 // 管理後台：#admin。只有 Rules 裡 ADMIN_UID 那個 Google 帳號讀得到資料。
 import { getApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getAuth, signInWithPopup, GoogleAuthProvider } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { getDatabase, ref, get, set, update } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
 const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };
 const B = 'min-h-[44px] rounded-xl px-4 font-bold text-sm ';
 let chart;
 const chartJs = () => window.Chart ? Promise.resolve() : new Promise((ok, no) => { const s = el('script'); s.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js'; s.onload = ok; s.onerror = no; document.head.append(s); });
 
-export function mountAdmin(root, ctx) {
+export async function mountAdmin(root, ctx) {
   const auth = getAuth(getApp());
+  root.replaceChildren(el('h2', 'text-xl font-black mb-3', '管理後台'), el('p', '', '確認登入狀態中…'));
+  // 重新整理後，Firebase 要一點時間才會還原登入狀態；等它還原完再判斷，登入過就直接進後台（登入會一直保留到登出）
+  try { await (auth.authStateReady ? auth.authStateReady() : new Promise(r => { const off = onAuthStateChanged(auth, () => { off(); r(); }); })); } catch {}
+  if (auth.currentUser && !auth.currentUser.isAnonymous) return panel(root, ctx);
   root.replaceChildren(el('h2', 'text-xl font-black mb-3', '管理後台'));
   const b = el('button', B + 'bg-sky-500 text-white', 'Google 登入（管理員）');
   b.onclick = async () => { try { await signInWithPopup(auth, new GoogleAuthProvider()); panel(root, ctx); } catch { alert('登入失敗'); } };
   root.append(b);
-  // 已經用 Google 登入（例如重新整理後）就直接進後台，不用再按一次登入；沒權限時 panel 會顯示提示
-  if (auth.currentUser && !auth.currentUser.isAnonymous) panel(root, ctx);
 }
 async function panel(root, { songs, cats, year }) {
   const auth = getAuth(getApp()), db = getDatabase(getApp());
@@ -31,7 +33,7 @@ async function panel(root, { songs, cats, year }) {
   const catNames = Object.fromEntries(cats.map(c => [c.id, c.name]));
   const result = { year, total, totalGoogle: totalG, tally: all, tallyGoogle: goog, titles, catNames, settledAt: Date.now() };
   await chartJs().catch(() => {});
-  root.replaceChildren(el('h2', 'text-xl font-black', `管理後台｜${year}｜共 ${total} 人（Google ${totalG}／匿名 ${total - totalG}）`));
+  root.replaceChildren(el('h2', 'text-xl font-black', `管理後台｜${year}｜共 ${total} 人（Google ${totalG}／匿名 ${total - totalG}）`), el('p', 'text-xs text-slate-500', `資料時間：${new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei', hour12: false })}（按「更新數據」重新讀取，不用重新整理頁面）`));
   const sel = el('select', 'min-h-[44px] rounded-xl border border-slate-300 px-3'); cats.forEach(c => sel.append(new Option(c.name.zh, c.id)));
   const mode = el('select', 'min-h-[44px] rounded-xl border border-slate-300 px-3'); mode.append(new Option('全部票', 'all'), new Option('僅 Google', 'g'));
   const cv = el('canvas'), row = el('div', 'flex flex-wrap gap-2 my-3');
@@ -41,7 +43,7 @@ async function panel(root, { songs, cats, year }) {
   sel.onchange = mode.onchange = draw;
   const btn = (txt, cls, fn) => { const b = el('button', B + cls, txt); b.onclick = fn; return b; };
   row.append(sel, mode,
-    btn('重新整理', 'bg-slate-100', () => panel(root, { songs, cats, year })),
+    btn('🔄 更新數據', 'bg-sky-500 text-white', async () => { const y = scrollY; await panel(root, { songs, cats, year }); scrollTo(0, y); }),
     btn('結算並公開', 'bg-sky-500 text-white', async () => { if (!confirm('把統計寫入 results/（截止後所有人可讀）？')) return;
       try { await set(ref(db, `results/${year}`), result); alert('已結算'); } catch { alert('寫入失敗'); } }),
     btn('匯出 JSON', 'bg-sky-100 text-sky-700', () => { const a = el('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(result, null, 2)], { type: 'application/json' })); a.download = `${year}.json`; a.click(); }),
