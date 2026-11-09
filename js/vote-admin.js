@@ -13,6 +13,8 @@ export function mountAdmin(root, ctx) {
   const b = el('button', B + 'bg-sky-500 text-white', 'Google 登入（管理員）');
   b.onclick = async () => { try { await signInWithPopup(auth, new GoogleAuthProvider()); panel(root, ctx); } catch { alert('登入失敗'); } };
   root.append(b);
+  // 已經用 Google 登入（例如重新整理後）就直接進後台，不用再按一次登入；沒權限時 panel 會顯示提示
+  if (auth.currentUser && !auth.currentUser.isAnonymous) panel(root, ctx);
 }
 async function panel(root, { songs, cats, year }) {
   const auth = getAuth(getApp()), db = getDatabase(getApp());
@@ -52,7 +54,7 @@ async function panel(root, { songs, cats, year }) {
         Object.entries(sr).forEach(([sid, m]) => Object.keys(m || {}).forEach(c => { if (codes.has(c)) up[`songReasons/${year}/${sid}/${c}`] = null; }));
         if (Object.keys(up).length) await update(ref(db), up); alert(`已刪除 ${anon.length} 筆匿名投票`); panel(root, { songs, cats, year }); } catch { alert('失敗'); } }));
   root.append(row, cv, el('p', 'text-xs text-slate-500 mt-4', '結算流程：截止 → 結算並公開 → 匯出 JSON 放到 data/results/' + year + '.json（歷年結果頁會優先讀這份）→ 結果公布 3 個月後按「刪除匿名投票」。Google 登入的投票依隱私說明保留到本人刪除。'));
-  await livePanel(root, { db, cats, songs, year, all });
+  await livePanel(root, { db, cats, songs, year, all, refresh: () => panel(root, { songs, cats, year }) });
   draw();
   await reasonsPanel(root, { db, songs, cats, year });
 }
@@ -90,7 +92,7 @@ async function reasonsPanel(root, { db, songs, cats, year }) {
 }
 
 // ---- 速報：前台只顯示名次（不含票數）。同票同名次；每個獎項最多存 8 筆（前 5 名含同名次） ----
-async function livePanel(root, { db, cats, songs, year, all }) {
+async function livePanel(root, { db, cats, songs, year, all, refresh }) {
   const rankOf = t => { const out = []; let prev = null, r = 0; Object.entries(t || {}).sort((a, b) => b[1] - a[1]).forEach(([id, n], k) => { if (n !== prev) { r = k + 1; prev = n; } if (r <= 5 && out.length < 8) out.push({ i: id, r, n }); }); return out; };
   const top = cats.map(c => [c, rankOf(all[c.id])]).filter(([, v]) => v.length);
   let cur = null; try { cur = (await get(ref(db, `live/${year}`))).val(); } catch {}
@@ -102,8 +104,8 @@ async function livePanel(root, { db, cats, songs, year, all }) {
   const row = el('div', 'flex flex-wrap gap-2');
   const b1 = el('button', B + 'bg-amber-400 text-slate-900', `發布第 ${(cur?.round || 0) + 1} 回速報`);
   b1.onclick = async () => { if (!top.length) return alert('還沒有票'); if (!confirm('以目前票數發布速報？前台會顯示各獎項前 5 名（只有名次）。')) return;
-    try { await set(ref(db, `live/${year}`), { round: (cur?.round || 0) + 1, t: Date.now(), cats: Object.fromEntries(top.map(([c, v]) => [c.id, v.map(({ i, r }) => ({ i, r }))])) }); alert('已發布'); location.reload(); } catch { alert('發布失敗：請確認資料庫規則已加入 live'); } };
+    try { await set(ref(db, `live/${year}`), { round: (cur?.round || 0) + 1, t: Date.now(), cats: Object.fromEntries(top.map(([c, v]) => [c.id, v.map(({ i, r }) => ({ i, r }))])) }); alert('已發布'); refresh(); } catch { alert('發布失敗：請確認資料庫規則已加入 live'); } };
   const b2 = el('button', B + 'bg-white text-rose-700 border border-rose-200', '撤下速報');
-  b2.onclick = async () => { if (!cur || !confirm('撤下後前台不再顯示速報。確定？')) return; try { await set(ref(db, `live/${year}`), null); alert('已撤下'); location.reload(); } catch { alert('失敗'); } };
+  b2.onclick = async () => { if (!cur || !confirm('撤下後前台不再顯示速報。確定？')) return; try { await set(ref(db, `live/${year}`), null); alert('已撤下'); refresh(); } catch { alert('失敗'); } };
   row.append(b1, b2); box.append(pv, row); root.append(box);
 }
