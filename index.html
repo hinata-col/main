@@ -1414,6 +1414,7 @@
         // 這個查詢依賴 orderByChild + limitToLast，資料量變多後容易不穩定，
         // 現在只用下面這個「抓全部資料」的監聽器，穩定、且已經即時更新
         let videosFullyLoaded = false;
+        let playlistsLoaded = false;
 
         onValue(ref(db, 'videos'), (snapshot) => {
             allVideos = snapshot.val() ? Object.values(snapshot.val()) : [];
@@ -1451,7 +1452,10 @@
                 .map(id => ({ id, ...data[id] }))
                 .filter(p => !p.hidden);
             allPlaylists.sort((a, b) => (a.order || 0) - (b.order || 0));
+            playlistsLoaded = true;
             renderPlaylistsPage();
+            // 如果是透過精華區分享連結進來、而且還在等精華區資料，現在補開
+            if (!sharedNavStack.length) checkSharedUrl();
             if (!document.getElementById('playlist-view').classList.contains('hidden') && playlistNavStack.length) {
                 // 精華區資料更新時，同步重新整理目前導覽路徑上的每一層節點，再重繪目前層級
                 playlistNavStack = playlistNavStack.map(n => allPlaylists.find(p => p.id === n.id) || n);
@@ -1686,27 +1690,14 @@
         }
 
         function sharePlaylist(playlist) {
-            // 固定用播單 ID 當 shareId，同一個懶人包重複分享時會覆蓋同一筆紀錄，
-            // 不會每按一次就在資料庫多留一筆孤兒資料，網址也會保持固定
-            const shareId = "sp_" + playlist.id;
-
-            const shareData = {
-                owner: currentUser ? (currentUser.displayName || "日向坂推し") : "精華整理",
-                tree: buildShareTree(playlist),
-                created_at: Date.now()
-            };
-
-            set(ref(db, `shares/${shareId}`), shareData).then(() => {
-                const shareUrl = `${window.location.origin}${window.location.pathname}?share=${shareId}`;
-
-                navigator.clipboard.writeText(shareUrl).then(() => {
-                    showToast("🔗 分享連結已複製到剪貼簿！");
-                }).catch(() => {
-                    prompt("因瀏覽器權限限制，請手動複製以下網址分享給好友：", shareUrl);
-                });
-            }).catch(err => {
-                console.error(err);
-                alert("分享失敗，請稍後再試。");
+            // 精華區的內容本來就是公開資料，訪客也讀得到，所以分享時不需要先存一份到資料庫，
+            // 直接產生連結即可（未登入的訪客也能分享）。別人打開連結時，會即時讀取最新的精華區內容。
+            // 連結格式維持 ?share=sp_播單ID，以前分享出去的舊連結一樣能開。
+            const shareUrl = `${window.location.origin}${window.location.pathname}?share=sp_${playlist.id}`;
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                showToast("🔗 分享連結已複製到剪貼簿！");
+            }).catch(() => {
+                prompt("因瀏覽器權限限制，請手動複製以下網址分享給好友：", shareUrl);
             });
         }
 
@@ -2487,6 +2478,18 @@
 
             document.getElementById('shared-folder-title').innerText = "🔮 正在載入分享資料夾...";
             document.getElementById('shared-folder-desc').innerText = "";
+
+            // 精華區分享（sp_ 開頭）：直接用公開的精華區資料即時組出來，不需要事先存在資料庫
+            if (shareId.startsWith('sp_')) {
+                if (!playlistsLoaded) return; // 精華區資料還沒載入，載入完成後會再呼叫一次
+                const playlist = allPlaylists.find(p => p.id === shareId.slice(3));
+                if (playlist) {
+                    sharedNavStack = [buildShareTree(playlist)];
+                    renderSharedView();
+                    return;
+                }
+                // 找不到（例如該播單已被移除）就退回去讀以前存下來的分享快照
+            }
 
             onValue(ref(db, `shares/${shareId}`), (snapshot) => {
                 const data = snapshot.val();
