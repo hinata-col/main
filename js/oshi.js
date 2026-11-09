@@ -98,6 +98,17 @@ const NAVY = '#1F3552', RING = '#9FD0F0';
 const assetCache = {};
 // 圖卡用的小圖都在本站：網路忙時（例如頁面同時在載很多封面）也要等到載完，最多 30 秒；失敗不記住，下次再試
 const asset = n => (assetCache[n] ||= once(new URL(`../img/oshi/${n}.png`, import.meta.url).href, false, 30000).then(im => { if (!im) delete assetCache[n]; return im; }));
+// 粉圓字型只有一種粗細（Regular）。直接要求 700～900 會讓瀏覽器自己「假加粗」，每支手機加粗程度不同，
+// 有的會粗到筆畫糊在一起。所以畫圖卡時一律用 Regular 字重，再用同字色描邊模擬粗體，各裝置看起來都一樣。
+export function steadyBold(g) {
+  const P = CanvasRenderingContext2D.prototype, fd = Object.getOwnPropertyDescriptor(P, 'font'); let w = 400, sz = 16;
+  Object.defineProperty(g, 'font', { configurable: true, get() { return fd.get.call(this); },
+    set(v) { const m = /^\s*(\d{3}|bold|normal)?\s*(\d+(?:\.\d+)?)px\s+(.*)$/.exec(String(v)); if (!m) return fd.set.call(this, v);
+      w = m[1] === 'bold' ? 700 : +m[1] || 400; sz = +m[2]; fd.set.call(this, `400 ${m[2]}px ${m[3]}`); } });
+  g.fillText = function (t, x, y, mw) { if (w > 500) { this.save(); this.lineJoin = 'round'; this.lineCap = 'round'; this.strokeStyle = this.fillStyle; this.lineWidth = sz * (w >= 900 ? .06 : w >= 800 ? .045 : w >= 700 ? .035 : .025); mw == null ? this.strokeText(t, x, y) : this.strokeText(t, x, y, mw); this.restore(); }
+    return mw == null ? P.fillText.call(this, t, x, y) : P.fillText.call(this, t, x, y, mw); };
+  return g;
+}
 export const decoImgs = names => Promise.all(names.map(asset));
 export const preloadOshi = () => Promise.all(ASSETS.map(asset)); // 打開本命設定時先在背景下載，切到分享卡時通常已經好了
 // 投票網址的 QR code（29×29，直接畫在圖卡上，不用另外下載圖片，避免被擋或載入失敗而變成空白）
@@ -110,8 +121,8 @@ export function drawQR(g, x, y, size, col = '#1F3552') {
 const ASSETS = ['cloud-big', 'cloud-light', 'cloud-sm', 'cloud-mass', 'cloud-r', 'cloud-sm2', 'brush-y', 'heart-l', 'heart-s', 'star-y', 'star-b', 'spark-1', 'spark-3', 'swoosh'];
 export async function makeOshiCard(o) {
   const { lang, st, nick, host } = o, T = OS_T[lang], W = 1080, H = 1350;
-  const F = '"VoteRound","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif', cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
-  try { await document.fonts.load('900 40px VoteRound', Object.values(T).filter(v => typeof v === 'string').join('') + (nick || '') + OSHI_MEMBERS.map(m => m.name).join('') + '0123456789#：'); } catch {} // 罕用字在補字包，先載好再畫
+  const F = '"VoteRound","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif', cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = steadyBold(cv.getContext('2d'));
+  try { await document.fonts.load('40px VoteRound', Object.values(T).filter(v => typeof v === 'string').join('') + (nick || '') + OSHI_MEMBERS.map(m => m.name).join('') + '0123456789#：'); } catch {} // 罕用字在補字包，先載好再畫
   const sortIds = ids => ids.sort((a, b) => OSHI_MEMBERS.indexOf(byId[a]) - OSHI_MEMBERS.indexOf(byId[b]));
   const oIds = sortIds(Object.keys(st.map)), wIds = sortIds(Object.keys(st.watch));
   const TOP = 250, LIMIT = 1146, OC = 10, oShow = oIds.slice(0, OC), hero = oShow.length === 1;
@@ -131,7 +142,6 @@ export async function makeOshiCard(o) {
   const put = (k, cx, cy, w, rot = 0, al = 1, sy = 1) => { const im = A[k]; if (!im) return; const h = w * im.height / im.width; g.save(); g.globalAlpha = al; g.translate(cx, cy); g.rotate(rot * Math.PI / 180); g.scale(1, sy); g.drawImage(im, -w / 2, -h / 2, w, h); g.restore(); };
   const fit = (s, w, size, weight) => { let z = size; g.font = `${weight} ${z}px ${F}`; while (z > 14 && g.measureText(s).width > w) { z -= 2; g.font = `${weight} ${z}px ${F}`; } return z; };
   const ctext = (s, cx, y, w, size, weight, color) => { g.fillStyle = color; const z = fit(s, w, size, weight); g.textAlign = 'center';
-    if (z >= 30) { g.save(); g.lineJoin = 'round'; g.lineWidth = z * .04; g.strokeStyle = color; g.strokeText(s, cx, y); g.restore(); } // 粉圓字型偏細，大字補一圈描邊加粗
     g.fillText(s, cx, y); g.textAlign = 'left'; };
   const pill = (txt, cx, cy, size) => { g.font = `900 ${size}px ${F}`; const w = g.measureText(txt).width + size * 1.4, h = size * 1.7; g.fillStyle = '#F5E050'; g.beginPath(); g.roundRect(cx - w / 2, cy - h / 2, w, h, h / 2); g.fill();
     g.fillStyle = NAVY; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(txt, cx, cy + 1); g.textAlign = 'left'; g.textBaseline = 'alphabetic'; };

@@ -379,8 +379,8 @@ input,select{font:inherit}
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getAuth, onAuthStateChanged, signInAnonymously, GoogleAuthProvider, signOut, linkWithPopup, signInWithCredential, deleteUser, reauthenticateWithPopup } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { getDatabase, ref, get, update, increment, serverTimestamp, query, limitToFirst } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
-import { OSHI_MEMBERS, OS_T, oshiHTML, makeOshiCard, cleanState, today, decoImgs, drawQR, preloadOshi } from './js/oshi.js?v=20261109i';
-import { MAX, buildData, match, buildTabs, esc, linkify, encodeShare, decodeShare, daysLeft, fmtDeadline, ytUrl, reasonLang } from './js/vote-lib.js?v=20261109i';
+import { OSHI_MEMBERS, OS_T, oshiHTML, makeOshiCard, cleanState, today, decoImgs, drawQR, preloadOshi, steadyBold } from './js/oshi.js?v=20261109j';
+import { MAX, buildData, match, buildTabs, esc, linkify, encodeShare, decodeShare, daysLeft, fmtDeadline, ytUrl, reasonLang } from './js/vote-lib.js?v=20261109j';
 
 // 投票專用 Firebase 專案（hinata-vote）
 const FB = { apiKey: "AIzaSyDhhCVZY7kby_i3Ktf2G2FsJce1uXbrU0o", authDomain: "hinata-vote.firebaseapp.com",
@@ -793,13 +793,13 @@ function sticker(g, cx, cy, r, face) {
 const CARD_DECO = ['cloud-big', 'cloud-light', 'cloud-sm', 'cloud-mass', 'cloud-r', 'cloud-sm2', 'brush-y', 'star-y', 'star-b', 'spark-1', 'spark-3', 'heart-l'];
 async function card(withImg) {
   const ps = picked(), main = ps.find(c => c.id === 'title') || ps.find(c => c.view !== 'mv' && c.view !== 'cover') || ps[0], ids = sel[main.id].slice(0, 3), sub = String(year) + (nick ? '　' + nick + t('nickSuf') : '');
-  try { await document.fonts.load('900 40px VoteRound', t('ttl') + sub + t('mine') + t('cardTag')(year) + ps.map(c => nm(c)).join('') + Object.values(sel).flat().map(ttlOf).join('') + '0123456789…'); } catch {}
-  const F = '"VoteRound","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif', W = 1080, H = 1350, NAVY = '#1F3552', cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
+  try { await document.fonts.load('40px VoteRound', t('ttl') + sub + t('mine') + t('cardTag')(year) + ps.map(c => nm(c)).join('') + Object.values(sel).flat().map(ttlOf).join('') + '0123456789…'); } catch {}
+  const F = '"VoteRound","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif', W = 1080, H = 1350, NAVY = '#1F3552', cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = steadyBold(cv.getContext('2d'));
   const smile = cardStyle === 'smile', [ims, dz, sm] = await Promise.all([withImg ? Promise.all(ids.map(i => loadImg(items[i]?.img))) : ids.map(() => null), decoImgs(CARD_DECO), smile ? Promise.all(SMILE.map(loadImg)) : []]);
   const A = Object.fromEntries(CARD_DECO.map((n, i) => [n, dz[i]]));
   const put = (k, cx, cy, w, rot = 0, al = 1, sy = 1) => { const im = A[k]; if (!im) return; const h = w * im.height / im.width; g.save(); g.globalAlpha = al; g.translate(cx, cy); g.rotate(rot * Math.PI / 180); g.scale(1, sy); g.drawImage(im, -w / 2, -h / 2, w, h); g.restore(); };
   const ctext = (str, cx, y, w, size, weight) => { let z = size; g.font = `${weight} ${z}px ${F}`; while (z > 14 && g.measureText(str).width > w) { z -= 2; g.font = `${weight} ${z}px ${F}`; }
-    g.fillStyle = NAVY; g.textAlign = 'center'; if (z >= 30) { g.save(); g.lineJoin = 'round'; g.lineWidth = z * .04; g.strokeStyle = NAVY; g.strokeText(str, cx, y); g.restore(); } g.fillText(str, cx, y); g.textAlign = 'left'; };
+    g.fillStyle = NAVY; g.textAlign = 'center'; g.fillText(str, cx, y); g.textAlign = 'left'; };
   // 背景與標題
   const sml = (k, cx, cy, w, rot = 0) => { const im = sm[k]; if (!im) return; const h = w * im.height / im.width; g.save(); g.globalAlpha = .95; g.translate(cx, cy); g.rotate(rot * Math.PI / 180); g.drawImage(im, -w / 2, -h / 2, w, h); g.restore(); };
   const gr = g.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, smile ? '#A9DAF3' : '#CFE8F9'); gr.addColorStop(1, smile ? '#C9E8F9' : '#EAF6FD'); g.fillStyle = gr; g.fillRect(0, 0, W, H);
@@ -992,7 +992,7 @@ async function route() {
   if (h.startsWith('#s=')) sharedS(h.slice(3)); else if (h.startsWith('#r=') || h.startsWith('#v=') || h.startsWith('#w=')) shared(h); else if (h.startsWith('#results')) results(h.split('/')[1]); else if (h === '#live') liveView();
   else if (h === '#admin') { head(); $('#bar').innerHTML = '';
     try { if (!window.tailwind) await new Promise((ok, no) => { const s = document.createElement('script'); s.src = 'https://cdn.tailwindcss.com'; s.onload = ok; s.onerror = no; document.head.append(s); });
-      const m = await import('./js/vote-admin.js?v=20261109i'); m.mountAdmin($('#app'), { songs: items, cats: dcats(), year }); } catch { toast(t('fail')); } }
+      const m = await import('./js/vote-admin.js?v=20261109j'); m.mountAdmin($('#app'), { songs: items, cats: dcats(), year }); } catch { toast(t('fail')); } }
   else { render(); guideAuto(); }
 }
 (async () => {
