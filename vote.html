@@ -338,6 +338,9 @@ input,select{font:inherit}
 .lvx{min-width:0;display:flex;flex-direction:column;gap:3px}
 .lvx b{font-size:15px;line-height:1.35;overflow-wrap:anywhere}
 .lvx .tag{align-self:flex-start;margin:0}
+/* 不是按鈕的資訊：不要白底陰影，跟可以點的按鈕分開 */
+.chips2 .days:not(.lvc){background:none;box-shadow:none;padding:0 4px;min-height:0;font-weight:800;color:var(--mut)}
+.note{background:rgba(255,255,255,.35);border:2px dashed #9FCBE8;box-shadow:none;border-radius:12px}
 </style>
 <!-- GA4：把首頁那段 gtag 程式碼原封不動貼在這裡（同一個 G-XXXX） -->
 </head>
