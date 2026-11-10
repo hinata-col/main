@@ -570,24 +570,42 @@ function renderAll() {
   renderLogin(); render();
 }
 
+// 讀取很慢的主因是 Apps Script 冷啟動（約 1～3 秒）。做法：先秀上次存的結果，背景再更新；頁面一開就先預載。
+const cacheGet = k => { try { const v = JSON.parse(localStorage.getItem(k) || 'null'); return v && Date.now() - v.t < 86400000 ? v.d : null; } catch { return null; } };
+const cachePut = (k, d) => { try { localStorage.setItem(k, JSON.stringify({ t: Date.now(), d })); } catch {} };
+const okRank = r => r && r.ok && Array.isArray(r.pairs);
+// 背景預載時人可能正在投票頁打字，只有在戰況頁才重畫，避免打字到一半被洗掉
+const renderRank = () => { if (S.tab === 'rank') render(); };
+let rankFetch = null;
 async function loadRank(force) {
-  if (!force && S.rank && S.rank !== 'loading') return;
-  S.rankErr = false; S.rank = 'loading'; render();
-  try {
-    if (!configured) throw 0;
-    const r = await (await fetch(CFG.APPS_SCRIPT_URL + '?action=ranking')).json();
-    if (!r.ok) throw 0;
-    S.rank = r;
-  } catch { S.rank = null; S.rankErr = true; }
-  render();
+  if (!force && okRank(S.rank) && !S.rankStale) return;
+  const cached = okRank(S.rank) ? S.rank : cacheGet('cp_rank');
+  S.rankErr = false;
+  if (okRank(cached)) { S.rank = cached; S.rankStale = true; } else { S.rank = 'loading'; }
+  renderRank();
+  if (!rankFetch) rankFetch = (async () => {
+    try {
+      if (!configured) throw 0;
+      const r = await (await fetch(CFG.APPS_SCRIPT_URL + '?action=ranking')).json();
+      if (!r.ok) throw 0;
+      S.rank = r; S.rankStale = false; cachePut('cp_rank', r);
+    } catch { if (!okRank(S.rank)) { S.rank = null; S.rankErr = true; } S.rankStale = false; }
+    rankFetch = null; renderRank();
+    // 先把前 3 組的理由與照片也預載好，點開就不用等
+    if (okRank(S.rank)) S.rank.pairs.slice(0, 3).forEach(r => { if (S.detail[r.key] === undefined) loadDetail(r.key, true); });
+  })();
+  return rankFetch;
 }
-async function loadDetail(key) {
-  S.detail[key] = 'loading'; render();
+async function loadDetail(key, quiet) {
+  const cached = cacheGet('cp_d_' + key);
+  if (Array.isArray(cached)) S.detail[key] = cached; else if (!quiet) S.detail[key] = 'loading';
+  if (!quiet || !Array.isArray(cached)) renderRank();
   try {
     const r = await (await fetch(CFG.APPS_SCRIPT_URL + '?action=detail&key=' + encodeURIComponent(key))).json();
-    S.detail[key] = r.ok && Array.isArray(r.items) ? r.items : [];
-  } catch { S.detail[key] = []; }
-  render();
+    if (r.ok && Array.isArray(r.items)) { S.detail[key] = r.items; cachePut('cp_d_' + key, r.items); }
+    else if (!Array.isArray(cached)) S.detail[key] = [];
+  } catch { if (!Array.isArray(cached)) S.detail[key] = []; }
+  renderRank();
 }
 
 /* ---------- 事件 ---------- */
@@ -673,7 +691,7 @@ $('#modal').addEventListener('keydown', e => { if (e.key === 'Escape') closeCard
 const restored = restoreLogin();
 renderAll(); initGoogle(); syncAvatars();
 if (restored) loadMine();
-if (S.tab === 'rank') loadRank(false);
+if (configured) loadRank(false);
 </script>
 </body>
 </html>
