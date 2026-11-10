@@ -85,6 +85,15 @@ textarea{width:100%;min-height:76px;border:2px solid var(--ink);border-radius:14
 .pg a{display:block;aspect-ratio:1/1;border-radius:14px;border:2px solid var(--ink);overflow:hidden;background:var(--sky3)}
 .pg img{width:100%;height:100%;object-fit:cover}
 .h3{font-size:14px;font-weight:700}
+.avw{position:relative;display:inline-flex}
+.x{position:absolute;top:-10px;right:-12px;width:36px;height:36px;padding:0;border:0;background:transparent;display:flex;align-items:center;justify-content:center}
+.x span{width:24px;height:24px;border-radius:50%;border:2px solid var(--ink);background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 0 var(--ink)}
+.x:active span{transform:translateY(1px)}
+.ov{position:fixed;inset:0;background:rgba(58,42,40,.55);display:flex;align-items:center;justify-content:center;z-index:30;padding:16px}
+.ov[hidden]{display:none}
+.mdl{background:#fff;border:3px solid var(--ink);border-radius:22px;box-shadow:0 5px 0 var(--ink);width:min(520px,100%);max-height:calc(100vh - 32px);overflow:auto;padding:16px;display:flex;flex-direction:column;gap:12px;outline:none}
+.mdl img{width:100%;height:auto;border:2px solid var(--ink);border-radius:14px;display:block}
+.mdl .row{justify-content:center}
 @media (min-width:700px){
   #app{max-width:720px}
   .grid{grid-template-columns:repeat(6,minmax(0,1fr))}
@@ -117,6 +126,7 @@ textarea{width:100%;min-height:76px;border:2px solid var(--ink);border-radius:14
 <div id="view"></div>
 </main>
 <div id="toast" role="status" aria-live="polite"></div>
+<div class="ov" id="modal" hidden><div class="mdl" role="dialog" aria-modal="true" aria-labelledby="mdlT" tabindex="-1"><h2 id="mdlT"></h2><div id="mdlBody"></div><div class="row" id="mdlBtns"></div></div></div>
 </div>
 
 <script type="module">
@@ -149,7 +159,9 @@ const T = {
     photoType: '照片只能是 jpg / png / webp', photoBig: '照片太大，沒辦法縮到 2MB 以內', done: '送出完成，謝謝你的投票！', loaded: '已帶入你上次送出的內容',
     fail: '送出失敗，請稍後再試', expired: '登入已過期，請重新登入', loadFail: '讀取失敗，請稍後再試', busy: '送出中…',
     rankTitle: 'CP 戰況排行', rankLead: n => `目前共 ${n} 人投票，點開任一組可以看粉絲的理由和照片。`, votes: '票',
-    reasons: '粉絲的理由', photos: '照片牆', noReason: '還沒有人寫理由', refresh: '重新整理', noData: '還沒有人投票', loading: '讀取中…', toVote: '我也要投票'
+    reasons: '粉絲的理由', photos: '照片牆', noReason: '還沒有人寫理由', refresh: '重新整理', noData: '還沒有人投票', loading: '讀取中…', toVote: '我也要投票',
+    rmMember: n => `移除 ${n}`, cardBtn: '預覽分享圖卡', cardTitle: '我的 CP 圖卡', cardDone: '投票完成！這是你的 CP 圖卡', save: '儲存圖片', share: '分享', close: '關閉',
+    hold: '手機也可以長按圖片儲存', making: '圖卡製作中…', cardFail: '圖卡製作失敗，請稍後再試', cardTag: '你也來選你心中的 CP！'
   },
   ja: {
     title: '日向坂コンビ投票', htmlLang: 'ja',
@@ -169,7 +181,9 @@ const T = {
     photoType: '写真はjpg・png・webpのみです', photoBig: '写真が大きすぎて2MB以内に縮小できませんでした', done: '送信しました。投票ありがとうございます！', loaded: '前回送信した内容を読み込みました',
     fail: '送信に失敗しました。しばらくしてからもう一度お試しください', expired: 'ログインの期限が切れました。もう一度ログインしてください', loadFail: '読み込みに失敗しました', busy: '送信中…',
     rankTitle: 'コンビランキング', rankLead: n => `現在 ${n} 人が投票中。コンビをタップすると、みんなの理由と写真が見られるよ。`, votes: '票',
-    reasons: 'みんなの理由', photos: 'フォトウォール', noReason: 'まだ理由がありません', refresh: '更新', noData: 'まだ投票がありません', loading: '読み込み中…', toVote: '私も投票する'
+    reasons: 'みんなの理由', photos: 'フォトウォール', noReason: 'まだ理由がありません', refresh: '更新', noData: 'まだ投票がありません', loading: '読み込み中…', toVote: '私も投票する',
+    rmMember: n => `${n} を外す`, cardBtn: 'シェアカードを見る', cardTitle: '私のコンビカード', cardDone: '投票完了！コンビカードができました', save: '画像を保存', share: 'シェア', close: '閉じる',
+    hold: 'スマホは画像を長押しで保存できます', making: 'カードを作成中…', cardFail: 'カードの作成に失敗しました。もう一度お試しください', cardTag: 'あなたも推しコンビを選ぼう！'
   }
 };
 const ERR = { bad_token: 'needLogin', expired: 'expired', too_many: 'full', dup: 'dupPair', bad_type: 'photoType', too_big: 'photoBig' };
@@ -207,16 +221,23 @@ const avatar = (m, s) => `<span class="av"${s ? ` style="--s:${s}px"` : ''}><spa
 document.addEventListener('error', e => { if (e.target.tagName === 'IMG' && e.target.hasAttribute('data-av')) e.target.remove(); }, true);
 
 /* ---------- 選擇邏輯 ---------- */
-const pending = () => { const p = S.pairs[S.pairs.length - 1]; return p && !p.b ? p : null; };
+const pending = () => S.pairs.find(p => !p.b) || null;
 function pick(id) {
   const k = t(), p = pending();
   if (p) {
-    if (p.a === id) { S.pairs.pop(); return; }
-    if (S.pairs.some(q => q.b && keyOf(q.a, q.b) === keyOf(p.a, id))) { toast(k.dupPair); return; }
+    if (p.a === id) { S.pairs.splice(S.pairs.indexOf(p), 1); return; }
+    if (S.pairs.some(q => q !== p && q.b && keyOf(q.a, q.b) === keyOf(p.a, id))) { toast(k.dupPair); return; }
     p.b = id; return;
   }
   if (S.pairs.length >= MAX_PAIRS) { toast(k.full); return; }
   S.pairs.push({ a: id, b: null, reason: '', photo: '', blob: null, preview: '' });
+}
+// 叉掉一組裡的某位成員：留下另一位等你重選；只剩一位時叉掉就是移除整組
+function removeMember(i, side) {
+  const p = S.pairs[i]; if (!p) return;
+  if (!p.b) { S.pairs.splice(i, 1); return; }
+  if (side === 'a') p.a = p.b;
+  p.b = null;
 }
 const badges = () => { const m = {}; S.pairs.forEach((p, i) => [p.a, p.b].forEach(id => { if (id) (m[id] = m[id] || []).push(i + 1); })); return m; };
 
@@ -258,6 +279,7 @@ async function submit() {
   if (S.user.exp * 1000 < Date.now() + 30000) { S.user = null; renderLogin(); return toast(k.expired); }
   if (!S.pairs.length) return toast(k.needPair);
   if (S.pairs.some(p => !p.b)) return toast(k.incomplete);
+  let sent = false;
   S.busy = true; render();
   try {
     const out = [];
@@ -268,9 +290,107 @@ async function submit() {
     const res = await api({ action: 'submit', idToken: S.user.token, pairs: out });
     if (!res.ok) throw res.error || 'server';
     S.submitted = true; S.rank = null; S.detail = {};
-    toast(k.done);
+    toast(k.done); sent = true;
   } catch (err) { toast(k[ERR[err]] || k.fail); }
   S.busy = false; renderAll();
+  if (sent) openCard(true);
+}
+
+/* ---------- 分享圖卡（在你的手機／電腦上直接畫成圖片，不經過任何伺服器） ---------- */
+const INK = '#3A2A28', SKY = '#5BB8EA', PINK = '#FF8FB1';
+const CARD_W = 1080, ROW_H = 190, ROW_GAP = 26, CARD_TOP = 250, CARD_BOTTOM = 150;
+const CARD_FONT = 'VoteRound, "Hiragino Maru Gothic ProN", "Noto Sans TC", sans-serif';
+const cardSize = n => [CARD_W, CARD_TOP + n * (ROW_H + ROW_GAP) + CARD_BOTTOM];
+const loadImg = (src, cors, ms = 8000) => new Promise(res => { const i = new Image(); if (cors) i.crossOrigin = 'anonymous'; const to = setTimeout(() => res(null), ms); i.onload = () => { clearTimeout(to); res(i); }; i.onerror = () => { clearTimeout(to); res(null); }; i.src = src; });
+const avCache = {};
+// 成員照片分散在不同網站：先直接載入，被擋就透過 images.weserv.nl 轉一手（作法同本命設定分享卡），再不行就畫姓名首字
+const loadAvatar = url => !url ? Promise.resolve(null) : (avCache[url] ||= (async () => (await loadImg(url, true)) || (await loadImg('https://images.weserv.nl/?w=480&url=' + encodeURIComponent(url.replace(/^https?:\/\//, '')), true)))());
+
+function roundRect(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
+function fitText(g, text, x, y, maxW, size) {
+  let s = size; g.font = `700 ${s}px ${CARD_FONT}`;
+  while (s > 22 && g.measureText(text).width > maxW) { s -= 2; g.font = `700 ${s}px ${CARD_FONT}`; }
+  g.fillText(text, x, y);
+}
+function drawAvatar(g, img, cx, cy, r, initial) {
+  g.save(); g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2); g.closePath(); g.fillStyle = '#D8EEFB'; g.fill(); g.clip();
+  if (img) { const sc = Math.max(2 * r / img.width, 2 * r / img.height), w = img.width * sc, h = img.height * sc; g.drawImage(img, cx - w / 2, cy - r - (h - 2 * r) * 0.12, w, h); }
+  else { g.fillStyle = INK; g.font = `700 ${Math.round(r * 0.9)}px ${CARD_FONT}`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(initial, cx, cy + 4); }
+  g.restore();
+  g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2); g.closePath(); g.lineWidth = 6; g.strokeStyle = INK; g.stroke();
+}
+function drawHeart(g, cx, cy, s) {
+  g.beginPath(); g.moveTo(cx, cy + s * .9);
+  g.bezierCurveTo(cx - s * 1.6, cy - s * .1, cx - s * .9, cy - s * 1.2, cx, cy - s * .35);
+  g.bezierCurveTo(cx + s * .9, cy - s * 1.2, cx + s * 1.6, cy - s * .1, cx, cy + s * .9);
+  g.closePath(); g.fillStyle = PINK; g.fill(); g.lineWidth = 5; g.lineJoin = 'round'; g.strokeStyle = INK; g.stroke();
+}
+function drawCard(g, pairs, imgs, k) {
+  const [W, H] = cardSize(pairs.length);
+  g.fillStyle = '#F3F7FA'; g.fillRect(0, 0, W, H);
+  g.fillStyle = '#E3F1FA';
+  [[930, 90, 120], [90, 330, 70], [1000, 700, 90], [70, 1000, 110], [960, H - 160, 80]].forEach(([x, y, r]) => { g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill(); });
+  g.textAlign = 'center'; g.textBaseline = 'alphabetic'; g.lineJoin = 'round';
+  let ts = 100; g.font = `700 ${ts}px ${CARD_FONT}`;
+  while (ts > 50 && g.measureText(k.title).width > 860) { ts -= 4; g.font = `700 ${ts}px ${CARD_FONT}`; }
+  g.strokeStyle = INK; g.lineWidth = 24; g.strokeText(k.title, W / 2, 146);
+  g.strokeStyle = '#fff'; g.lineWidth = 16; g.strokeText(k.title, W / 2, 140);
+  g.fillStyle = SKY; g.fillText(k.title, W / 2, 140);
+  g.fillStyle = '#5E4A47'; g.font = `500 30px ${CARD_FONT}`; g.fillText('HINATAZAKA46 FAVORITE PAIRS', W / 2, 205);
+  pairs.forEach((p, i) => {
+    const y0 = CARD_TOP + i * (ROW_H + ROW_GAP), cy = y0 + ROW_H / 2, a = MAP[p.a], b = MAP[p.b];
+    roundRect(g, 40, y0 + 8, W - 80, ROW_H, 36); g.fillStyle = INK; g.fill();
+    roundRect(g, 40, y0, W - 80, ROW_H, 36); g.fillStyle = '#fff'; g.fill(); g.lineWidth = 6; g.strokeStyle = INK; g.stroke();
+    g.beginPath(); g.arc(104, cy, 34, 0, Math.PI * 2); g.fillStyle = SKY; g.fill(); g.lineWidth = 5; g.strokeStyle = INK; g.stroke();
+    g.fillStyle = INK; g.font = `700 38px ${CARD_FONT}`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(String(i + 1), 104, cy + 3);
+    drawAvatar(g, imgs[i * 2], 245, cy, 64, a.name[0]);
+    drawHeart(g, 340, cy, 24);
+    drawAvatar(g, imgs[i * 2 + 1], 435, cy, 64, b.name[0]);
+    g.textAlign = 'left'; g.textBaseline = 'alphabetic'; g.fillStyle = INK;
+    fitText(g, a.name, 540, cy - 12, W - 540 - 70, 46);
+    fitText(g, '× ' + b.name, 540, cy + 50, W - 540 - 70, 46);
+  });
+  g.textAlign = 'center'; g.textBaseline = 'alphabetic';
+  g.fillStyle = INK; g.font = `700 38px ${CARD_FONT}`; g.fillText(k.cardTag, W / 2, H - 78);
+  g.fillStyle = '#5E4A47'; g.font = `500 28px ${CARD_FONT}`; g.fillText('hinata-col.github.io/main/cp/', W / 2, H - 34);
+}
+async function makeCard() {
+  const k = t(), pairs = S.pairs.filter(p => p.b);
+  const text = pairs.map(p => MAP[p.a].name + MAP[p.b].name).join('') + k.title + k.cardTag + 'HINATAZAKA46 FAVORITE PAIRS hinata-col.github.io/main/cp/0123456789×';
+  try { await document.fonts.load(`700 40px VoteRound`, text); await document.fonts.load(`500 28px VoteRound`, text); } catch {}
+  const imgs = await Promise.all(pairs.flatMap(p => [loadAvatar(MAP[p.a].avatar), loadAvatar(MAP[p.b].avatar)]));
+  const c = document.createElement('canvas'), [W, H] = cardSize(pairs.length);
+  c.width = W; c.height = H;
+  drawCard(c.getContext('2d'), pairs, imgs, k);
+  return new Promise((res, rej) => c.toBlob(b => b ? res(b) : rej(new Error('toBlob')), 'image/png'));
+}
+let cardBlob = null, cardUrl = '';
+function closeCard() {
+  $('#modal').hidden = true;
+  if (cardUrl) { URL.revokeObjectURL(cardUrl); cardUrl = ''; }
+  cardBlob = null; $('#mdlBody').innerHTML = '';
+}
+async function openCard(afterSubmit) {
+  const k = t();
+  if (!S.pairs.some(p => p.b)) return toast(k.needPair);
+  if (cardUrl) { URL.revokeObjectURL(cardUrl); cardUrl = ''; }
+  $('#mdlT').textContent = afterSubmit ? k.cardDone : k.cardTitle;
+  $('#mdlBody').innerHTML = `<div class="mut" style="text-align:center;padding:28px 0">${esc(k.making)}</div>`;
+  $('#mdlBtns').innerHTML = `<button class="btn ghost" data-m="close">${k.close}</button>`;
+  $('#modal').hidden = false; $('#modal .mdl').focus();
+  try {
+    const blob = await makeCard();
+    if ($('#modal').hidden) return;
+    cardBlob = blob; cardUrl = URL.createObjectURL(blob);
+    $('#mdlBody').innerHTML = `<img src="${cardUrl}" alt="${esc(k.cardTitle)}"><div class="mut" style="text-align:center;margin-top:8px">${esc(k.hold)}</div>`;
+    let canShare = false;
+    try { canShare = !!(navigator.canShare && navigator.canShare({ files: [new File([blob], 'hinata-cp.png', { type: 'image/png' })] })); } catch {}
+    $('#mdlBtns').innerHTML = `<a class="btn" href="${cardUrl}" download="hinata-cp.png">${k.save}</a>${canShare ? `<button class="btn ghost" data-m="share">${k.share}</button>` : ''}<button class="btn ghost" data-m="close">${k.close}</button>`;
+  } catch { $('#mdlBody').innerHTML = `<div class="mut" style="text-align:center;padding:20px 0">${esc(k.cardFail)}</div>`; }
+}
+async function shareCard() {
+  if (!cardBlob) return;
+  try { await navigator.share({ files: [new File([cardBlob], 'hinata-cp.png', { type: 'image/png' })], title: t().title }); } catch {}
 }
 
 /* ---------- Google 登入 ---------- */
@@ -316,16 +436,17 @@ function renderLogin() {
 
 /* ---------- 畫面 ---------- */
 const heart = (dash) => `<svg width="32" height="32" viewBox="0 0 24 24" fill="${dash ? '#fff' : '#FF8FB1'}" stroke="#3A2A28" stroke-width="1.8" stroke-linejoin="round" ${dash ? 'stroke-dasharray="3 2"' : ''} aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>`;
-const col = m => `<div class="col">${avatar(m, 68)}<span>${esc(m.name)}</span></div>`;
+const xIcon = '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#3A2A28" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8"/></svg>';
+const col = (m, i, side) => `<div class="col"><div class="avw">${avatar(m, 68)}<button class="x" data-act="rmMember" data-i="${i}" data-side="${side}" aria-label="${esc(t().rmMember(m.name))}"><span>${xIcon}</span></button></div><span>${esc(m.name)}</span></div>`;
 
 function slotHTML(i) {
   const k = t(), p = S.pairs[i];
   if (!p) return `<div class="card slot empty"><span class="pill gray">${k.slot(i + 1)}</span><span class="mut">${k.empty}</span></div>`;
   const a = MAP[p.a], b = p.b && MAP[p.b];
   const head = `<div class="row"><span class="pill ${b ? '' : 'white'}">${k.slot(i + 1)}</span>${b ? '' : `<span class="mut">${k.pickSecond}</span>`}<span class="grow"></span><button class="link" data-act="rm" data-i="${i}">${k.clear}</button></div>`;
-  if (!b) return `<div class="card slot pend">${head}<div class="pairrow">${col(a)}${heart(true)}<div class="col"><span class="av ghost" style="--s:68px"></span></div></div></div>`;
+  if (!b) return `<div class="card slot pend">${head}<div class="pairrow">${col(a, i, 'a')}${heart(true)}<div class="col"><span class="av ghost" style="--s:68px"></span></div></div></div>`;
   const src = p.preview || p.photo;
-  return `<div class="card slot">${head}<div class="pairrow">${col(a)}${heart(false)}${col(b)}</div>
+  return `<div class="card slot">${head}<div class="pairrow">${col(a, i, 'a')}${heart(false)}${col(b, i, 'b')}</div>
 <label class="fld">${k.reason}<textarea data-reason="${i}" maxlength="${MAX_REASON}" placeholder="${esc(k.reasonPh)}">${esc(p.reason)}</textarea></label>
 <div class="photo"><div class="thumb ${src ? 'has' : ''}">${src ? `<img src="${esc(src)}" alt="" referrerpolicy="no-referrer">` : ''}</div>
 <div class="stack"><label class="btn ghost" style="cursor:pointer"><input type="file" accept="image/*" hidden data-photo="${i}">${src ? k.change : k.upload}</label>
@@ -351,7 +472,8 @@ function voteHTML() {
     picker += `</div></div>`;
   }
   picker += `</div>`;
-  const submit = `<div class="stack o4"><button class="btn big" data-act="submit" ${S.busy ? 'disabled' : ''}>${S.busy ? k.busy : (S.submitted ? k.update : k.submit)}</button><span class="mut" style="text-align:center">${k.checkNote}</span></div>`;
+  const cardBtn = S.pairs.some(p => p.b) ? `<button class="btn ghost" data-act="card">${k.cardBtn}</button>` : '';
+  const submit = `<div class="stack o4"><button class="btn big" data-act="submit" ${S.busy ? 'disabled' : ''}>${S.busy ? k.busy : (S.submitted ? k.update : k.submit)}</button>${cardBtn}<span class="mut" style="text-align:center">${k.checkNote}</span></div>`;
   return `${warn}<div class="vgrid"><div class="colL">${intro}${picker}</div><div class="colR">${mycp}${submit}</div></div>`;
 }
 
@@ -437,6 +559,8 @@ $('#view').addEventListener('click', e => {
   else if (act === 'rm') { S.pairs.splice(i, 1); render(); }
   else if (act === 'rmPhoto') { const p = S.pairs[i]; if (p.preview && p.blob) URL.revokeObjectURL(p.preview); p.photo = ''; p.blob = null; p.preview = ''; render(); }
   else if (act === 'submit') submit();
+  else if (act === 'rmMember') { removeMember(i, el.dataset.side); render(); }
+  else if (act === 'card') openCard(false);
   else if (act === 'refresh') { S.detail = {}; S.open = null; loadRank(true); }
   else if (act === 'toggle') { const key = el.dataset.key; S.open = S.open === key ? null : key; render(); if (S.open && S.detail[key] === undefined) loadDetail(key); }
 });
@@ -473,6 +597,12 @@ async function syncAvatars() {
     if (changed) render();
   } catch {}
 }
+
+$('#modal').addEventListener('click', e => {
+  if (e.target.id === 'modal' || e.target.closest('[data-m="close"]')) return closeCard();
+  if (e.target.closest('[data-m="share"]')) shareCard();
+});
+$('#modal').addEventListener('keydown', e => { if (e.key === 'Escape') closeCard(); });
 
 renderAll(); initGoogle(); syncAvatars();
 if (S.tab === 'rank') loadRank(false);
