@@ -1,0 +1,31 @@
+name: 下載圖卡用圖片
+# 把 MV 縮圖、封面賞封面存一份到 img/cache/，分享圖卡就不會因為外站限制而缺圖。
+# 每天台灣時間 03:17 自動檢查一次（只有新增或更換的圖才會下載、提交），也可以在 Actions 頁面手動按 Run workflow。
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 19 * * *'
+permissions:
+  contents: write
+concurrency: cache-images
+jobs:
+  cache:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: 安裝圖片處理工具
+        run: npm install --no-save --no-package-lock sharp@0.33.5
+      - name: 下載圖片
+        run: node .github/scripts/cache-images.mjs
+      - name: 提交變更
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add img/cache
+          if git diff --cached --quiet; then echo "沒有新圖片"; exit 0; fi
+          git commit -m "更新圖卡用圖片快取"
+          git pull --rebase
+          git push
