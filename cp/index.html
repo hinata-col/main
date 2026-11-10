@@ -59,7 +59,15 @@ h2{margin:0;font-size:20px}
 .pairrow>svg{margin-top:18px;flex:none}
 .col{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:14px;min-width:84px}
 .av{position:relative;width:var(--s,60px);height:var(--s,60px);border-radius:50%;border:2.5px solid var(--ink);background:var(--sky2);overflow:hidden;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:calc(var(--s,60px)*.36);flex:none}
-.av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 12%;background:#fff}
+.av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 12%;background:#fff;opacity:0;transition:opacity .25s}
+.av img.ok{opacity:1}
+.ld{display:flex;align-items:center;justify-content:center;gap:10px;padding:26px 16px;color:var(--mut);font-weight:700}
+.ld.sm{padding:10px 0;justify-content:flex-start}
+.ld .hs{display:inline-flex;gap:6px}
+.ld .hs i{width:16px;height:16px;background:var(--pink);border:2px solid var(--ink);border-radius:50%;animation:hb 1s ease-in-out infinite}
+.ld .hs i:nth-child(2){background:var(--sun);animation-delay:.15s}.ld .hs i:nth-child(3){background:var(--sky);animation-delay:.3s}
+@keyframes hb{0%,100%{transform:translateY(0)}40%{transform:translateY(-9px)}}
+@media (prefers-reduced-motion:reduce){.ld .hs i{animation:none}.av img{transition:none}}
 .av.ghost{border-style:dashed;background:#fff}
 label.fld{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--mut);margin-top:6px}
 input[data-nick],#nick{width:100%;border:2px solid var(--ink);border-radius:14px;padding:10px 12px;font-size:15px;background:var(--cream);min-height:44px}
@@ -232,7 +240,13 @@ function groups() {
   }
   return out;
 }
-const avatar = (m, s) => `<span class="av"${s ? ` style="--s:${s}px"` : ''}><span>${esc(m.name[0])}</span><img data-av src="${esc(m.avatar)}" alt="" loading="lazy" referrerpolicy="no-referrer"></span>`;
+const LOADER = '<span class="hs" aria-hidden="true"><i></i><i></i><i></i></span>';
+// 最新公式照的網址存在資料庫裡。上次看過的先存在瀏覽器，一開頁就用最新的；第一次來的要等資料庫回應（最多 1.5 秒）才開始載入，避免先載舊照片再換新照片
+let avReady = false;
+try { const c = JSON.parse(localStorage.getItem('cp_av') || 'null'); if (c && typeof c === 'object') { for (const m of MEMBERS) if (typeof c[m.id] === 'string' && /^https:\/\//.test(c[m.id])) m.avatar = c[m.id]; avReady = true; } } catch {}
+const avatar = (m, s) => `<span class="av"${s ? ` style="--s:${s}px"` : ''}><span>${esc(m.name[0])}</span><img data-av data-id="${esc(m.id)}"${avReady ? ` src="${esc(m.avatar)}"` : ''} alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></span>`;
+const markAv = () => document.querySelectorAll('img[data-av]:not(.ok)').forEach(i => { if (i.complete && i.naturalWidth) i.classList.add('ok'); });
+document.addEventListener('load', e => { if (e.target.tagName === 'IMG' && e.target.hasAttribute('data-av')) e.target.classList.add('ok'); }, true);
 document.addEventListener('error', e => { if (e.target.tagName === 'IMG' && e.target.hasAttribute('data-av')) e.target.remove(); }, true);
 
 /* ---------- 選擇邏輯 ---------- */
@@ -530,7 +544,7 @@ function rankHTML() {
   const k = t();
   let h = '';
   if (!configured) h += `<div class="card warn mut">${esc(k.notCfg)}</div>`;
-  if (S.rank === 'loading') return h + `<div class="card mut">${k.loading}</div>`;
+  if (S.rank === 'loading') return h + `<div class="card ld">${LOADER}${k.loading}</div>`;
   if (S.rankErr || !S.rank) return h + `<div class="card"><p class="mut">${k.loadFail}</p><button class="btn ghost" data-act="refresh" style="margin-top:8px">${k.refresh}</button></div>`;
   h += `<div class="card"><h2>${k.rankTitle}</h2><div class="sub">${k.rankLead(Number(S.rank.total) || 0)}</div></div>`;
   const rows = (S.rank.pairs || []).filter(r => MAP[r.a] && MAP[r.b]);
@@ -543,7 +557,7 @@ function rankHTML() {
     h += `<div class="card"><button class="rrow" data-act="toggle" data-key="${esc(r.key)}" aria-expanded="${open}"><span class="rn ${rk <= 3 ? 'r' + rk : ''}">${rk}</span><span class="avs">${avatar(a, 46)}${avatar(b, 46)}</span><span class="names">${esc(a.name)} × ${esc(b.name)}</span><span class="cnt">${Number(r.count) || 0}<small> ${k.votes}</small></span></button>`;
     if (open) {
       h += `<div class="det">`;
-      if (d === 'loading' || d === undefined) h += `<span class="mut">${k.loading}</span>`;
+      if (d === 'loading' || d === undefined) h += `<div class="ld sm">${LOADER}${k.loading}</div>`;
       else {
         const rs = d.filter(x => x.r), ph = d.filter(x => safePhoto(x.p));
         h += rs.length ? rs.map(x => `<div class="h3">${esc(x.n || k.defNick)}</div><div class="rs">${esc(x.r)}</div>`).join('') : `<div class="h3">${k.reasons}</div><span class="mut">${k.noReason}</span>`;
@@ -560,6 +574,7 @@ function rankHTML() {
 function render() {
   const y = window.scrollY;
   $('#view').innerHTML = S.tab === 'vote' ? voteHTML() : rankHTML();
+  markAv();
   window.scrollTo(0, y);
 }
 function renderAll() {
@@ -650,20 +665,27 @@ $('#view').addEventListener('change', async e => {
 // 成員頭像：主站會自動同步最新公式照到 members/{id}/avatar，讀得到就換成最新的，讀不到沿用名單內建網址（作法同歌曲票選）
 const MAIN_DB = 'https://hinata-collection-default-rtdb.asia-southeast1.firebasedatabase.app';
 async function syncAvatars() {
+  const first = !avReady;
   try {
-    const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 5000);
+    const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), first ? 1500 : 5000);
     const r = await fetch(MAIN_DB + '/members.json', { signal: ctl.signal });
     clearTimeout(to);
-    if (!r.ok) return;
-    const o = await r.json();
-    if (!o || typeof o !== 'object') return;
-    let changed = false;
-    for (const m of MEMBERS) {
-      const u = o[m.id] && o[m.id].avatar;
-      if (typeof u === 'string' && /^https:\/\//.test(u) && u !== m.avatar) { m.avatar = u; changed = true; }
+    if (r.ok) {
+      const o = await r.json();
+      if (o && typeof o === 'object') {
+        const store = {};
+        for (const m of MEMBERS) {
+          const u = o[m.id] && o[m.id].avatar;
+          if (typeof u === 'string' && /^https:\/\//.test(u)) {
+            store[m.id] = u;
+            if (u !== m.avatar) { m.avatar = u; document.querySelectorAll(`img[data-av][data-id="${m.id}"]`).forEach(i => { i.classList.remove('ok'); i.src = u; }); }
+          }
+        }
+        try { localStorage.setItem('cp_av', JSON.stringify(store)); } catch {}
+      }
     }
-    if (changed) render();
   } catch {}
+  if (first) { avReady = true; document.querySelectorAll('img[data-av]:not([src])').forEach(i => { const m = MAP[i.dataset.id]; if (m) i.src = m.avatar; }); }
 }
 
 // 照片牆：縮圖是正方形裁切（排版整齊），點開用燈箱看完整原圖，橫式直式都不會被切
