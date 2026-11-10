@@ -432,8 +432,24 @@ async function onCred(resp) {
   try {
     const p = decodeJwt(resp.credential);
     S.user = { token: resp.credential, name: p.name || '', exp: p.exp };
+    try { sessionStorage.setItem('cp_tok', resp.credential); } catch {}
   } catch { return; }
   renderAll();
+  await loadMine();
+}
+// 重新整理頁面後，如果登入憑證還沒過期（Google 憑證約 1 小時），就直接沿用，不用再登入
+function restoreLogin() {
+  let tok = null;
+  try { tok = sessionStorage.getItem('cp_tok'); } catch {}
+  if (!tok) return false;
+  try {
+    const p = decodeJwt(tok);
+    if (p.exp * 1000 < Date.now() + 60000) { sessionStorage.removeItem('cp_tok'); return false; }
+    S.user = { token: tok, name: p.name || '', exp: p.exp };
+    return true;
+  } catch { try { sessionStorage.removeItem('cp_tok'); } catch {} return false; }
+}
+async function loadMine() {
   if (S.pairs.length === 0) {
     try {
       const r = await api({ action: 'mine', idToken: S.user.token });
@@ -449,7 +465,7 @@ function initGoogle() {
   if (!configured) return;
   const s = document.createElement('script');
   s.src = 'https://accounts.google.com/gsi/client'; s.async = true;
-  s.onload = () => { window.google.accounts.id.initialize({ client_id: CFG.GOOGLE_CLIENT_ID, callback: onCred, auto_select: false }); renderLogin(); };
+  s.onload = () => { window.google.accounts.id.initialize({ client_id: CFG.GOOGLE_CLIENT_ID, callback: onCred, auto_select: true }); renderLogin(); if (!S.user) window.google.accounts.id.prompt(); };
   document.head.appendChild(s);
 }
 function renderLogin() {
@@ -579,7 +595,7 @@ $('#tabseg').addEventListener('click', e => {
   renderAll(); if (S.tab === 'rank') loadRank(false);
 });
 $('#login').addEventListener('click', e => {
-  if (e.target.closest('[data-act="logout"]')) { S.user = null; window.google?.accounts?.id?.disableAutoSelect(); renderAll(); }
+  if (e.target.closest('[data-act="logout"]')) { S.user = null; try { sessionStorage.removeItem('cp_tok'); } catch {} window.google?.accounts?.id?.disableAutoSelect(); renderAll(); }
 });
 $('#view').addEventListener('click', e => {
   const el = e.target.closest('[data-act]'); if (!el) return;
@@ -649,7 +665,9 @@ $('#modal').addEventListener('input', e => {
 });
 $('#modal').addEventListener('keydown', e => { if (e.key === 'Escape') closeCard(); });
 
+const restored = restoreLogin();
 renderAll(); initGoogle(); syncAvatars();
+if (restored) loadMine();
 if (S.tab === 'rank') loadRank(false);
 </script>
 </body>
