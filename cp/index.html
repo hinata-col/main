@@ -62,6 +62,7 @@ h2{margin:0;font-size:20px}
 .av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 12%;background:#fff}
 .av.ghost{border-style:dashed;background:#fff}
 label.fld{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--mut);margin-top:6px}
+input[data-nick],#nick{width:100%;border:2px solid var(--ink);border-radius:14px;padding:10px 12px;font-size:15px;background:var(--cream);min-height:44px}
 textarea{width:100%;min-height:76px;border:2px solid var(--ink);border-radius:14px;padding:10px 12px;font-size:15px;line-height:1.6;background:var(--cream);resize:vertical}
 .photo{display:flex;gap:12px;align-items:center;margin-top:12px;flex-wrap:wrap}
 .thumb{width:76px;height:76px;border-radius:14px;border:2px dashed var(--ink);background:var(--sky3);display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none}
@@ -164,17 +165,17 @@ const T = {
     pickTitle: '點頭像選成員', pickNote: '依期別分區，區內按五十音排序。同一對不分先後，也不能重複選。',
     current: '現役', og: 'OG', gen: { 1: '一期生', 2: '二期生', 3: '三期生', 4: '四期生', 5: '五期生' },
     submit: '送出我的 CP', update: '更新我的 CP',
-    checkNote: '送出後，你選的 CP、理由和照片會公開顯示在戰況頁（不會顯示你的名字）。',
+    checkNote: '送出後，你選的 CP、理由、照片和暱稱會公開顯示在戰況頁（不會顯示你的 Google 名字）。',
     loginTitle: '登入後才能送出', loginNote: '用 Google 登入，每人只會保留最後一次送出的內容。', hello: n => `${n || 'Google'} 已登入`, logout: '登出',
     notCfg: '這個頁面還沒完成設定（登入、上傳、試算表網址），目前只能預覽畫面。',
     full: '最多只能選 5 組', dupPair: '這一組你已經選過了', needLogin: '請先用 Google 登入', needPair: '請至少選 1 組 CP', incomplete: '有一組還沒選好第二位',
     photoType: '照片只能是 jpg / png / webp', photoBig: '照片太大，沒辦法縮到 2MB 以內', done: '送出完成，謝謝你的投票！', loaded: '已帶入你上次送出的內容',
     fail: '送出失敗，請稍後再試', expired: '登入已過期，請重新登入', loadFail: '讀取失敗，請稍後再試', busy: '送出中…',
-    rankTitle: 'CP 戰況排行', rankLead: n => `目前共 ${n} 人投票，點開任一組可以看粉絲的理由和照片。`, votes: '票',
-    reasons: '粉絲的理由', photos: '照片牆', noReason: '還沒有人寫理由', refresh: '重新整理', noData: '還沒有人投票', loading: '讀取中…', toVote: '我也要投票',
+    rankTitle: 'CP 戰況排行', rankLead: n => `目前共 ${n} 人投票，點開任一組可以看投票理由和照片。`, votes: '票',
+    reasons: '投票理由', defNick: 'おひさま', nickField: '暱稱（選填）', nickHint: '會顯示在你的理由旁邊，沒填就是「おひさま」', photos: '照片牆', noReason: '還沒有人寫理由', refresh: '重新整理', noData: '還沒有人投票', loading: '讀取中…', toVote: '我也要投票',
     rmMember: n => `移除 ${n}`, cardBtn: '預覽分享圖卡', cardTitle: '我的 CP 圖卡', cardDone: '投票完成！這是你的 CP 圖卡', save: '儲存圖片', share: '分享', close: '關閉',
     hold: '手機也可以長按圖片儲存', making: '圖卡製作中…', cardFail: '圖卡製作失敗，請稍後再試', cardTag: '你也來選你心中的 CP！',
-    openOrig: '開啟原圖', nickLabel: '暱稱（選填，只會出現在圖卡上）', nickPh: '例：小明', nickOf: n => `${n} 的 CP`
+    openOrig: '開啟原圖', nickLabel: '暱稱（選填，也會顯示在圖卡上）', nickPh: '例：小明', nickOf: n => `${n} 的 CP`
   },
   ja: {
     title: '日向坂コンビ投票', htmlLang: 'ja',
@@ -187,17 +188,17 @@ const T = {
     pickTitle: 'アイコンをタップして選ぶ', pickNote: '期別に分けて、五十音順に並んでいます。同じ組み合わせは順番に関係なく1回だけ選べます。',
     current: '現役', og: 'OG', gen: { 1: '1期生', 2: '2期生', 3: '3期生', 4: '4期生', 5: '5期生' },
     submit: '投票する', update: '投票内容を更新する',
-    checkNote: '送信すると、選んだコンビ・理由・写真がランキングページに公開されます（お名前は表示されません）。',
+    checkNote: '送信すると、選んだコンビ・理由・写真・ニックネームがランキングページに公開されます（Googleのお名前は表示されません）。',
     loginTitle: 'ログインしてから送信できます', loginNote: 'Googleでログインします。1人につき最後に送った内容だけが残ります。', hello: n => `${n || 'Google'} でログイン中`, logout: 'ログアウト',
     notCfg: 'このページはまだ設定が完了していません（ログイン・アップロード・スプレッドシートのURL）。画面のプレビューのみ可能です。',
     full: '選べるのは5組までです', dupPair: 'この組み合わせはもう選んでいます', needLogin: '先にGoogleでログインしてください', needPair: '1組以上選んでください', incomplete: '2人目が選ばれていない組があります',
     photoType: '写真はjpg・png・webpのみです', photoBig: '写真が大きすぎて2MB以内に縮小できませんでした', done: '送信しました。投票ありがとうございます！', loaded: '前回送信した内容を読み込みました',
     fail: '送信に失敗しました。しばらくしてからもう一度お試しください', expired: 'ログインの期限が切れました。もう一度ログインしてください', loadFail: '読み込みに失敗しました', busy: '送信中…',
     rankTitle: 'コンビランキング', rankLead: n => `現在 ${n} 人が投票中。コンビをタップすると、みんなの理由と写真が見られるよ。`, votes: '票',
-    reasons: 'みんなの理由', photos: 'フォトウォール', noReason: 'まだ理由がありません', refresh: '更新', noData: 'まだ投票がありません', loading: '読み込み中…', toVote: '私も投票する',
+    reasons: 'みんなの理由', defNick: 'おひさま', nickField: 'ニックネーム（任意）', nickHint: '理由の横に表示されます。未入力は「おひさま」', photos: 'フォトウォール', noReason: 'まだ理由がありません', refresh: '更新', noData: 'まだ投票がありません', loading: '読み込み中…', toVote: '私も投票する',
     rmMember: n => `${n} を外す`, cardBtn: 'シェアカードを見る', cardTitle: '私のコンビカード', cardDone: '投票完了！コンビカードができました', save: '画像を保存', share: 'シェア', close: '閉じる',
     hold: 'スマホは画像を長押しで保存できます', making: 'カードを作成中…', cardFail: 'カードの作成に失敗しました。もう一度お試しください', cardTag: 'あなたも推しコンビを選ぼう！',
-    openOrig: '元の画像を開く', nickLabel: 'ニックネーム（任意・カードにだけ表示）', nickPh: '例：ひなた', nickOf: n => `${n} のコンビ`
+    openOrig: '元の画像を開く', nickLabel: 'ニックネーム（任意・カードにも表示）', nickPh: '例：ひなた', nickOf: n => `${n} のコンビ`
   }
 };
 const ERR = { bad_token: 'needLogin', expired: 'expired', too_many: 'full', dup: 'dupPair', bad_type: 'photoType', too_big: 'photoBig' };
@@ -301,7 +302,7 @@ async function submit() {
       if (p.blob) { p.photo = await uploadPhoto(p.blob); p.blob = null; }
       out.push({ a: p.a, b: p.b, reason: (p.reason || '').trim().slice(0, MAX_REASON), photo: p.photo || '' });
     }
-    const res = await api({ action: 'submit', idToken: S.user.token, pairs: out });
+    const res = await api({ action: 'submit', idToken: S.user.token, pairs: out, nick: (S.nick || '').trim() });
     if (!res.ok) throw res.error || 'server';
     S.submitted = true; S.rank = null; S.detail = {};
     toast(k.done); sent = true;
@@ -386,6 +387,7 @@ function closeCard() {
   $('#modal').hidden = true;
   if (cardUrl) { URL.revokeObjectURL(cardUrl); cardUrl = ''; }
   cardBlob = null; $('#mdlBody').innerHTML = '';
+  if (S.tab === 'vote') render();
 }
 async function openCard(afterSubmit) {
   const k = t();
@@ -453,6 +455,7 @@ async function loadMine() {
   if (S.pairs.length === 0) {
     try {
       const r = await api({ action: 'mine', idToken: S.user.token });
+      if (r.ok && r.nick && !S.nick) { S.nick = String(r.nick).slice(0, 12); ls.set('cp_nick', S.nick); }
       if (r.ok && Array.isArray(r.pairs) && r.pairs.length) {
         S.pairs = r.pairs.filter(p => MAP[p.a] && MAP[p.b]).slice(0, MAX_PAIRS).map(p => ({ a: p.a, b: p.b, reason: String(p.reason || ''), photo: safePhoto(p.photo) ? p.photo : '', blob: null, preview: safePhoto(p.photo) ? p.photo : '' }));
         S.submitted = S.pairs.length > 0;
@@ -518,7 +521,8 @@ function voteHTML() {
   }
   picker += `</div>`;
   const cardBtn = S.pairs.some(p => p.b) ? `<button class="btn ghost" data-act="card">${k.cardBtn}</button>` : '';
-  const submit = `<div class="stack o4"><button class="btn big" data-act="submit" ${S.busy ? 'disabled' : ''}>${S.busy ? k.busy : (S.submitted ? k.update : k.submit)}</button>${cardBtn}<span class="mut" style="text-align:center">${k.checkNote}</span></div>`;
+  const nickBox = `<label class="fld">${k.nickField}<input data-nick type="text" maxlength="12" value="${esc(S.nick || '')}" placeholder="${k.defNick}" autocomplete="nickname"><span class="mut" style="font-size:12px">${k.nickHint}</span></label>`;
+  const submit = `<div class="stack o4">${nickBox}<button class="btn big" data-act="submit" ${S.busy ? 'disabled' : ''}>${S.busy ? k.busy : (S.submitted ? k.update : k.submit)}</button>${cardBtn}<span class="mut" style="text-align:center">${k.checkNote}</span></div>`;
   return `${warn}<div class="vgrid"><div class="colL">${intro}${picker}</div><div class="colR">${mycp}${submit}</div></div>`;
 }
 
@@ -542,8 +546,7 @@ function rankHTML() {
       if (d === 'loading' || d === undefined) h += `<span class="mut">${k.loading}</span>`;
       else {
         const rs = d.filter(x => x.r), ph = d.filter(x => safePhoto(x.p));
-        h += `<div class="h3">${k.reasons}</div>`;
-        h += rs.length ? rs.map(x => `<div class="rs">${esc(x.r)}</div>`).join('') : `<span class="mut">${k.noReason}</span>`;
+        h += rs.length ? rs.map(x => `<div class="h3">${esc(x.n || k.defNick)}</div><div class="rs">${esc(x.r)}</div>`).join('') : `<div class="h3">${k.reasons}</div><span class="mut">${k.noReason}</span>`;
         if (ph.length) h += `<div class="h3">${k.photos}</div><div class="pg">${ph.map(x => `<a href="${esc(x.p)}" target="_blank" rel="noopener"><img src="${esc(x.p)}" alt="" loading="lazy"></a>`).join('')}</div>`;
       }
       h += `</div>`;
@@ -610,6 +613,8 @@ $('#view').addEventListener('click', e => {
   else if (act === 'toggle') { const key = el.dataset.key; S.open = S.open === key ? null : key; render(); if (S.open && S.detail[key] === undefined) loadDetail(key); }
 });
 $('#view').addEventListener('input', e => {
+  const nk = e.target.closest('[data-nick]');
+  if (nk) { S.nick = nk.value.replace(/[\u0000-\u001f]/g, '').slice(0, 12); ls.set('cp_nick', S.nick); return; }
   const el = e.target.closest('[data-reason]'); if (!el) return;
   S.pairs[Number(el.dataset.reason)].reason = el.value;
 });
@@ -644,15 +649,15 @@ async function syncAvatars() {
 }
 
 // 照片牆：縮圖是正方形裁切（排版整齊），點開用燈箱看完整原圖，橫式直式都不會被切
-$('#view').addEventListener('click', e => {
-  const a = e.target.closest('.pg a'); if (!a) return;
-  e.preventDefault();
+document.addEventListener('click', e => {
+  const a = e.target.closest && e.target.closest('.pg a'); if (!a) return;
+  e.preventDefault(); e.stopPropagation();
   const k = t();
   $('#mdlT').textContent = k.photos;
   $('#mdlBody').innerHTML = `<img src="${esc(a.getAttribute('href'))}" alt="" style="max-height:70vh;object-fit:contain;background:var(--sky3)">`;
   $('#mdlBtns').innerHTML = `<a class="btn ghost" href="${esc(a.getAttribute('href'))}" target="_blank" rel="noopener">${k.openOrig}</a><button class="btn" data-m="close">${k.close}</button>`;
   $('#modal').hidden = false; $('#modal .mdl').focus();
-});
+}, true);
 $('#modal').addEventListener('click', e => {
   if (e.target.id === 'modal' || e.target.closest('[data-m="close"]')) return closeCard();
   if (e.target.closest('[data-m="share"]')) shareCard();
