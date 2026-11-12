@@ -110,7 +110,30 @@ async function livePanel(root, { db, cats, songs, year, all, refresh }) {
     try { await set(ref(db, `live/${year}`), { round: (cur?.round || 0) + 1, t: Date.now(), cats: Object.fromEntries(top.map(([c, v]) => [c.id, v.map(({ i, r }) => ({ i, r }))])) }); alert('已發布'); refresh(); } catch { alert('發布失敗：請確認資料庫規則已加入 live'); } };
   const b2 = el('button', B + 'bg-white text-rose-700 border border-rose-200', '撤下速報');
   b2.onclick = async () => { if (!cur || !confirm('撤下後前台不再顯示速報。確定？')) return; try { await set(ref(db, `live/${year}`), null); alert('已撤下'); refresh(); } catch { alert('失敗'); } };
-  row.append(b1, b2); box.append(pv, row); root.append(box);
+  row.append(b1, b2); box.append(pv, row);
+  // 宣傳圖：用「已發布」的速報畫（只有名次，和前台一致）。圖是在你的瀏覽器裡畫的，不會多讀資料庫
+  const dl = el('div', 'mt-4 pt-3 border-t border-amber-200');
+  dl.append(el('h4', 'font-black text-sm', '下載宣傳圖（社群用，1080×1350）'));
+  if (!cur?.cats) dl.append(el('p', 'text-sm text-slate-600 my-1', '先發布速報，才能下載宣傳圖（圖上的內容會和前台速報一致）。'));
+  else {
+    let lg = 'zh'; const lrow = el('div', 'flex gap-2 my-2'), msg = el('p', 'text-sm text-slate-600 my-1', ''), grid = el('div', 'flex flex-wrap gap-2');
+    const lbs = [['zh', '中文'], ['ja', '日本語']].map(([k, n]) => { const b = el('button', B + 'border border-amber-300', n); b.onclick = () => { lg = k; lbs.forEach(([kk, bb]) => paint(bb, kk === k)); render(); }; return [k, b]; });
+    const paint = (b, on) => { b.className = B + (on ? 'bg-amber-400 text-slate-900' : 'bg-white text-slate-700 border border-amber-300'); };
+    lbs.forEach(([k, b]) => { paint(b, k === lg); lrow.append(b); });
+    const have = cats.filter(c => (cur.cats[c.id] || []).length);
+    let busy = false;
+    const make = async (only, save = true) => { const m = await import('./live-card.js?v=20261112a'); const cv = await m.makeLiveCard({ lang: lg, year, live: cur, cats, items: songs, only }); const blob = await m.canvasBlob(cv);
+      if (save) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `hinata-live-r${cur.round || 1}-${lg}-${only}.png`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); } return blob; };
+    const run = async (only, label) => { if (busy) return; busy = true; msg.textContent = `製作中：${label}…`; try { await make(only); msg.textContent = `已下載：${label}`; } catch (e) { console.error(e); msg.textContent = '製作失敗，請再按一次'; } busy = false; };
+    const render = () => { grid.replaceChildren();
+      const bc = el('button', B + 'bg-sky-500 text-white', '總覽封面（各獎項第 1 名）'); bc.onclick = () => run('cover', '總覽封面'); grid.append(bc);
+      have.forEach(c => { const b = el('button', B + 'bg-white border border-sky-300 text-sky-800', c.name[lg] || c.name.zh); b.onclick = () => run(c.id, c.name[lg] || c.name.zh); grid.append(b); });
+      const ba = el('button', B + 'bg-slate-800 text-white', `全部下載（${have.length + 1} 張）`);
+      ba.onclick = async () => { if (busy) return; busy = true; try { const list = ['cover', ...have.map(c => c.id)]; for (let i = 0; i < list.length; i++) { msg.textContent = `製作中 ${i + 1} / ${list.length}…`; await make(list[i]); await new Promise(r => setTimeout(r, 400)); } msg.textContent = `已下載 ${list.length} 張（瀏覽器若詢問「允許下載多個檔案」請按允許）`; } catch (e) { console.error(e); msg.textContent = '製作失敗，請再按一次'; } busy = false; };
+      grid.append(ba); };
+    render(); dl.append(lrow, grid, msg, el('p', 'text-xs text-slate-500', `依第 ${cur.round} 回已發布的速報製作；重新發布後圖片會跟著更新。日文版會用日文獎項名稱與標籤。`));
+  }
+  box.append(dl); root.append(box);
 }
 
 // ---- 數據分析：每日新增、時段、獎項參與率、完整度、理由與分享、語言、可疑匿名票 ----
