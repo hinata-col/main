@@ -54,7 +54,7 @@ export const OSHI_MEMBERS = [
   { id: 'tsuruzaki_nika', name: '鶴崎仁香', gen: 5, graduated: false, avatar: 'https://cdn.hinatazaka46.com/images/14/468/a512adc17581d6f50cdd3205557e2/800_800_102400.jpg' },
   ];
 
-export const GEN_LABELS = { zh: { 1: '一期生', 2: '二期生', 3: '三期生', 4: '四期生', 5: '五期生' }, ja: { 1: '1期生', 2: '2期生', 3: '3期生', 4: '4期生', 5: '5期生' } };
+export const GEN_LABELS = { zh: { 1: '一期生', 2: '二期生', 3: '三期生', 4: '四期生', 5: '五期生' }, ja: { 1: '一期生', 2: '二期生', 3: '三期生', 4: '四期生', 5: '五期生' } };
 export const OS_T = {
   zh: { title: '本命設定', mOshi: '♥ 本命', mWatch: '☀ 在意成員', hOshi: '點成員頭像加入／移除本命，可複選，各自記錄陪伴起始日', hWatch: '點成員頭像加入／移除在意名單，可複選',
     tEdit: '編輯', tCard: '分享卡', none: '尚未選擇本命，在下方名單點選成員吧', days: n => `陪伴 ${n} 天`, picked: n => `已選 ${n}`, rm: '移除', since: '陪伴起始日', close: '關閉',
