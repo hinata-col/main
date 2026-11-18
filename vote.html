@@ -459,6 +459,9 @@ body.slt{background:radial-gradient(circle at 20% 0,#33724c 0,transparent 55%),r
 .sldl:disabled{opacity:.6}
 .sltg{background:#fff;color:#2A6B43}
 .slbt{display:flex;gap:8px;margin:0 0 6px}.slbt .slall{flex:1;margin:0;padding:8px 4px;font-size:14px}
+.slt .gq{display:none}
+.slbd .slbt{margin:10px 0 14px;padding-top:14px;border-top:1px dotted #9DB3A3}
+.slt #top .login,.slt #top .av,.slt #top .menu{display:none}
 </style>
 <!-- GA4：把首頁那段 gtag 程式碼原封不動貼在這裡（同一個 G-XXXX） -->
 </head>
@@ -796,7 +799,7 @@ async function setlistView() {
     return `<li class="lvr"><span class="lvn">${x.n}</span><span class="lvi${s.kind === 'mv' ? ' mv' : ''}">${imgTag(s.img)}</span><span class="lvx"><b>${esc(s.title)}${noteBtn(s)}</b>${s.single ? `<span class="tag">${esc(s.single)}</span>` : ''}</span>${mvBtn(x.id)}${s.previewUrl ? playBtn(s) : ''}</li>`; }).join('');
   const any = sh.list.some(x => items[x.id]?.previewUrl);
   $('#app').innerHTML = `<div class="slh"><div class="slh1">Setlist</div><i class="slsl"></i><div class="slh2">${t('slBadge')}</div><div class="slh3">日向坂46 ARENA TOUR「ひなくり2026」</div><a class="slh4" href="https://www.hinatazaka46.com/s/official/page/hinachri2026" target="_blank" rel="noopener noreferrer">${t('slOff2')}</a></div>` + tabsH
-    + `<section class="slbox">${daysH}<h2>${esc(sh.date || sh.name)}${venueN ? `<small>${esc(venueN)}</small>` : ''}</h2><div class="slbd">${any ? `<button class="slall" data-slall="1">▶ ${t('slAll')}</button>` : ''}<div class="slbt"><button class="slall sldl" data-slcard="1">${t('slDl')}</button><button class="slall sldl sltg" data-sltag="1">${t('slCp')}</button></div><ol class="lvl">${rows}</ol></div></section>` + ad;
+    + `<section class="slbox">${daysH}<h2>${esc(sh.date || sh.name)}${venueN ? `<small>${esc(venueN)}</small>` : ''}</h2><div class="slbd">${any ? `<button class="slall" data-slall="1">▶ ${t('slAll')}</button>` : ''}<ol class="lvl">${rows}</ol><div class="slbt"><button class="slall sldl" data-slcard="1">${t('slDl')}</button><button class="slall sldl sltg" data-sltag="1">${t('slCp')}</button></div></div></section>` + ad;
   const pk = document.querySelector('.slpick'), ac = pk?.querySelector('.act'); if (pk && ac) pk.scrollLeft = ac.offsetLeft - (pk.clientWidth - ac.offsetWidth) / 2;
 }
 // ---- 使用導覽：第一次進站自動顯示一次，之後可從頂部「?」再打開。圖片是實際畫面截圖（img/guide/語言/1~6.webp）
