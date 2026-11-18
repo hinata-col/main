@@ -35,6 +35,23 @@ export function rowsToObjects(rows) {
   return out;
 }
 
+// ---------- LIVE歌單：第1欄＝編號、第2欄＝歌名、第3欄起每欄一個場次（標題＝場次名，儲存格＝演出順序數字）----------
+export function parseSetlists(csv) {
+  const rows = parseCSV(csv); if (rows.length < 2) return [];
+  const meta = k => rows.find(r => String(r[0] ?? '').trim().toLowerCase() === '@' + k) || [];
+  const dRow = meta('date'), vRow = meta('venue'), out = [];
+  for (let c = 2; c < rows[0].length; c++) {
+    const name = String(rows[0][c] || '').trim(); if (!name) continue;
+    const list = [];
+    for (const r of rows.slice(1)) { const id = String(r[0] ?? '').trim(); if (id.startsWith('@')) continue;
+      const n = parseInt(String(r[c] ?? '').trim(), 10), title = String(r[1] ?? '').trim();
+      if (n > 0 && (id || title)) list.push({ n, id, title }); }
+    list.sort((a, b) => a.n - b.n);
+    if (list.length) out.push({ name, date: String(dRow[c] ?? '').trim(), venue: String(vRow[c] ?? '').trim(), list });
+  }
+  return out;
+}
+
 // ---------- 基本轉換 ----------
 export const truthy = v => /^(y|yes|1|true|是|v|✓|○|隱藏)$/i.test(String(v || '').trim());
 

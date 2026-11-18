@@ -7,7 +7,8 @@
    "sources": {
     "songs": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRbSDkQ5cL_1VOmBlJrZaq-YZ0cWonJ4bKgefj_cMgBt6oTBP8zDgLDE2vI1nCGukh_NvlAov_caBCe/pub?single=true&output=csv&gid=899677463",
     "mv": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRbSDkQ5cL_1VOmBlJrZaq-YZ0cWonJ4bKgefj_cMgBt6oTBP8zDgLDE2vI1nCGukh_NvlAov_caBCe/pub?single=true&output=csv&gid=5001",
-    "releases": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRbSDkQ5cL_1VOmBlJrZaq-YZ0cWonJ4bKgefj_cMgBt6oTBP8zDgLDE2vI1nCGukh_NvlAov_caBCe/pub?single=true&output=csv&gid=5003"
+    "releases": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRbSDkQ5cL_1VOmBlJrZaq-YZ0cWonJ4bKgefj_cMgBt6oTBP8zDgLDE2vI1nCGukh_NvlAov_caBCe/pub?single=true&output=csv&gid=5003",
+    "live": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRbSDkQ5cL_1VOmBlJrZaq-YZ0cWonJ4bKgefj_cMgBt6oTBP8zDgLDE2vI1nCGukh_NvlAov_caBCe/pub?gid=425159248&single=true&output=csv"
    },
    "groups": [
     {
