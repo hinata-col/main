@@ -122,14 +122,14 @@ async function livePanel(root, { db, cats, songs, year, all, refresh }) {
     lbs.forEach(([k, b]) => { paint(b, k === lg); lrow.append(b); });
     const have = cats.filter(c => (cur.cats[c.id] || []).length);
     let busy = false;
-    const make = async (only, save = true) => { const m = await import('./live-card.js?v=20261118a'); const cv = await m.makeLiveCard({ lang: lg, year, live: cur, cats, items: songs, only }); const blob = await m.canvasBlob(cv);
-      if (save) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `hinata-live-r${cur.round || 1}-${lg}-${only}.png`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); } return blob; };
+    const make = async (only, save = true) => { const m = await import('./live-card.js?v=20261119a'); const cv = await m.makeLiveCard({ lang: lg, year, live: cur, cats, items: songs, only }); const blob = await m.canvasBlob(cv);
+      if (save) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `hinata-live-r${cur.round || 1}-${lg}-${only === '_all' ? 'overview' : only}.png`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); } return blob; };
     const run = async (only, label) => { if (busy) return; busy = true; msg.textContent = `製作中：${label}…`; try { await make(only); msg.textContent = `已下載：${label}`; } catch (e) { console.error(e); msg.textContent = '製作失敗，請再按一次'; } busy = false; };
     const render = () => { grid.replaceChildren();
-      const bc = el('button', B + 'bg-sky-500 text-white', '總覽封面（各獎項第 1 名）'); bc.onclick = () => run('cover', '總覽封面'); grid.append(bc);
+      const bc = el('button', B + 'bg-sky-500 text-white', '總覽封面（各獎項第 1 名）'); bc.onclick = () => run('_all', '總覽封面'); grid.append(bc);
       have.forEach(c => { const b = el('button', B + 'bg-white border border-sky-300 text-sky-800', c.name[lg] || c.name.zh); b.onclick = () => run(c.id, c.name[lg] || c.name.zh); grid.append(b); });
       const ba = el('button', B + 'bg-slate-800 text-white', `全部下載（${have.length + 1} 張）`);
-      ba.onclick = async () => { if (busy) return; busy = true; try { const list = ['cover', ...have.map(c => c.id)]; for (let i = 0; i < list.length; i++) { msg.textContent = `製作中 ${i + 1} / ${list.length}…`; await make(list[i]); await new Promise(r => setTimeout(r, 400)); } msg.textContent = `已下載 ${list.length} 張（瀏覽器若詢問「允許下載多個檔案」請按允許）`; } catch (e) { console.error(e); msg.textContent = '製作失敗，請再按一次'; } busy = false; };
+      ba.onclick = async () => { if (busy) return; busy = true; try { const list = ['_all', ...have.map(c => c.id)]; for (let i = 0; i < list.length; i++) { msg.textContent = `製作中 ${i + 1} / ${list.length}…`; await make(list[i]); await new Promise(r => setTimeout(r, 400)); } msg.textContent = `已下載 ${list.length} 張（瀏覽器若詢問「允許下載多個檔案」請按允許）`; } catch (e) { console.error(e); msg.textContent = '製作失敗，請再按一次'; } busy = false; };
       grid.append(ba); };
     render(); dl.append(lrow, grid, msg, el('p', 'text-xs text-slate-500', `依第 ${cur.round} 回已發布的速報製作；重新發布後圖片會跟著更新。日文版會用日文獎項名稱與標籤。`));
   }

@@ -1,6 +1,6 @@
 // 速報宣傳圖卡（後台下載用）：只畫名次，不含票數。畫法與投票分享圖卡、本命圖卡同一套（天空藍底、黃色筆刷標題、QR code）。
 // 資料來源是「已發布的速報」(live/年份)，所以圖上的內容一定和前台速報一致。
-import { steadyBold, drawQR, decoImgs } from './oshi.js?v=20261118a';
+import { steadyBold, drawQR, decoImgs } from './oshi.js?v=20261119a';
 
 const NAVY = '#1F3552', BLUE = '#1F7FBF', W = 1080, H = 1350;
 const F = '"VoteRound","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif';
@@ -46,21 +46,21 @@ function sticker(g, cx, cy, r) {
 }
 
 /**
- * o = { lang:'zh'|'ja', year, live:{round,t,cats:{catId:[{i,r}]}}, cats:[分類], items:{id:歌曲}, only:'cover' | 分類 id }
+ * o = { lang:'zh'|'ja', year, live:{round,t,cats:{catId:[{i,r}]}}, cats:[分類], items:{id:歌曲}, only:'_all' | 分類 id }
  * 回傳 1080×1350 的 canvas
  */
 export async function makeLiveCard(o) {
-  const { lang, year, live, cats, items } = o, T = TX[lang], only = o.only || 'cover';
+  const { lang, year, live, cats, items } = o, T = TX[lang], only = o.only || '_all';
   const have = c => (live.cats?.[c.id] || []).filter(x => items[x.i]);
   const avail = cats.filter(c => have(c).length);
   const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = steadyBold(cv.getContext('2d'));
   // 先決定要畫的資料與圖片
   let cat = null, rows = [], cells = [];
-  if (only === 'cover') {
+  if (only === '_all') {
     const pick = [...COVER_PICK.map(id => avail.find(c => c.id === id)).filter(Boolean)]; avail.forEach(c => { if (pick.length < 6 && !pick.includes(c)) pick.push(c); });
     cells = pick.slice(0, 6).map(c => { const f = have(c).filter(x => x.r === 1); return { c, id: f[0]?.i || have(c)[0].i, tie: Math.max(0, f.length - 1) }; });
   } else { cat = cats.find(c => c.id === only); rows = have(cat).slice(0, 6); }
-  const ids = only === 'cover' ? cells.map(x => x.id) : rows.map(x => x.i);
+  const ids = only === '_all' ? cells.map(x => x.id) : rows.map(x => x.i);
   const [ims, dz] = await Promise.all([Promise.all(ids.map(id => imgOf(id, items[id]))), decoImgs(DECO)]);
   const A = Object.fromEntries(DECO.map((n, i) => [n, dz[i]]));
   const shortT = id => { const it = items[id], tt = uni(it?.title || id); return it?.kind === 'release' ? (/《(.+)》/.exec(tt)?.[1] || tt) : tt; };
@@ -83,7 +83,7 @@ export async function makeLiveCard(o) {
   ctext(`${year}　${T.round(live.round || 1)}　${T.at(stamp(live.t))}`, 540, 170, 960, 32, 800);
   // ---- 內容
   const PY = 206;
-  if (only === 'cover') {
+  if (only === '_all') {
     card1(40, PY, 1000, 880, 36);
     g.font = `900 46px ${F}`; const lb = T.first, lw = g.measureText(lb).width; g.fillStyle = 'rgba(245,224,80,.85)'; g.fillRect(74, PY + 50, lw + 12, 20); g.fillStyle = NAVY; g.fillText(lb, 80, PY + 64);
     cells.forEach((cl, k) => { const x = 70 + (k % 2) * 480, y = PY + 104 + Math.floor(k / 2) * 262, c = cl.c, it = items[cl.id], mv = c.view === 'mv', tw = mv ? 192 : 108, th = 108;
