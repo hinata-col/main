@@ -47,7 +47,8 @@ export function parseSetlists(csv) {
       const n = parseInt(String(r[c] ?? '').trim(), 10), title = String(r[1] ?? '').trim();
       if (n > 0 && (id || title)) list.push({ n, id, title }); }
     list.sort((a, b) => a.n - b.n);
-    if (list.length) out.push({ name, date: String(dRow[c] ?? '').trim(), venue: String(vRow[c] ?? '').trim(), list });
+    const date = String(dRow[c] ?? '').trim(), venue = String(vRow[c] ?? '').trim();
+    if (list.length || date || venue) out.push({ name, date, venue, list }); // 還沒填曲序的場次也保留（顯示為「尚未開演」）
   }
   return out;
 }
