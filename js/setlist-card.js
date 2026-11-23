@@ -1,6 +1,6 @@
 // LIVE試聽歌單的分享圖卡（歌單頁的「下載圖卡」按鈕用）：深綠×米金，與歌單頁同一套風格。
 // 只畫「場次、日期、場地、曲順」，另外附投票網址的 QR code，方便在社群轉發。
-import { steadyBold, drawQR } from './oshi.js?v=20261119a';
+import { steadyBold, drawQR } from './oshi.js?v=20261121a';
 
 const W = 1080, H = 1350, GREEN = '#2A6B43', DARK = '#1F3D2B', BEIGE = '#CDBB93', CREAM = '#EFE6CB';
 const F = '"VoteRound","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif';

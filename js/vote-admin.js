@@ -107,7 +107,7 @@ async function livePanel(root, { db, cats, songs, year, all, refresh }) {
   const row = el('div', 'flex flex-wrap gap-2');
   const b1 = el('button', B + 'bg-amber-400 text-slate-900', `發布第 ${(cur?.round || 0) + 1} 回速報`);
   b1.onclick = async () => { if (!top.length) return alert('還沒有票'); if (!confirm('以目前票數發布速報？前台會顯示各獎項前 5 名（只有名次）。')) return;
-    try { await set(ref(db, `live/${year}`), { round: (cur?.round || 0) + 1, t: Date.now(), cats: Object.fromEntries(top.map(([c, v]) => [c.id, v.map(({ i, r }) => ({ i, r }))])) }); alert('已發布'); refresh(); } catch { alert('發布失敗：請確認資料庫規則已加入 live'); } };
+    try { await set(ref(db, `live/${year}`), { round: (cur?.round || 0) + 1, t: Date.now(), ...(cur?.cats ? { prev: { round: cur.round || 1, t: cur.t || 0, cats: cur.cats } } : {}), cats: Object.fromEntries(top.map(([c, v]) => [c.id, v.map(({ i, r }) => ({ i, r }))])) }); alert('已發布'); refresh(); } catch { alert('發布失敗：請確認資料庫規則已加入 live'); } };
   const b2 = el('button', B + 'bg-white text-rose-700 border border-rose-200', '撤下速報');
   b2.onclick = async () => { if (!cur || !confirm('撤下後前台不再顯示速報。確定？')) return; try { await set(ref(db, `live/${year}`), null); alert('已撤下'); refresh(); } catch { alert('失敗'); } };
   row.append(b1, b2); box.append(pv, row);
@@ -122,7 +122,7 @@ async function livePanel(root, { db, cats, songs, year, all, refresh }) {
     lbs.forEach(([k, b]) => { paint(b, k === lg); lrow.append(b); });
     const have = cats.filter(c => (cur.cats[c.id] || []).length);
     let busy = false;
-    const make = async (only, save = true) => { const m = await import('./live-card.js?v=20261119a'); const cv = await m.makeLiveCard({ lang: lg, year, live: cur, cats, items: songs, only }); const blob = await m.canvasBlob(cv);
+    const make = async (only, save = true) => { const m = await import('./live-card.js?v=20261121a'); const cv = await m.makeLiveCard({ lang: lg, year, live: cur, cats, items: songs, only }); const blob = await m.canvasBlob(cv);
       if (save) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `hinata-live-r${cur.round || 1}-${lg}-${only === '_all' ? 'overview' : only}.png`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); } return blob; };
     const run = async (only, label) => { if (busy) return; busy = true; msg.textContent = `製作中：${label}…`; try { await make(only); msg.textContent = `已下載：${label}`; } catch (e) { console.error(e); msg.textContent = '製作失敗，請再按一次'; } busy = false; };
     const render = () => { grid.replaceChildren();

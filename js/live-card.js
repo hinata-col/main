@@ -1,6 +1,6 @@
 // 速報宣傳圖卡（後台下載用）：只畫名次，不含票數。畫法與投票分享圖卡、本命圖卡同一套（天空藍底、黃色筆刷標題、QR code）。
 // 資料來源是「已發布的速報」(live/年份)，所以圖上的內容一定和前台速報一致。
-import { steadyBold, drawQR, decoImgs } from './oshi.js?v=20261119a';
+import { steadyBold, drawQR, decoImgs } from './oshi.js?v=20261121a';
 
 const NAVY = '#1F3552', BLUE = '#1F7FBF', W = 1080, H = 1350;
 const F = '"VoteRound","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif';
