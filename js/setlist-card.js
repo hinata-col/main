@@ -1,6 +1,6 @@
 // LIVE試聽歌單的分享圖卡（歌單頁的「下載圖卡」按鈕用）：深綠×米金，與歌單頁同一套風格。
 // 只畫「場次、日期、場地、曲順」，另外附投票網址的 QR code，方便在社群轉發。
-import { steadyBold, drawQR } from './oshi.js?v=20261123a';
+import { steadyBold, drawQR } from './oshi.js?v=20261123b';
 
 const W = 1080, H = 1350, GREEN = '#2A6B43', DARK = '#1F3D2B', BEIGE = '#CDBB93', CREAM = '#EFE6CB';
 const F = '"VoteRound","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif';
@@ -43,11 +43,34 @@ export async function makeSetlistCard(o) {
   g.fillStyle = '#E4EEDF'; g.font = `400 32px ${F}`; let hs = head; while (g.measureText(hs).width > CW - 60 && hs.length > 4) hs = hs.slice(0, -2) + '…'; g.fillText(hs, W / 2, CY + 146);
   // 曲目
   const AY = CY + BH + 26, AH = 760 - BH - 46, n = list.length, two = n > 12, rows = two ? Math.ceil(n / 2) : n, rh = Math.min(n <= 8 ? 100 : two ? 62 : 78, Math.floor(AH / Math.max(1, rows + (extra ? 1 : 0)))), fs = Math.max(20, Math.min(n <= 8 ? 44 : two ? 30 : 38, Math.round(rh * .56)));
-  const colW = two ? (CW - 60) / 2 : CW - 100;
-  list.forEach((x, i) => { const col = two ? Math.floor(i / rows) : 0, r = two ? i % rows : i, cx = X + 30 + col * (colW + 0), y = AY + r * rh, cy = y + rh / 2;
-    if (!(r === 0)) { g.fillStyle = '#C9D6CD'; for (let dx = 0; dx < colW - 10; dx += 8) g.fillRect(cx + dx, y, 3, 2); }
-    g.textAlign = 'left'; g.fillStyle = GREEN; g.font = `italic 400 ${Math.round(fs * 1.1)}px Georgia, serif`; g.fillText(String(x.n), cx + 4, cy + fs * .36);
-    g.fillStyle = DARK; g.font = `900 ${fs}px ${F}`; let tt = title(x); const mw = colW - 80 - (two ? 14 : 0); while (g.measureText(tt).width > mw && tt.length > 3) tt = tt.slice(0, -2) + '…'; g.fillText(tt, cx + (two ? 56 : 66), cy + fs * .34); });
+  const colW = two ? (CW - 60) / 2 : CW - 100, mw = colW - 80 - (two ? 14 : 0), tx = two ? 56 : 66;
+  // 歌名太長時換到第二行（最多兩行，還是放不下才用「…」）；整欄放不下時整體縮小
+  const wrap = (txt, fsz) => { g.font = `900 ${fsz}px ${F}`; const cs = Array.from(txt), ls = []; let cur = '';
+    for (const ch of cs) { if (cur && g.measureText(cur + ch).width > mw) { ls.push(cur); cur = ch; } else cur += ch; }
+    if (cur) ls.push(cur);
+    if (ls.length === 2) { // 兩行時改成盡量對稱，避免第二行只剩一兩個字；優先在空白或「？！」後面斷行
+      const all = Array.from(ls.join('')), bad = '?!？！。、」』）ー…', best = { k: 0, sc: 1e9 };
+      for (let k = 1; k < all.length; k++) { const a1 = all.slice(0, k).join(''), b1 = all.slice(k).join(''), w1 = g.measureText(a1).width, w2 = g.measureText(b1).width; if (w1 > mw || w2 > mw) continue;
+        const sc = Math.abs(w1 - w2) + (bad.includes(all[k]) ? 600 : 0) + (/[\s?!？！]/.test(all[k - 1]) ? 0 : 220); if (sc < best.sc) { best.k = k; best.sc = sc; } }
+      if (best.k) return [all.slice(0, best.k).join('').trim(), all.slice(best.k).join('').trim()];
+    }
+    if (ls.length > 2) { let l2 = ls.slice(1).join(''); while (g.measureText(l2 + '…').width > mw && l2.length > 1) l2 = l2.slice(0, -1); return [ls[0], l2 + '…']; }
+    return ls; };
+  let L = null;
+  for (let sc = 1; sc >= .55; sc -= .05) {
+    const rhS = rh * sc, fsS = Math.max(15, Math.round(fs * sc)), lh = fsS * 1.2;
+    const items2 = list.map(x => { const ls = wrap(title(x), fsS); return { x, ls, h: ls.length > 1 ? rhS * .55 + lh * ls.length : rhS }; });
+    const cols = two ? [items2.slice(0, rows), items2.slice(rows)] : [items2];
+    const tot = Math.max(...cols.map(c => c.reduce((a, b) => a + b.h, 0)));
+    L = { rhS, fsS, lh, cols }; if (tot <= AH - (extra ? rhS * .8 : 0)) break;
+  }
+  L.cols.forEach((col, ci) => { let y = AY; const cx = X + 30 + ci * colW;
+    col.forEach(({ x, ls, h }, r) => { const cy = y + h / 2;
+      if (r > 0) { g.fillStyle = '#C9D6CD'; for (let dx = 0; dx < colW - 10; dx += 8) g.fillRect(cx + dx, y, 3, 2); }
+      g.textAlign = 'left'; g.fillStyle = GREEN; g.font = `italic 400 ${Math.round(L.fsS * 1.1)}px Georgia, serif`; g.fillText(String(x.n), cx + 4, cy + L.fsS * .36);
+      g.fillStyle = DARK; g.font = `900 ${L.fsS}px ${F}`;
+      ls.forEach((t, li) => g.fillText(t, cx + tx, cy + L.fsS * .34 + (li - (ls.length - 1) / 2) * L.lh));
+      y += h; }); });
   if (extra) { g.fillStyle = GREEN; g.font = `800 ${Math.max(20, fs - 4)}px ${F}`; g.textAlign = 'right'; g.fillText(T.more(extra), X + CW - 30, CY + 760 - 20); }
   // 頁尾：兩個 QR code（左：歌單頁、右：投票頁）、邀請語、hashtag、網址
   const qs = 124, qy = 1122, q1 = 64, q2 = q1 + qs + 40;
