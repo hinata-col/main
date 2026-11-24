@@ -506,8 +506,8 @@ body:lang(ja) .asktt,html[lang=ja] .asktt{font-size:17px}
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getAuth, onAuthStateChanged, signInAnonymously, GoogleAuthProvider, signOut, linkWithPopup, signInWithCredential, deleteUser, reauthenticateWithPopup } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { getDatabase, ref, get, update, increment, serverTimestamp, query, limitToFirst } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
-import { OSHI_MEMBERS, OS_T, oshiHTML, makeOshiCard, cleanState, today, decoImgs, drawQR, preloadOshi, steadyBold } from './js/oshi.js?v=20261123b';
-import { MAX, parseSetlists, buildData, match, buildTabs, esc, linkify, encodeShare, decodeShare, daysLeft, fmtDeadline, ytUrl, reasonLang } from './js/vote-lib.js?v=20261123b';
+import { OSHI_MEMBERS, OS_T, oshiHTML, makeOshiCard, cleanState, today, decoImgs, drawQR, preloadOshi, steadyBold } from './js/oshi.js?v=20261124a';
+import { MAX, parseSetlists, buildData, match, buildTabs, esc, linkify, encodeShare, decodeShare, daysLeft, fmtDeadline, ytUrl, reasonLang } from './js/vote-lib.js?v=20261124a';
 
 // 投票專用 Firebase 專案（hinata-vote）
 const FB = { apiKey: "AIzaSyDhhCVZY7kby_i3Ktf2G2FsJce1uXbrU0o", authDomain: "hinata-vote.firebaseapp.com",
@@ -593,6 +593,8 @@ let E, ed, all = [], items = {}, cats = [], tabs = [], year, sel = {}, cur = 0, 
 let user = null, deadline = 0, hasVoted = false, count = null, pend = null, db, auth, menuOpen = false, lastPick = '', fullCat = '', popTab = -1, fade = false;
 let nick = localStorage.getItem('hv_nick') || '';
 let setl = null, chain = null; // LIVE歌單：[{name, list:[{n,id,title}]}]
+// VP＝投票頁路徑（載入時固定）。歌單頁會把網址列改成 …/setlist#setlist/N，讓直接複製網址分享時縮圖是歌單（setlist.html 再轉回這裡）
+const VP = location.pathname, SLP = VP.replace(/[^/]*$/, '') + 'setlist';
 let live = null, liveR; const liveP = new Promise(r => liveR = r); // 速報（只有名次）：live/年份，管理員在後台發布
 let shareCode = '', pubOk = false, pubIds = [], why = {}, whyDirty = false, whyT, whyOpen = new Set(), dbReady; const dbP = new Promise(r => dbReady = r);
 const closed = () => deadline && Date.now() > deadline;
@@ -646,7 +648,7 @@ function head() {
   document.documentElement.lang = lang === 'ja' ? 'ja' : 'zh-Hant'; document.title = t('ttl');
   const cl = closed(), minC = ed?.minCount ?? 10, dl = deadline ? daysLeft(deadline) : null;
   const cnt = count != null && count >= minC ? t('cntOn')(count) : t('cntLow');
-  $('#top').innerHTML = `<div class="hd"><div class="hd1">${!cl && location.hash.startsWith('#setlist') ? `<a class="slbadge" href="${esc(location.pathname)}" aria-label="${esc(t('ttl'))} ${year ?? ''}"><i>${year ?? ''}</i><b>${t('slBd1')}</b><span>${t('slBd2')}</span></a>` : `<span class="stk">${cl ? t('badgeEnd') : t('badge')(year ?? '')}</span>`}<div class="hr"><button class="btn lang gq" data-act="guide" aria-label="${t('gT')}" title="${t('gT')}">?</button><button class="btn lang" data-act="lang" aria-label="${t('lang')}">${GLOBE}${lang === 'ja' ? '中文' : '日本語'}</button>${acctHTML()}</div></div>${menuHTML()}
+  $('#top').innerHTML = `<div class="hd"><div class="hd1">${!cl && location.hash.startsWith('#setlist') ? `<a class="slbadge" href="${esc(VP)}" aria-label="${esc(t('ttl'))} ${year ?? ''}"><i>${year ?? ''}</i><b>${t('slBd1')}</b><span>${t('slBd2')}</span></a>` : `<span class="stk">${cl ? t('badgeEnd') : t('badge')(year ?? '')}</span>`}<div class="hr"><button class="btn lang gq" data-act="guide" aria-label="${t('gT')}" title="${t('gT')}">?</button><button class="btn lang" data-act="lang" aria-label="${t('lang')}">${GLOBE}${lang === 'ja' ? '中文' : '日本語'}</button>${acctHTML()}</div></div>${menuHTML()}
     <div class="en">${t('en')} ${year ?? ''}</div>
     <h1 class="ttl"><span class="hl"><span class="bl">${esc(t('ttl').split(' ')[0])}</span> ${esc(t('ttl').split(' ').slice(1).join(' '))}</span></h1>
     <div class="tg1">${t('tag1')}</div>
@@ -756,7 +758,7 @@ function toggle(id) {
 // ---- 速報 ----
 async function liveView() {
   head(); $('#bar').innerHTML = ''; $('#app').innerHTML = `<div class="card pad">${t('whyLoad')}</div>`; await liveP; if (location.hash !== '#live') return;
-  const back = `<div class="card cta"><div class="asktt"><span class="hl">${t('lvAsk')}</span></div><a class="btn go" href="${esc(location.pathname)}">${t('lvBack')}</a></div>`;
+  const back = `<div class="card cta"><div class="asktt"><span class="hl">${t('lvAsk')}</span></div><a class="btn go" href="${esc(VP)}">${t('lvBack')}</a></div>`;
   if (!live?.cats) { $('#app').innerHTML = `<div class="card empty">${t('lvNone')}</div>` + back; return; }
   const no = c => tabs.findIndex(x => x.cats.includes(c)) + 1, cs = dcats().filter(c => (live.cats[c.id] || []).some(x => items[x.i]));
   $('#app').innerHTML = `<div class="card banner"><span class="tag" style="margin:0">${t('lvBadge')(live.round || 1)}</span><div class="nm"><span class="hl">${t('lvT')}</span></div><div class="tg2" style="margin-top:6px">${esc(t('lvAt')(fmtDeadline(live.t)))}<br>${t('lvNote')}${live.prev ? t('lvPrev')(live.prev.round) : ''}</div></div>`
@@ -786,9 +788,9 @@ async function copyTags() {
 async function setlistShare(b) {
   const k = Math.min(Math.max(parseInt(location.hash.split('/')[1]) || 0, 0), (setl?.length || 1) - 1), sh = setl?.[k]; if (!sh || b.disabled) return;
   const old = b.textContent; b.disabled = true; b.textContent = t('slMk');
-  try { const m = await import('./js/setlist-card.js?v=20261123b'); const blob = await m.canvasBlob(await m.makeSetlistCard({ lang, year, show: sh, items }));
+  try { const m = await import('./js/setlist-card.js?v=20261124a'); const blob = await m.canvasBlob(await m.makeSetlistCard({ lang, year, show: sh, items }));
     const f = new File([blob], `hinata-setlist-${k + 1}.png`, { type: 'image/png' });
-    if (navigator.canShare?.({ files: [f] })) { try { await navigator.share({ files: [f], text: `${t('slTx')}\n${location.origin}${location.pathname}` }); return; } catch (e) { if (e.name === 'AbortError') return; } }
+    if (navigator.canShare?.({ files: [f] })) { try { await navigator.share({ files: [f], text: `${t('slTx')}\n${location.origin}${SLP}#setlist/${k}` }); return; } catch (e) { if (e.name === 'AbortError') return; } }
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = f.name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
   } catch { toast(t('fail')); } finally { b.disabled = false; b.textContent = old; }
 }
@@ -797,7 +799,7 @@ async function setlistView() {
   head(); $('#bar').innerHTML = ''; $('#app').innerHTML = `<div class="card pad">${t('whyLoad')}</div>`;
   await loadSetlist(); if (!location.hash.startsWith('#setlist')) return;
   const dl = deadline ? daysLeft(deadline) : null;
-  const ad = closed() ? '' : `<a class="slad" href="${esc(location.pathname)}"><span class="sltag">${t('slAdTag')}</span><div class="slad1"><img src="img/icons/favicon-192.png" width="56" height="56" alt=""><b>${t('slAdQ')}</b></div><div class="slad2"><span>${esc(t('ttl'))} ${year ?? ''}${dl ? '<br><small>' + esc(t('days')(dl)) + '</small>' : ''}</span><em>${t('slAdGo')}</em></div></a>`;
+  const ad = closed() ? '' : `<a class="slad" href="${esc(VP)}"><span class="sltag">${t('slAdTag')}</span><div class="slad1"><img src="img/icons/favicon-192.png" width="56" height="56" alt=""><b>${t('slAdQ')}</b></div><div class="slad2"><span>${esc(t('ttl'))} ${year ?? ''}${dl ? '<br><small>' + esc(t('days')(dl)) + '</small>' : ''}</span><em>${t('slAdGo')}</em></div></a>`;
   if (!setl?.length) { const em = setlErr ? t('slErr') : t('slNone'); $('#app').innerHTML = `<div class="slh"><div class="slh1">Setlist</div><i class="slsl"></i><div class="slh2">${t('slBadge')}</div><div class="slh3">日向坂46 ARENA TOUR「ひなくり2026」</div><a class="slh4" href="https://www.hinatazaka46.com/s/official/page/hinachri2026" target="_blank" rel="noopener noreferrer">${t('slOff2')}</a></div><div class="card empty">${em}</div>` + ad; return; }
   const k = Math.min(Math.max(parseInt(location.hash.split('/')[1]) || 0, 0), setl.length - 1), sh = setl[k];
   const pn = x => { const m = x.name.match(/^(.*?)\s*(?:Day|DAY|day|日目|Day\.)\s*(\d+)\s*$/); return m && m[1].trim() ? { city: m[1].trim(), day: m[2] } : { city: x.name, day: '' }; };
@@ -874,9 +876,9 @@ const UA = navigator.userAgent || '';
 const IAB = /Barcelona/i.test(UA) ? 'Threads' : /Instagram/i.test(UA) ? 'Instagram' : /FBAN|FBAV|FB_IAB|FBIOS/i.test(UA) ? 'Facebook' : /\bLine\//i.test(UA) ? 'LINE' : /MicroMessenger/i.test(UA) ? 'WeChat' : /KAKAOTALK/i.test(UA) ? 'KakaoTalk' : '';
 const ANDROID = /Android/i.test(UA);
 function carryUrl() { // 外部瀏覽器打開後，?d= 會把草稿選擇與暱稱帶回來（放在 ? 不放 #，Android 的 intent 網址才不會壞）
-  const w = encodeShare(location.origin + location.pathname, year, cats, sel, nick), q = [];
+  const w = encodeShare(location.origin + VP, year, cats, sel, nick), q = [];
   if (IAB === 'LINE') q.push('openExternalBrowser=1'); if (picked().length) q.push('d=' + encodeURIComponent(w.slice(w.indexOf('#') + 3)));
-  return location.origin + location.pathname + (q.length ? '?' + q.join('&') : '');
+  return location.origin + VP + (q.length ? '?' + q.join('&') : '');
 }
 function iabSheet(withAnon) {
   const u = carryUrl(); try { history.replaceState(null, '', u.slice(location.origin.length)); } catch {} // 用 App 選單「在瀏覽器開啟」時，網址也帶著選歌
@@ -928,7 +930,7 @@ async function submit() {
     catch (e) { if (!first) throw e; const b2 = { ...base }; delete b2[`${vp}/createdAt`]; try { await update(ref(db), base); } catch { await update(ref(db), b2); } } // 計數器寫入失敗時不影響投票；萬一其實已有紀錄（createdAt 不能改），就不帶 createdAt 再送一次
     hasVoted = true; localStorage.removeItem('hv_draft_' + year); render(); doneModal(); if (shareCode) publish(); } catch (e) { console.error(e); toast(t('fail')); }
 }
-const link = () => shareCode && pubOk ? location.origin + location.pathname + '#s=' + year + '-' + shareCode : encodeShare(location.origin + location.pathname, year, cats, sel, nick);
+const link = () => shareCode && pubOk ? location.origin + VP + '#s=' + year + '-' + shareCode : encodeShare(location.origin + VP, year, cats, sel, nick);
 // ---- 公開分享與推薦理由 ----
 const genCode = () => { const a = 'abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789', r = new Uint8Array(8); (self.crypto || {}).getRandomValues ? crypto.getRandomValues(r) : r.forEach((_, i) => r[i] = Math.random() * 256); return [...r].map(x => a[x % a.length]).join(''); };
 const badWhy = s => /https?:|www\.|:\/\//i.test(s);
@@ -1057,7 +1059,7 @@ async function card(withImg) {
   drawQR(g, 60, qy, qs);
   const outl = (txt, x, y, size, col, maxW) => { let z = size; g.font = `800 ${z}px ${F}`; while (z > 18 && g.measureText(txt).width > maxW) { z -= 2; g.font = `800 ${z}px ${F}`; }
     g.lineJoin = 'round'; g.lineWidth = 8; g.strokeStyle = 'rgba(255,255,255,.95)'; g.strokeText(txt, x, y); g.fillStyle = col; g.fillText(txt, x, y); };
-  outl(t('cardTag')(year), 60 + qs + 40, qy + 62, 40, NAVY, W - (60 + qs + 40) - 40); outl(location.host + location.pathname, 60 + qs + 40, qy + 116, 28, '#35516F', W - (60 + qs + 40) - 40);
+  outl(t('cardTag')(year), 60 + qs + 40, qy + 62, 40, NAVY, W - (60 + qs + 40) - 40); outl(location.host + VP, 60 + qs + 40, qy + 116, 28, '#35516F', W - (60 + qs + 40) - 40);
   return cv;
 }
 async function shareImg(dl) {
@@ -1074,7 +1076,7 @@ function renderShared(d) {
   head(); $('#bar').innerHTML = ''; document.title = t('shNick')(d.year, d.nick);
   $('#app').innerHTML = `<div class="card banner"><span class="tag" style="margin:0">${t('shared')}</span><div class="nm"><span class="hl">${esc(d.nick || t('guest'))}</span> <small>${t('nickSuf')}</small></div><div class="tg2" style="margin-top:6px">${esc(d.year || year)} ${t('ttl')}</div></div>`
     + (ps.length ? ps.map(c => `<div class="sec" style="margin-top:22px"><span class="num">${pad(no(c))}</span><h2><span class="hl">${esc(nm(c))}</span></h2></div><div class="${gridCls(c)}">${d.picks[c.id].map(id => { const w = d.reasons?.[c.id]?.[id]; return `<div class="itw">${itemHTML(items[id], c, true)}${w ? `<div class="why"><b>${t('whyTag')}</b>${esc(w)}</div>` : ''}</div>`; }).join('')}</div>`).join('') : `<div class="card empty">${t('empty')}</div>`)
-    + `<div class="card cta"><div style="font-size:20px;font-weight:900"><span class="hl">${t('ask')}</span></div><div class="tg2">${esc(t('askSub')(deadline ? fmtDeadline(deadline) : ''))}</div><a class="btn go" href="${esc(location.pathname)}">${t('me')}</a></div>`;
+    + `<div class="card cta"><div style="font-size:20px;font-weight:900"><span class="hl">${t('ask')}</span></div><div class="tg2">${esc(t('askSub')(deadline ? fmtDeadline(deadline) : ''))}</div><a class="btn go" href="${esc(VP)}">${t('me')}</a></div>`;
   bindCars();
 }
 const shared = h => renderShared(decodeShare(h, cats, items));
@@ -1167,7 +1169,7 @@ async function openOshi() {
 }
 async function osCard() {
   const my = osRid, T = OS_T[lang];
-  try { const cv = await makeOshiCard({ lang, st: os, nick, host: location.host + location.pathname });
+  try { const cv = await makeOshiCard({ lang, st: os, nick, host: location.host + VP });
     const blob = await new Promise(r => cv.toBlob(r)); if (!blob) throw new Error('blob'); if (my !== osRid || !$('#osimg')) return;
     osBlob = blob; $('#osimg').src = URL.createObjectURL(blob); $('#osimg').hidden = false; $('#osld').hidden = true; $('#ossv').disabled = false;
   } catch (e) { console.error(e); if (my === osRid && $('#osld')) $('#osld').textContent = T.fail; }
@@ -1222,14 +1224,15 @@ function freshData(r) {
   const y = scrollY; render(); scrollTo(0, y);
 }
 async function route() {
+  try { const want = location.hash.startsWith('#setlist') ? SLP : VP; if (location.pathname !== want) history.replaceState(history.state, '', want + location.search + location.hash); } catch {}
   document.body.classList.toggle('slt', location.hash.startsWith('#setlist')); chain = null; stopAudio(); menuOpen = false; const h = location.hash;
   const dq = new URLSearchParams(location.search).get('d');
   if (dq) { const d = decodeShare('#w=' + dq, cats, items); if (d?.picks && Object.keys(d.picks).length) { sel = d.picks; if (d.nick) { nick = d.nick; try { localStorage.setItem('hv_nick', nick); } catch {} } try { localStorage.setItem('hv_draft_' + year, JSON.stringify(sel)); } catch {} setTimeout(() => toast(t('draftIn')), 300); }
-    history.replaceState(null, '', location.pathname + location.hash); return route(); }
+    history.replaceState(null, '', VP + location.hash); return route(); }
   if (h.startsWith('#s=')) sharedS(h.slice(3)); else if (h.startsWith('#r=') || h.startsWith('#v=') || h.startsWith('#w=')) shared(h); else if (h.startsWith('#results')) results(h.split('/')[1]); else if (h === '#live') liveView(); else if (h.startsWith('#setlist')) setlistView();
   else if (h === '#admin') { head(); $('#bar').innerHTML = '';
     try { if (!window.tailwind) await new Promise((ok, no) => { const s = document.createElement('script'); s.src = 'https://cdn.tailwindcss.com'; s.onload = ok; s.onerror = no; document.head.append(s); });
-      const m = await import('./js/vote-admin.js?v=20261123b'); m.mountAdmin($('#app'), { songs: items, cats: dcats(), year }); } catch { toast(t('fail')); } }
+      const m = await import('./js/vote-admin.js?v=20261124a'); m.mountAdmin($('#app'), { songs: items, cats: dcats(), year }); } catch { toast(t('fail')); } }
   else { render(); guideAuto(); }
 }
 (async () => {
